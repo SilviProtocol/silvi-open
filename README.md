@@ -92,7 +92,7 @@ For more information or to get involved, reach out to @metafarmer on Telegram.
 
 ---
 
-_Note: This README will be updated regularly as the project evolves. Last updated: October 2024_
+_Note: This README will be updated regularly as the project evolves. Last updated: October 2024.
 
 
 
