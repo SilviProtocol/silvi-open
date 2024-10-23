@@ -1,22 +1,98 @@
-# Treekipedia
+# 🌳 Treekipedia
 
-Treekipedia is an open-source database for tree data, including species lists, attributes, and complementary resources like species-specific datasets.
+## About
+Treekipedia is an open-source initiative to create a comprehensive, scalable database of tree-related knowledge. Our mission is to unify fragmented datasets into a single, accessible resource serving researchers, educators, and practitioners in agroforestry and related fields.
 
-## Ontology
+## 🎯 Project Objectives
+- Create a unified taxonomy and species list as the foundation for an extensive tree knowledge graph
+- Develop a structured ontology for organizing tree-related data
+- Integrate data from multiple authoritative sources
+- Provide an open, accessible platform for the global tree knowledge community
 
-The ontology is defined in the `ontology/treekipedia.ttl` file.
+## 🚀 Current Progress
+- ✅ Hired a post-doctorate ecologist
+- ✅ Developed prototype taxonomic schema
+- ✅ Established data retrieval and filtering strategy using R Studio
+- ✅ Identified and compiled 10+ source species databases
+- ✅ Set up GraphDB/BlazeGraph for data storage
 
-## RDF Data
+## 📊 Data Sources
+We integrate data from several authoritative sources:
+- GBIF (Global Biodiversity Information Facility)
+- iNaturalist
+- Wikidata
+- World Flora Online (WFO)
+- BGCI
+- And more...
 
-RDF data for tree species is stored in the `data` directory. Each file represents a species.
+## 🛠️ Technical Stack
+- **Data Processing:** R Studio
+- **Data Storage:** GraphDB/BlazeGraph
+- **Data Format:** RDF (Resource Description Framework)
+- **Query Language:** SPARQL
+- **Database Type:** Graph Database
 
-## Scripts
+## 📝 Key Features
+1. **Structured Ontology**
+   - Hierarchical classification of tree data
+   - Defined relationships between different data elements
+   - Machine-readable format using RDF
 
-- `scripts/update_database.py`: Script to add or update RDF data in the database.
+2. **Comprehensive Data Coverage**
+   - Species information
+   - Geographic occurrences
+   - Habitat information
+   - Taxonomic data
+   - Bioregional aptitude
 
-## Getting Started
+3. **Data Management**
+   - Large-scale data retrieval capabilities
+   - Filtered specifically for tree-related data
+   - Regular updates and maintenance
 
-1. Clone the repository.
-2. Install required Python packages:
-   ```sh
-   pip install rdflib
+## 🗺️ Roadmap
+### In Progress
+- Finalizing species and occurrence data compilation
+- Refining data filtering processes
+- Developing the open-source schema & ontology
+
+### Upcoming
+- Building tree value features based on OneEarth ecoregions
+- Developing user interface
+- Implementing open-source contributor process (Wikipedia-style)
+- Creating frontend for user interaction
+
+## 🤝 Contributing
+We're building an open community and welcome contributions! If you're interested in participating:
+1. Contact @metafarmer on Telegram
+2. Watch this space for upcoming contribution guidelines
+3. Stay tuned for our open-source contributor process
+
+## 📖 Documentation
+Detailed documentation about our:
+- Data structure
+- Ontology definitions
+- API interfaces
+- Contributing guidelines
+
+Will be added as the project evolves.
+
+## YouTube Showcase
+
+Watch a detailed showcase of Treekipedia:
+
+[![Treekipedia YouTube Video](https://img.youtube.com/vi/asWx0lJdpeU/0.jpg)](https://youtu.be/asWx0lJdpeU)
+
+
+## 🔄 Project Status
+This is an active project in development. The database and ontology will continuously evolve as we add more features and data sources.
+
+## 📧 Contact
+For more information or to get involved, reach out to @metafarmer on Telegram.
+
+---
+
+_Note: This README will be updated regularly as the project evolves. Last updated: October 2024_
+
+
+
