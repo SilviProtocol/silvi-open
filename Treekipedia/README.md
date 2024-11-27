@@ -50,6 +50,13 @@ We integrate data from several authoritative sources:
    - Filtered specifically for tree-related data
    - Regular updates and maintenance
 
+4. **Silvi Integration**([1](https://docs.silvi.earth/silvi-app-user-guide/connecting-a-wallet))
+   - Direct connection with Silvi application for tree planting verification
+   - Support for Celo-compatible wallet integration
+   - Automated data validation through the Silvi platform
+   - Real-world tree planting data collection
+   - Integration with community-driven validation systems
+
 ## 🗺️ Roadmap
 ### In Progress
 - Finalizing species and occurrence data compilation
@@ -89,6 +96,16 @@ This is an active project in development. The database and ontology will continu
 
 ## 📧 Contact
 For more information or to get involved, reach out to @metafarmer on Telegram.
+
+## 🤝 Integration Partners
+
+### Silvi Application
+Treekipedia integrates with Silvi, a leading platform for tree planting verification and community engagement([1](https://docs.silvi.earth/silvi-app-user-guide/connecting-a-wallet)). Key features include:
+- Automated tree planting verification
+- Community-driven data validation
+- Blockchain-based reward system using cUSD (Celo stable dollar)
+- Support for multiple wallet options (MetaMask, Valora, Opera Minipay)
+- Real-time data synchronization with Treekipedia database
 
 ---
 
