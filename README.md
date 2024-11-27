@@ -5,7 +5,7 @@ Silvi is a revolutionary platform that bridges the gap between tree planting ini
 
 ## Core Features
 - **Digital Tree Verification**: Streamlined process for documenting and verifying tree planting activities
-- **Blockchain Integration**: Secure payments through Celo blockchain network([1](https://docs.silvi.earth/silvi-app-user-guide/connecting-a-wallet))
+- **Blockchain Integration**: Secure payments through Celo blockchain network
 - **Treekipedia Integration**: Access to comprehensive tree species database and ecological data
 - **Community-Driven Validation**: Peer review system for planting verification
 - **Mobile-First Design**: Optimized for field use and documentation
