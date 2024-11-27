@@ -11,7 +11,7 @@ Silvi is a revolutionary platform that bridges the gap between tree planting ini
 - **Mobile-First Design**: Optimized for field use and documentation
 
 ## Payment System
-- Payments issued in cUSD and USDC ([1](https://docs.silvi.earth/silvi-app-user-guide/connecting-a-wallet))
+- Payments issued in cUSD and USDC.
 - Support for multiple wallet options:
   - MetaMask
   - Valora
@@ -35,7 +35,7 @@ Silvi leverages Treekipedia's extensive database for:
 ## Getting Started
 1. Download the Silvi mobile app
 2. Create an account
-3. Connect your Celo and Arbitrum compatible wallet([1](https://docs.silvi.earth/silvi-app-user-guide/connecting-a-wallet))
+3. Connect your Celo and Arbitrum compatible wallet
 4. Start documenting your tree planting activities
 
 ## Key Features
@@ -62,8 +62,8 @@ Silvi leverages Treekipedia's extensive database for:
 ## Contact
 - Website: https://silvi.earth
 - Email: support@silvi.earth
-- Telegram: @Silvi
-- Twitter: @SilviProtocol
+- [Telegram](https://t.me/SilviProtocol)
+- [Twitter](https://x.com/SilviProtocol)
 
 ## License
 Copyright © 2024 Silvi. All rights reserved.
