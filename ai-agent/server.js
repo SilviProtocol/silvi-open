@@ -1,4 +1,4 @@
-// server.js
+// ai-agent/server.js
 
 // Global error handlers to catch unhandled errors
 process.on('uncaughtException', err => {
@@ -45,7 +45,7 @@ async function uploadToIPFS(jsonData) {
   const buffer = Buffer.from(JSON.stringify(jsonData));
   formData.append('file', buffer, { filename: 'research.json', contentType: 'application/json' });
   
-  // Set up headers including the Lighthouse API key with "Bearer " prefix.
+  // Set up headers including the Lighthouse API key with "Bearer" prefix.
   const headers = {
     ...formData.getHeaders(),
     'Authorization': `Bearer ${process.env.LIGHTHOUSE_API_KEY}`
@@ -65,10 +65,6 @@ async function uploadToIPFS(jsonData) {
 
 // --- Function: storeResearchInDB ---
 // Inserts the research data into the ai_research table.
-// The table schema includes: taxon_id, general_description, native_adapted_habitats, stewardship_best_practices,
-// planting_methods, ecological_function, agroforestry_use_cases, elevation_ranges, compatible_soil_types,
-// conservation_status, research_status (default "unverified"), ipfs_cid, researcher_wallet, revision, revision_history,
-// created_at, and updated_at.
 async function storeResearchInDB(researchData, ipfsCid, researcherWallet) {
   const query = `
     INSERT INTO ai_research (
@@ -132,13 +128,17 @@ async function storeResearchInDB(researchData, ipfsCid, researcherWallet) {
 }
 
 // --- POST /ai/research Endpoint ---
-// Expects a JSON payload with keys: taxonID, scientificName, commonNames, researcherWallet.
+// Expects a JSON payload with keys: scientificName, commonNames, researcherWallet.
+// Uses scientificName as the TaxonID.
 app.post('/ai/research', async (req, res) => {
   try {
-    const { taxonID, scientificName, commonNames, researcherWallet } = req.body;
-    if (!taxonID || !scientificName || !commonNames || !researcherWallet) {
-      return res.status(400).json({ error: 'Missing required fields: taxonID, scientificName, commonNames, researcherWallet' });
+    const { scientificName, commonNames, researcherWallet } = req.body;
+    if (!scientificName || !commonNames || !researcherWallet) {
+      return res.status(400).json({ error: 'Missing required fields: scientificName, commonNames, researcherWallet' });
     }
+    
+    // Use scientificName as the TaxonID.
+    const taxonID = scientificName;
 
     // Trigger the AI research workflow (Perplexity + ChatGPT 4o)
     const researchData = await performAIResearch(taxonID, scientificName, commonNames, researcherWallet);
@@ -149,7 +149,7 @@ app.post('/ai/research', async (req, res) => {
     // Store the research data in PostgreSQL (including ipfs_cid and researcher_wallet)
     await storeResearchInDB(researchData, ipfsCid, researcherWallet);
 
-    // Dummy on-chain details (to be replaced with actual AgentKit onchain actions later)
+    // Dummy on-chain details (to be replaced with actual on-chain actions later)
     const onChainDetails = {
       attestation_id: "dummy_attestation_id",
       nftree_token_id: "dummy_nftree_token_id",
@@ -167,6 +167,23 @@ app.post('/ai/research', async (req, res) => {
   } catch (error) {
     console.error("Error in POST /ai/research endpoint:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// --- GET /ai/research/:scientificName Endpoint ---
+// Retrieves research data for the given scientificName (used as TaxonID).
+app.get('/ai/research/:scientificName', async (req, res) => {
+  const { scientificName } = req.params;
+  try {
+    const query = 'SELECT * FROM ai_research WHERE taxon_id = $1';
+    const result = await pool.query(query, [scientificName]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: `No research data found for scientificName: ${scientificName}` });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error retrieving research data:', error);
+    res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
