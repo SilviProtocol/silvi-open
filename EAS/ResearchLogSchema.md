@@ -1,34 +1,34 @@
 # ResearchLogSchema
 
-https://easscan.org/schema/view/0x238847e1221a1a5ca60abc68eda91bb2bcd49623819ff275a77cfcdab68a54d1
+https://base-sepolia.easscan.org/schema/view/0x879ed82d38bd26318e55e4803c5699f3191e3e9ca2ffbf75d0cdf16524e4d9d3
 
 # Using EAS SDK
 ```
 import  { EAS, SchemaEncoder }  from "@ethereum-attestation-service/eas-sdk";
-const easContractAddress = "0xA1207F3BBa224E2c9c3c6D5aF63D0eb1582Ce587";
-const schemaUID = "0x238847e1221a1a5ca60abc68eda91bb2bcd49623819ff275a77cfcdab68a54d1";
+const easContractAddress = "0x4200000000000000000000000000000000000021";
+const schemaUID = "0x879ed82d38bd26318e55e4803c5699f3191e3e9ca2ffbf75d0cdf16524e4d9d3";
 const eas = new EAS(easContractAddress);
 // Signer must be an ethers-like signer.
 await eas.connect(signer);
 // Initialize SchemaEncoder with the schema string
-const schemaEncoder = new SchemaEncoder("string ResearchLogSchema,address TriggerWallet,string ScientificName,string SpeciesUID,string[] SpeciesURL,string LLMModelUsed,string IPFSCID,uint16 NumberofInsights,uint16 NumberofCitations");
+const schemaEncoder = new SchemaEncoder("uint256 researchLogID,address triggerWallet,string scientificName,string speciesUID,string[] speciesURL,string llmModel,string ipfsCID,uint16 numberInsights,uint16 numberCitations");
 const encodedData = schemaEncoder.encodeData([
-	{ name: "ResearchLogSchema", value: "", type: "string" }
-	{ name: "TriggerWallet", value: "0x0000000000000000000000000000000000000000", type: "address" }
-	{ name: "ScientificName", value: "", type: "string" }
-	{ name: "SpeciesUID", value: "", type: "string" }
-	{ name: "SpeciesURL", value: [], type: "string[]" }
-	{ name: "LLMModelUsed", value: "", type: "string" }
-	{ name: "IPFSCID", value: "", type: "string" }
-	{ name: "NumberofInsights", value: "0", type: "uint16" }
-	{ name: "NumberofCitations", value: "0", type: "uint16" }
+	{ name: "researchLogID", value: "0", type: "uint256" }
+	{ name: "triggerWallet", value: "0x0000000000000000000000000000000000000000", type: "address" }
+	{ name: "scientificName", value: "", type: "string" }
+	{ name: "speciesUID", value: "", type: "string" }
+	{ name: "speciesURL", value: [], type: "string[]" }
+	{ name: "llmModel", value: "", type: "string" }
+	{ name: "ipfsCID", value: "", type: "string" }
+	{ name: "numberInsights", value: "0", type: "uint16" }
+	{ name: "numberCitations", value: "0", type: "uint16" }
 ]);
 const tx = await eas.attest({
 	schema: schemaUID,
 	data: {
 		recipient: "0x0000000000000000000000000000000000000000",
 		expirationTime: 0,
-		revocable: true, // Be aware that if your schema is not revocable, this MUST be false
+		revocable: false, // Be aware that if your schema is not revocable, this MUST be false
 		data: encodedData,
 	},
 });
