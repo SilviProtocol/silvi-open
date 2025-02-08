@@ -23,7 +23,16 @@
     "sonner": "^1.7.4",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
-    "zustand": "^5.0.3"
+    "zustand": "^5.0.3",
+    "@coinbase/agentkit": "^0.1.2",
+    "agentkit": "^0.0.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "form-data": "^4.0.1",
+    "langchain": "^0.3.15",
+    "morgan": "^1.10.0",
+    "openai": "^4.83.0",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -36,7 +45,7 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   },
-  "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
+  "description": "This is a Next.js project bootstrapped with create-next-app, combined with backend functionality for DeepTrees.",
   "main": "index.js",
   "author": "",
   "license": "ISC"
