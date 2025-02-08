@@ -9,10 +9,10 @@ const app = express();
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Use morgan for request logging
+// Use morgan for logging HTTP requests
 app.use(morgan('combined'));
 
-// Basic authentication middleware: check for an API key in the header (x-api-key)
+// Basic API key authentication middleware
 app.use((req, res, next) => {
   const apiKey = req.headers['x-api-key'];
   if (!apiKey || apiKey !== process.env.API_KEY) {
@@ -31,6 +31,7 @@ const pool = new Pool({
 });
 
 // Endpoint for AI Data Submission: POST /research/drafts
+// This inserts or updates a record in the ai_research table.
 app.post('/research/drafts', async (req, res) => {
   try {
     const {
@@ -50,7 +51,7 @@ app.post('/research/drafts', async (req, res) => {
       return res.status(400).json({ error: 'Missing required field: taxon_id' });
     }
 
-    // Insert or update the record; on conflict update the fields and increment revision.
+    // Insert new record; on conflict, update the record and increment revision
     const query = `
       INSERT INTO ai_research 
         (taxon_id, general_description, native_adapted_habitats, stewardship_best_practices, planting_methods, ecological_function, agroforestry_use_cases, elevation_ranges, compatible_soil_types, conservation_status, research_status)
@@ -92,6 +93,7 @@ app.post('/research/drafts', async (req, res) => {
 });
 
 // Endpoint for Data Retrieval: GET /species/:id
+// This fetches the AI research data for a given taxon_id.
 app.get('/species/:id', async (req, res) => {
   try {
     const taxon_id = req.params.id;
@@ -109,7 +111,7 @@ app.get('/species/:id', async (req, res) => {
   }
 });
 
-// Start the server
+// Start the API server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`API Gateway listening on port ${port}`);
