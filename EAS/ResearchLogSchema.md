@@ -1,7 +1,7 @@
 # ResearchLogSchema
 
-[https://easscan.org/schema/view/0xbd1aef9b038a0bc608e1240cd0ab7ddd22adf3935dd87cab7859780be0862a29
-](https://easscan.org/schema/view/0x238847e1221a1a5ca60abc68eda91bb2bcd49623819ff275a77cfcdab68a54d1)
+https://easscan.org/schema/view/0x238847e1221a1a5ca60abc68eda91bb2bcd49623819ff275a77cfcdab68a54d1
+
 # Using EAS SDK
 ```
 import  { EAS, SchemaEncoder }  from "@ethereum-attestation-service/eas-sdk";
