@@ -29,7 +29,7 @@ const SpeciesDetailsPage = () => {
     queryFn: async () => {
       if (!speciesId) throw new Error("No species ID provided");
       const { data } = await axios.get(
-        `http://localhost:8000/core/species/${speciesId}`
+        `https://silviapi.herokuapp.com/core/species/${speciesId}`
       );
       return data;
     },
@@ -189,8 +189,9 @@ const SpeciesDetailsPage = () => {
                   hover:shadow-[inset_5px_5px_10px_#d1d1d1,inset_-5px_-5px_10px_#ffffff] 
                   transition-all duration-300"
                   disabled={researchMutation.isPending}
+                  onClick={() => router.push(`/species/${speciesId}/nfts`)}
                 >
-                  Mint
+                  View NFT
                 </Button>
               </div>
 
