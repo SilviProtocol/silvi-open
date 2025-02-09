@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export interface APITreeSpecies {
   id: number;
-  commonName: string;
+  species_common_name: string;
   species_scientific_name: string;
   subspecies: string | null;
   genus: string;

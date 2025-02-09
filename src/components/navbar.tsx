@@ -1,14 +1,24 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
+import {
+  ConnectWallet,
+  Wallet,
+  WalletDropdown,
+  WalletDropdownLink,
+  WalletDropdownDisconnect,
+} from '@coinbase/onchainkit/wallet';
+import {
+  Address,
+  Avatar,
+  Name,
+  Identity,
+  EthBalance,
+} from '@coinbase/onchainkit/identity';
 
 export function Navbar() {
-  const handleConnect = () => {
-    // Implement wallet connection logic here
-    console.log("Connecting wallet...")
-  }
+  
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
@@ -16,22 +26,47 @@ export function Navbar() {
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center">
             <Image
-              src="/logo.png" // Make sure to add your logo file to the public directory
+              src="/silvi_logo.png" // Make sure to add your logo file to the public directory
               alt="Logo"
-              width={40}
-              height={40}
-              className="rounded-full"
+              width={100}
+              height={100}
+              className=""
             />
-            <span className="ml-2 text-xl font-bold text-white">TreeDAO</span>
           </Link>
           
-          <Button 
-            onClick={handleConnect}
-            variant="outline" 
-            className="bg-white/10 text-white border-white/20 hover:bg-white/20"
-          >
-            Connect Wallet
-          </Button>
+          <div className="wallet-container">
+            <Wallet>
+              <ConnectWallet className='bg-white text-black hover:bg-white hover:text-black'>
+                <Avatar className="h-6 w-6 text-black" />
+                <Name className="text-black" />
+              </ConnectWallet>
+              <WalletDropdown>
+                <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+                  <Avatar />
+                  <Name />
+                  <Address />
+                  <EthBalance />
+                </Identity>
+                <WalletDropdownLink
+                  icon="wallet"
+                  href="https://keys.coinbase.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Wallet
+                </WalletDropdownLink>
+                <WalletDropdownLink
+                  icon="wallet"
+                  href="https://t.me/SilviProtocol/1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Silvi Telegram
+                </WalletDropdownLink>
+                <WalletDropdownDisconnect />
+              </WalletDropdown>
+            </Wallet>
+          </div>
         </div>
       </div>
     </nav>

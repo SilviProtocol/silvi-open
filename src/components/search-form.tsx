@@ -9,9 +9,7 @@ export function SearchForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
-  // const [preview, setPreview] = useState<TreeSpecies[]>([]);
-  // const [isPreviewVisible, setIsPreviewVisible] = useState(false);
-  // const previewRef = useRef<HTMLDivElement>(null);
+ 
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -52,25 +50,6 @@ export function SearchForm() {
               <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 w-6 h-6" />
             </button>
           </div>
-          {/* {isPreviewVisible && preview.length > 0 && (
-            <div
-              ref={previewRef}
-              className="absolute z-20 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1"
-            >
-              {preview.map((species) => (
-                <div
-                  key={species.id}
-                  className="p-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handlePreviewClick(species)}
-                >
-                  <p className="font-semibold text-left">{species.commonName}</p>
-                  <p className="text-sm text-gray-600 italic text-left">
-                    {species.scientificName}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )} */}
         </div>
       </form>
     </div>
