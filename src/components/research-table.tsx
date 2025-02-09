@@ -45,8 +45,8 @@ export const ResearchTable: React.FC<ResearchTableProps> = ({
 
   if (researchMutation.isPending) {
     return (
-      <div className="h-full flex items-center justify-center">
-        <Loader2 className="w-4 h-4 animate-spin text-green-800" />
+      <div className="h-full flex flex-col gap-4 items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-green-800" />
         AI Agent Researching...
       </div>
     );

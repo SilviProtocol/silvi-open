@@ -8,10 +8,6 @@ import SilviLogo from '/public/SilviFaviconNew.svg'
 import { Suspense } from "react";
 
 
-
-
-
-
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
@@ -45,13 +41,12 @@ export default function RootLayout({
       <body
         className={montserrat.className}
       >
-        
         <Providers>
           <ResearchProvider>
             <Suspense>
               {children}
             </Suspense>
-            
+
             </ResearchProvider>
         </Providers>
         </body>
