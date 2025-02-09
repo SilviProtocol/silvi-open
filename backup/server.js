@@ -4,6 +4,7 @@
 require('dotenv').config({ path: '../.env' });
 
 const express = require('express');
+const cors = require('cors');
 const { Pool } = require('pg');
 const axios = require('axios');
 const FormData = require('form-data');
@@ -12,6 +13,7 @@ const FormData = require('form-data');
 const { performAIResearch } = require('../ai-agent/aiResearchService');
 
 const app = express();
+app.use(cors());
 const port = process.env.PORT || 3000;
 
 // Parse JSON request bodies

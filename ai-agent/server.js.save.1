@@ -20,9 +20,10 @@ const axios = require('axios');
 const FormData = require('form-data');
 const { Pool } = require('pg');
 const { createAttestation } = require('../smart-contracts/createAttestation');
-const { uploadResearchToIPFS } = require('../smart-contracts/uploadToIPFS');
+const { uploadToIPFS } = require('../smart-contracts/uploadToIPFS');
 const { mintNFTree } = require('../smart-contracts/mintNFTree');
 const path = require('path');
+
 
 // Import the AI research service (Perplexity + ChatGPT 4o flow)
 const { performAIResearch } = require('./aiResearchService');
@@ -150,20 +151,24 @@ app.post('/ai/research', async (req, res) => {
     const researchData = await performAIResearch(taxonID, scientificName, commonNames, researcherWallet);
 
     // Upload the structured research JSON to IPFS via Lighthouse
-    const ipfsCid = await uploadResearchToIPFS(researchData);
+    const ipfsCid = await uploadToIPFS(researchData);
 
     // Store the research data in PostgreSQL (including ipfs_cid and researcher_wallet)
     await storeResearchInDB(researchData, ipfsCid, researcherWallet);
 
-    // Trigger attestation and NFT minting via Athus's modules
-    const attestationDetails = await triggerAttestationAndMint(researchData, ipfsCid, researcherWallet);
+    // Dummy on-chain details (to be replaced with actual on-chain actions later)
+    const onChainDetails = {
+      attestation_id: "dummy_attestation_id",
+      nftree_token_id: "dummy_nftree_token_id",
+      contreebution_token_id: "dummy_contreebution_token_id"
+    };
 
-    // Combine research data with the attestation details returned by AgentKit and the IPFS CID
+    // Combine research data with on-chain details and IPFS CID, then return final JSON.
     const finalResponse = {
       ...researchData,
-  ipfs_cid: ipfsCid,
-  on_chain: attestationDetails
-};
+      ipfs_cid: ipfsCid,
+      on_chain: onChainDetails
+    };
 
     res.json({ status: "success", data: finalResponse });
   } catch (error) {
@@ -188,33 +193,6 @@ app.get('/ai/research/:scientificName', async (req, res) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
-
-// Function to trigger attestation and NFT minting using Athus's modules
-async function triggerAttestationAndMint(researchData, ipfsCid, researcherWallet) {
-  try {
-    console.log("Creating attestation using Athus's module...");
-    const attestationUID = await createAttestation();
-    console.log("Attestation UID:", attestationUID);
-
-    // Since metadataNFTree is no longer used, we reuse the research JSON IPFS CID as the token URI.
-    const tokenURI = ipfsCid;
-
-    console.log("Minting NFT using Athus's mintNFTree module...");
-    // Using the researcherWallet as recipient; tokenId 2 and amount 1 are examples.
-    const mintReceipt = await mintNFTree(researcherWallet, 2, 1, tokenURI);
-    console.log("Mint Receipt:", mintReceipt);
-
-    return {
-      attestation_id: attestationUID,
-      attestation_metadata_ipfs: tokenURI,
-      nft_mint_receipt: mintReceipt
-    };
-  } catch (error) {
-    console.error("Error in triggerAttestationAndMint:", error);
-    throw error;
-  }
-}
-
 
 // Start the Express server on port 3000 (or the port specified in .env)
 const PORT = process.env.PORT || 3000;
