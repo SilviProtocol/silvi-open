@@ -1,3 +1,4 @@
 node_modules/
 .env
 ai-agent/server.log
+.env.save
