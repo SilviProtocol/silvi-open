@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export interface APITreeSpecies {
   id: number;
-  commonName: string;
+  species_common_name: string;
   species_scientific_name: string;
   subspecies: string | null;
   genus: string;
@@ -12,6 +12,6 @@ export interface APITreeSpecies {
 }
 
 export const searchTreeSpecies = async (query: string): Promise<APITreeSpecies[]> => {
-  const { data } = await axios.get(`http://localhost:8000/core/species/?search=${query}`);
+  const { data } = await axios.get(`https://silviapi.herokuapp.com/core/species/?search=${query}`);
   return data;
 };
