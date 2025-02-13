@@ -12,6 +12,7 @@ process.on('unhandledRejection', err => {
 require('dotenv').config({ path: '../.env' });
 console.log("DB_HOST is:", process.env.DB_HOST);
 console.log("LIGHTHOUSE_API_KEY is:", process.env.LIGHTHOUSE_API_KEY);
+console.log("BASE_L2_RPC_URL is:", process.env.BASE_L2_RPC_URL);
 
 // Import required modules
 const express = require('express');
@@ -40,34 +41,6 @@ const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD
 });
-
-// --- Function: uploadToIPFS ---
-// Uploads JSON data to IPFS via Lighthouse and returns the CID.
-async function uploadToIPFS(jsonData) {
-  const url = 'https://node.lighthouse.storage/api/v0/add?pin=true';
-  
-  // Create a FormData instance and append the JSON data as a file.
-  const formData = new FormData();
-  const buffer = Buffer.from(JSON.stringify(jsonData));
-  formData.append('file', buffer, { filename: 'research.json', contentType: 'application/json' });
-  
-  // Set up headers including the Lighthouse API key with "Bearer" prefix.
-  const headers = {
-    ...formData.getHeaders(),
-    'Authorization': `Bearer ${process.env.LIGHTHOUSE_API_KEY}`
-  };
-
-  try {
-    console.log('Uploading research JSON to IPFS via Lighthouse...');
-    const response = await axios.post(url, formData, { headers });
-    const ipfsCid = response.data.Hash;
-    console.log('Received IPFS CID from Lighthouse:', ipfsCid);
-    return ipfsCid;
-  } catch (error) {
-    console.error('Error uploading to Lighthouse:', error.response ? error.response.data : error.message);
-    throw error;
-  }
-}
 
 // --- Function: storeResearchInDB ---
 // Inserts the research data into the ai_research table.
@@ -128,7 +101,7 @@ async function storeResearchInDB(researchData, ipfsCid, researcherWallet) {
     await pool.query(query, values);
     console.log('Research data stored successfully.');
   } catch (error) {
-    console.error('Error storing research data in PostgreSQL:', error);
+    console.error('Error storing research data in PostgreSQL:', error.stack);
     throw error;
   }
 }
@@ -149,7 +122,7 @@ app.post('/ai/research', async (req, res) => {
     // Trigger the AI research workflow (Perplexity + ChatGPT 4o)
     const researchData = await performAIResearch(taxonID, scientificName, commonNames, researcherWallet);
 
-    // Upload the structured research JSON to IPFS via Lighthouse
+    // Upload the structured research JSON to IPFS via Lighthouse using Athus's module
     const ipfsCid = await uploadResearchToIPFS(researchData);
 
     // Store the research data in PostgreSQL (including ipfs_cid and researcher_wallet)
@@ -161,14 +134,14 @@ app.post('/ai/research', async (req, res) => {
     // Combine research data with the attestation details returned by AgentKit and the IPFS CID
     const finalResponse = {
       ...researchData,
-  ipfs_cid: ipfsCid,
-  on_chain: attestationDetails
-};
+      ipfs_cid: ipfsCid,
+      on_chain: attestationDetails
+    };
 
     res.json({ status: "success", data: finalResponse });
   } catch (error) {
-    console.error("Error in POST /ai/research endpoint:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error in POST /ai/research endpoint:", error.stack);
+    res.status(500).json({ error: "Internal server error", details: error.message });
   }
 });
 
@@ -184,19 +157,20 @@ app.get('/ai/research/:scientificName', async (req, res) => {
     }
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error retrieving research data:', error);
+    console.error('Error retrieving research data:', error.stack);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
-// Function to trigger attestation and NFT minting using Athus's modules
+// --- Function: triggerAttestationAndMint ---
+// Triggers attestation and NFT minting using Athus's modules.
 async function triggerAttestationAndMint(researchData, ipfsCid, researcherWallet) {
   try {
     console.log("Creating attestation using Athus's module...");
     const attestationUID = await createAttestation();
     console.log("Attestation UID:", attestationUID);
 
-    // Since metadataNFTree is no longer used, we reuse the research JSON IPFS CID as the token URI.
+    // Reuse the IPFS CID as the token URI.
     const tokenURI = ipfsCid;
 
     console.log("Minting NFT using Athus's mintNFTree module...");
@@ -210,14 +184,14 @@ async function triggerAttestationAndMint(researchData, ipfsCid, researcherWallet
       nft_mint_receipt: mintReceipt
     };
   } catch (error) {
-    console.error("Error in triggerAttestationAndMint:", error);
+    console.error("Error in triggerAttestationAndMint:", error.stack);
     throw error;
   }
 }
 
-
 // Start the Express server on port 3000 (or the port specified in .env)
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`AI Research API listening on port ${PORT}`);
 });
+
