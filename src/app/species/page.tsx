@@ -1,11 +1,11 @@
 import { SearchForm } from "@/components/search-form";
 import { SearchResults } from "@/components/search-results";
-// import { Navbar } from "@/components/navbar";
+import { Navbar } from "@/components/navbar";
 
 export default function SpeciesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-200">
-      {/* <Navbar /> */}
+      <Navbar />
       <main className="w-full min-h-screen bg-white">
         <div
           className="relative min-h-screen flex flex-col"
@@ -16,7 +16,7 @@ export default function SpeciesPage() {
             backgroundPosition: "center",
           }}
         >
-          <div className="max-w-6xl mx-auto pt-6 px-4 w-full">
+          <div className="max-w-6xl mx-auto md:pt-16 pt-24 px-4 w-full">
             <h1 className="text-xl md:text-4xl font-bold mb-6 text-white text-center">
               The Open Encyclopedia of Trees
             </h1>
