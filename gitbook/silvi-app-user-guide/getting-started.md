@@ -37,8 +37,6 @@ Once users have logged claims, they will be able to view the status of the claim
 
 As a user, your projects and assets registered will be publicly viewable on the home map page, so Silvi users around the world can see the tangible impact you have made in reforestation, and the steps you took to get there.
 
-\
-
 
 ## Registration
 
