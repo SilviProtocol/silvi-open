@@ -4,7 +4,7 @@ description: 'Current Stage: 2024 Q3 - Data Collection and Cleaning'
 
 # Latest Developments
 
-TreeKipedia is currently in the Data Collection and Cleaning phase. We have gathered over 12,000,000 occurrences of tree species data from global sources such as GBIF (Global Biodiversity Information Facility), iNaturalist, idigbio, and National History Museums. Our team is actively working on cleaning this data to ensure its accuracy by removing duplicates, correcting errors, and standardizing formats.\
+TreeKipedia is currently in the Data Collection and Cleaning phase. We have gathered over 12,000,000 occurrences of tree species data from global sources such as GBIF (Global Biodiversity Information Facility), iNaturalist, idigbio, and National History Museums. Our team is actively working on cleaning this data to ensure its accuracy by removing duplicates, correcting errors, and standardizing formats.
 
 
 ### **Key Activities in This Stage:**
