@@ -1,115 +1,73 @@
-# 🌳 Treekipedia
+# Silvi
 
 ## About
-Treekipedia is an open-source initiative to create a comprehensive, scalable database of tree-related knowledge. Our mission is to unify fragmented datasets into a single, accessible resource serving researchers, educators, and practitioners in agroforestry and related fields.
+Silvi is a revolutionary platform that bridges the gap between tree planting initiatives and digital verification through blockchain technology. Our mission is to enable transparent, verifiable tree planting activities while providing fair compensation to planters through web3 technology.
 
-## 🎯 Project Objectives
-- Create a unified taxonomy and species list as the foundation for an extensive tree knowledge graph
-- Develop a structured ontology for organizing tree-related data
-- Integrate data from multiple authoritative sources
-- Provide an open, accessible platform for the global tree knowledge community
+## Core Features
+- **Digital Tree Verification**: Streamlined process for documenting and verifying tree planting activities
+- **Blockchain Integration**: Secure payments through Celo blockchain network
+- **Treekipedia Integration**: Access to comprehensive tree species database and ecological data
+- **Community-Driven Validation**: Peer review system for planting verification
+- **Mobile-First Design**: Optimized for field use and documentation
 
-## 🚀 Current Progress
-- ✅ Hired a post-doctorate ecologist
-- ✅ Developed prototype taxonomic schema
-- ✅ Established data retrieval and filtering strategy using R Studio
-- ✅ Identified and compiled 10+ source species databases
-- ✅ Set up GraphDB/BlazeGraph for data storage
+## Payment System
+- Payments issued in cUSD and USDC.
+- Support for multiple wallet options:
+  - MetaMask
+  - Valora
+  - Opera Minipay
+- Automated reward distribution based on verified plantings
 
-## 📊 Data Sources
-We integrate data from several authoritative sources:
-- GBIF (Global Biodiversity Information Facility)
-- iNaturalist
-- Wikidata
-- World Flora Online (WFO)
-- BGCI
-- And more...
+## Treekipedia Integration
+Silvi leverages Treekipedia's extensive database for:
+- Species identification and verification
+- Ecological suitability assessment
+- Best practices for planting and care
+- Data validation through the knowledge graph
 
-## 🛠️ Technical Stack
-- **Data Processing:** R Studio
-- **Data Storage:** GraphDB/BlazeGraph
-- **Data Format:** RDF (Resource Description Framework)
-- **Query Language:** SPARQL
-- **Database Type:** Graph Database
+## Technical Stack
+- **Backend**: GraphDB/BlazeGraph for tree species data
+- **Blockchain**: Celo Network
+- **Data Format**: RDF (Resource Description Framework)
+- **Query Language**: SPARQL
+- **Validation**: AI/ML tools for species identification
 
-## 📝 Key Features
-1. **Structured Ontology**
-   - Hierarchical classification of tree data
-   - Defined relationships between different data elements
-   - Machine-readable format using RDF
+## Getting Started
+1. Download the Silvi mobile app
+2. Create an account
+3. Connect your Celo and Arbitrum compatible wallet
+4. Start documenting your tree planting activities
 
-2. **Comprehensive Data Coverage**
-   - Species information
-   - Geographic occurrences
-   - Habitat information
-   - Taxonomic data
-   - Bioregional aptitude
-
-3. **Data Management**
-   - Large-scale data retrieval capabilities
-   - Filtered specifically for tree-related data
-   - Regular updates and maintenance
-
-4. **Silvi Integration**([1](https://docs.silvi.earth/silvi-app-user-guide/connecting-a-wallet))
-   - Direct connection with Silvi application for tree planting verification
-   - Support for Celo-compatible wallet integration
-   - Automated data validation through the Silvi platform
-   - Real-world tree planting data collection
-   - Integration with community-driven validation systems
-
-## 🗺️ Roadmap
-### In Progress
-- Finalizing species and occurrence data compilation
-- Refining data filtering processes
-- Developing the open-source schema & ontology
-
-### Upcoming
-- Building tree value features based on OneEarth ecoregions
-- Developing user interface
-- Implementing open-source contributor process (Wikipedia-style)
-- Creating frontend for user interaction
-
-## 🤝 Contributing
-We're building an open community and welcome contributions! If you're interested in participating:
-1. Contact @metafarmer on Telegram
-2. Watch this space for upcoming contribution guidelines
-3. Stay tuned for our open-source contributor process
-
-## 📖 Documentation
-Detailed documentation about our:
-- Data structure
-- Ontology definitions
-- API interfaces
-- Contributing guidelines
-
-Will be added as the project evolves.
-
-## YouTube Showcase
-
-Watch a detailed showcase of Treekipedia:
-
-[![Treekipedia YouTube Video](https://img.youtube.com/vi/asWx0lJdpeU/0.jpg)](https://youtu.be/asWx0lJdpeU)
+## Key Features
+- **Map Interface**: Interactive mapping of planting sites
+- **Photo Documentation**: Visual verification of plantings
+- **Species Database**: Access to comprehensive tree data
+- **Payment Tracking**: Real-time payment monitoring
+- **Data Analytics**: Project progress and impact metrics
 
 
-## 🔄 Project Status
-This is an active project in development. The database and ontology will continuously evolve as we add more features and data sources.
+## Environmental Impact
+- Carbon footprint tracking
+- Biodiversity monitoring
+- Ecosystem restoration metrics
+- Environmental compliance reporting
+- Impact assessment tools
 
-## 📧 Contact
-For more information or to get involved, reach out to @metafarmer on Telegram.
+## Community Support
+- 24/7 Technical support
+- Knowledge base
+- Video tutorials
+- Project showcases
 
-## 🤝 Integration Partners
+## Contact
+- Website: https://silvi.earth
+- Email: support@silvi.earth
+- [Telegram](https://t.me/SilviProtocol)
+- [Twitter](https://x.com/SilviProtocol)
 
-### Silvi Application
-Treekipedia integrates with Silvi, a leading platform for tree planting verification and community engagement([1](https://docs.silvi.earth/silvi-app-user-guide/connecting-a-wallet)). Key features include:
-- Automated tree planting verification
-- Community-driven data validation
-- Blockchain-based reward system using cUSD (Celo stable dollar)
-- Support for multiple wallet options (MetaMask, Valora, Opera Minipay)
-- Real-time data synchronization with Treekipedia database
+## License
+Copyright © 2024 Silvi. All rights reserved.
 
 ---
 
-_Note: This README will be updated regularly as the project evolves. Last updated: October 2024.
-
-
-
+For detailed documentation and guides, visit our [Documentation Portal](https://docs.silvi.earth).
