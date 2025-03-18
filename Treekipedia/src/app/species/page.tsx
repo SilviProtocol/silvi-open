@@ -11,15 +11,20 @@ export default function SpeciesPage() {
           className="relative min-h-screen flex flex-col"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80)",
+              "linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80)",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
-          <div className="max-w-6xl mx-auto md:pt-16 pt-24 px-4 w-full">
-            <h1 className="text-xl md:text-4xl font-bold mb-6 text-white text-center">
-              The Open Encyclopedia of Trees
-            </h1>
+          <div className="max-w-6xl mx-auto py-20 px-4 w-full">
+            <div className="mb-12 text-center">
+              <h1 className="relative inline-block text-2xl md:text-5xl font-medium tracking-tight mb-8">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 via-green-200 to-teal-300 animate-gradient-x">
+                  The Open Encyclopedia of Trees
+                </span>
+                <div className="absolute -bottom-2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></div>
+              </h1>
+            </div>
             {/* <p className="text-md md:text-lg mb-8 text-white">
               Discover, explore, and contribute to the world&apos;s largest tree
               database
