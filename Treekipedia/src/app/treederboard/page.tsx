@@ -87,10 +87,7 @@ export default function TreederboardPage() {
                     active:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.3),inset_-2px_-2px_5px_rgba(255,255,255,0.1)]
                     active:translate-y-[1px]
                     flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-                    </svg>
-                    Share on X
+                    Share on <span className="ml-1 font-bold">𝕏</span>
                   </button>
                 </div>
               </div>
@@ -119,9 +116,9 @@ export default function TreederboardPage() {
                   <tr 
                     key={entry.id} 
                     className={`hover:bg-white/10 transition-colors ${
-                      entry.rank === 1 ? "bg-gradient-to-r from-yellow-500/10 to-transparent border-l-4 border-yellow-500" : 
-                      entry.rank === 2 ? "bg-gradient-to-r from-gray-400/10 to-transparent border-l-4 border-gray-400" : 
-                      entry.rank === 3 ? "bg-gradient-to-r from-amber-700/10 to-transparent border-l-4 border-amber-700" : ""
+                      entry.rank === 1 ? "border-l-4 border-yellow-500" : 
+                      entry.rank === 2 ? "border-l-4 border-gray-400" : 
+                      entry.rank === 3 ? "border-l-4 border-amber-700" : ""
                     }`}
                   >
                     <td className="px-3 py-2 whitespace-nowrap">
