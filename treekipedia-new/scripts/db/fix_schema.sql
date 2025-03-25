@@ -1,0 +1,10 @@
+-- Fix varchar length issues in species table
+ALTER TABLE species ALTER COLUMN growth_form TYPE VARCHAR(100);
+ALTER TABLE species ALTER COLUMN leaf_type TYPE VARCHAR(100);
+ALTER TABLE species ALTER COLUMN flower_color TYPE VARCHAR(100);
+ALTER TABLE species ALTER COLUMN fruit_type TYPE VARCHAR(100);
+ALTER TABLE species ALTER COLUMN conservation_status TYPE VARCHAR(100);
+ALTER TABLE species ALTER COLUMN climate_change_vulnerability TYPE VARCHAR(100);
+ALTER TABLE species ALTER COLUMN verification_status TYPE VARCHAR(50);
+ALTER TABLE species ALTER COLUMN lifespan TYPE VARCHAR(100);
+ALTER TABLE species ALTER COLUMN successional_stage TYPE VARCHAR(100);
