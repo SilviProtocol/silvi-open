@@ -5,12 +5,17 @@ A Solidity smart contract for minting and managing NFTs that represent research 
 <img src="https://gpbr.infura-ipfs.io/ipfs/bafkreibkta2e54ddqjlrmxmacjvqcpj7w6o3a4oww6ea7hldjazio22c3e" alt="Alt text" width="500px" height="auto">
 
 ## Deployed Contracts
+
+### Research Contreebution v2
+**Ethereum Sepolia:** https://sepolia.etherscan.io/nft/0x5efe80d2679e7a23b90623d7de45efadd242a86f/1
+
+
+### Research Contreebution v1
 **CELO Mainnet:** 0x5Ed6240fCC0B2A231887024321Cc9481ba07f3c6
 
 [see the deployed contract on celoscan...](https://celoscan.io/address/0x5ed6240fcc0b2a231887024321cc9481ba07f3c6)
 
 **Ethereum Sepolia:** 0x1Ad2317DEBD2ac4730641A1E317B204bd2fEeFA8
-
 
 ## Overview
 
