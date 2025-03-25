@@ -1,16 +1,15 @@
 {
-    "name": "Research Contreebution",
+    "name": "Research Contreebution #30",
     "description": "This the Treekipedia NFT for your Research contreebution. Thank you!",
     "image": "ipfs://bafkreibkta2e54ddqjlrmxmacjvqcpj7w6o3a4oww6ea7hldjazio22c3e",
     "properties": 
     {
-        "researchLogID": "njfnc4",
+        "researchLogID": "njfnc4asdasfa",
         "scientificName": "Moringa Oleifera",
         "triggerWallet": "0xfoahf...",
-        "speciesUID": "ubsa756ca",
+        "speciesUID": "4gu445asdaffw45bsa756ca",
         "speciesURL": "https://somelink.com",
-        "llmModel": "GPT-4",
-        "ipfsCID": "bafkreiexw7xsebgjffqdqyzzh726zfxluhfc3fuslu6jx27lmytrtk6p6u",
+        "llmModel": "GPT-4",        
         "numberInsights": 3,
         "numberCitations": 4      
     }
