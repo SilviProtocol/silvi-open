@@ -40,25 +40,26 @@ async function createAttestation(chain, data) {
     const researchVersion = 1; // Initial version of the research
     
     // Encode data according to the new schema:
-    // "string taxon_id, string ipfs_cid, address wallet_address, uint256 timestamp, uint256 research_version, string scientific_name"
+    // "string taxon_id, string ipfs_cid, address wallet_address, uint256 timestamp, uint256 research_version, string scientific_name, bytes32 refUID"
+    const refUID = data.refUID || ethers.ZeroHash; // Default to zero hash if no reference provided
+    
     const attestationData = ethers.AbiCoder.defaultAbiCoder().encode(
-      ['string', 'string', 'address', 'uint256', 'uint256', 'string'], 
+      ['string', 'string', 'address', 'uint256', 'uint256', 'string', 'bytes32'], 
       [
         data.taxonId, 
         data.ipfsCid, 
         data.researcher, 
         timestamp, 
         researchVersion, 
-        data.species
+        data.species,
+        refUID
       ]
     );
     
     // Create attestation
     console.log(`Creating attestation on ${chain} for species ${data.species}`);
     
-    // Create a properly formatted zero bytes32 value for refUID
-    // In ethers v6, we use ZeroHash for zero bytes32
-    const refUID = ethers.ZeroHash;
+    // We already have the refUID defined above, using either data.refUID or ethers.ZeroHash
     
     // Add detailed logging for debugging
     console.log("Schema UID:", schema);
@@ -66,23 +67,9 @@ async function createAttestation(chain, data) {
     console.log("Recipient:", data.researcher);
     console.log("Encoded attestation data:", attestationData);
     
-    // Try to check if the schema is registered (if contract has a function for this)
-    try {
-      console.log("Checking if schema registry is available...");
-      const schemaRegistry = await easContract.getSchemaRegistry();
-      if (schemaRegistry) {
-        console.log("Schema Registry Address:", schemaRegistry);
-        try {
-          const schemaInfo = await schemaRegistry.getSchema(schema);
-          console.log("Schema Info:", schemaInfo);
-        } catch (schemaError) {
-          console.log("Error getting schema:", schemaError.message);
-        }
-      }
-    } catch (registryError) {
-      console.log("Schema registry check failed:", registryError.message);
-      console.log("Continuing with attestation attempt...");
-    }
+    // Skip schema registry check as it's not needed for attestation
+    // and may cause errors if the EAS contract doesn't support it
+    console.log("Skipping schema registry check and proceeding directly to attestation...")
     
     // Create attestation with detailed error handling
     try {
@@ -124,11 +111,11 @@ async function createAttestation(chain, data) {
  * Mints a Contreebution NFT on the specified chain
  * @param {string} chain - Chain to mint NFT on ('base', 'celo', 'optimism', 'arbitrum')
  * @param {string} recipient - Wallet address of the recipient
- * @param {string} tokenId - Token ID for the NFT
+ * @param {number} globalId - The global_id from database to use as token ID
  * @param {string} tokenURI - URI for the NFT metadata (IPFS CID)
  * @returns {Promise<Object>} - Transaction receipt
  */
-async function mintNFT(chain, recipient, tokenId, tokenURI) {
+async function mintNFT(chain, recipient, globalId, tokenURI) {
   try {
     // Get chain configuration
     const chainConfig = chains[chain];
@@ -148,8 +135,14 @@ async function mintNFT(chain, recipient, tokenId, tokenURI) {
       signer
     );
     
+    // Validate input - globalId must be a number
+    const tokenId = Number(globalId);
+    if (isNaN(tokenId) || tokenId <= 0) {
+      throw new Error(`Invalid global_id: ${globalId}. Must be a positive number.`);
+    }
+    
     // Mint NFT
-    console.log(`Minting NFT on ${chain} for recipient ${recipient}`);
+    console.log(`Minting NFT on ${chain} for recipient ${recipient} with tokenId: ${tokenId}`);
     const tx = await nftContract.safeMint(recipient, tokenId, tokenURI);
     
     // Wait for transaction to be confirmed
@@ -161,11 +154,20 @@ async function mintNFT(chain, recipient, tokenId, tokenURI) {
       tokenURI,
       transactionHash: receipt.hash,
       chain,
-      blockNumber: receipt.blockNumber
+      blockNumber: receipt.blockNumber,
+      status: 'success'
     };
   } catch (error) {
     console.error(`Error minting NFT on ${chain}:`, error);
-    throw new Error(`NFT minting failed: ${error.message}`);
+    
+    // Return a structured error object instead of throwing
+    // This allows the calling code to handle the error appropriately
+    return {
+      status: 'failed',
+      error: error.message,
+      errorCode: error.code || 'UNKNOWN_ERROR',
+      errorData: error.data || null
+    };
   }
 }
 

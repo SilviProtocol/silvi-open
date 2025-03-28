@@ -12,45 +12,51 @@ export const supportedChains = [
   arbitrumSepolia
 ];
 
+// Contract addresses interface
+interface ContractAddresses {
+  contreebutionNFT: string;
+  eas: string;
+}
+
 // Map chain IDs to their respective contract addresses
-export const contractAddresses = {
+export const contractAddresses: Record<string, ContractAddresses> = {
   // Base Mainnet
-  [base.id]: {
+  [String(base.id)]: {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0xF0D7BD87A38E4C1F14c7f95Bb3BD2A61ac8D1C3e' // EAS address on Base
   },
   // Base Sepolia Testnet
-  [baseSepolia.id]: {
+  [String(baseSepolia.id)]: {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0x4200000000000000000000000000000000000021' // EAS address on Base Sepolia
   },
   // Celo Mainnet
-  [celo.id]: {
+  [String(celo.id)]: {
     contreebutionNFT: '0x5Ed6240fCC0B2A231887024321Cc9481ba07f3c6', // From README
     eas: '0xA310a93BEF1B503984EDF8c854C9Eb5542f6e25A' // EAS address on Celo
   },
   // Celo Alfajores Testnet
-  [celoAlfajores.id]: {
+  [String(celoAlfajores.id)]: {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0xaaB7b95246c714F32fb1636Ae95A775d8951e057' // EAS address on Celo Alfajores
   },
   // Optimism Mainnet
-  [optimism.id]: {
+  [String(optimism.id)]: {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0x4200000000000000000000000000000000000021' // EAS address on Optimism
   },
   // Optimism Sepolia Testnet
-  [optimismSepolia.id]: {
+  [String(optimismSepolia.id)]: {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0x4200000000000000000000000000000000000021' // EAS address on Optimism Sepolia
   },
   // Arbitrum Mainnet
-  [arbitrum.id]: {
+  [String(arbitrum.id)]: {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0xBD75f629A22Dc1ceD33dDA0b68c546A1c035c458' // EAS address on Arbitrum
   },
   // Arbitrum Sepolia Testnet 
-  [arbitrumSepolia.id]: {
+  [String(arbitrumSepolia.id)]: {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0xaEF4103A04090071165F78D45D83A0C0782c2B2a' // EAS address on Arbitrum Sepolia
   }

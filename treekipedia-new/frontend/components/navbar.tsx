@@ -4,8 +4,8 @@ import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useAccount, useBalance, useDisconnect, useChainId, useSwitchChain } from 'wagmi'
-import { supportedChains, getChainName, chainsByNetwork } from '@/lib/chains'
-import { Menu, ChevronDown, Wallet } from "lucide-react"
+import { getChainName, chainsByNetwork } from '@/lib/chains'
+import { ChevronDown, Wallet } from "lucide-react"
 
 export function Navbar() {
   const { address, isConnected } = useAccount()

@@ -6,11 +6,11 @@ module.exports = {
   base: {
     name: 'Base',
     chainId: 8453,
-    rpcUrl: process.env.BASE_RPC_URL || 'https://mainnet.base.org',
+    rpcUrl: process.env.BASE_RPC_URL || 'https://base-mainnet.infura.io/v3/03ccdfb9f1b1421b803e7c9e0fbee198',
     blockExplorer: 'https://basescan.org',
-    nftContractAddress: process.env.BASE_NFT_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
+    nftContractAddress: process.env.BASE_NFT_CONTRACT_ADDRESS || '0x4D673AD5BD926266A8d06EE26103a0D0d9Eea599',
     easContractAddress: process.env.BASE_EAS_CONTRACT_ADDRESS || '0x4200000000000000000000000000000000000020',
-    easSchemaId: process.env.BASE_EAS_SCHEMA_ID || '0x911e11e82dc5709a0c674725c0dcc6b1e72102ad816c6eba23038f6bf9f87dac',
+    easSchemaId: process.env.BASE_EAS_SCHEMA_ID || '0xcf573b05cd63a15003b7a67ed4ea2aa6d9963c6518d0c3efd3bfab12d8d74ac9',
     isTestnet: false
   },
   
@@ -18,11 +18,11 @@ module.exports = {
   celo: {
     name: 'Celo',
     chainId: 42220,
-    rpcUrl: process.env.CELO_RPC_URL || 'https://forno.celo.org',
+    rpcUrl: process.env.CELO_RPC_URL || 'https://celo-mainnet.infura.io/v3/03ccdfb9f1b1421b803e7c9e0fbee198',
     blockExplorer: 'https://celoscan.io',
-    nftContractAddress: process.env.CELO_NFT_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
-    easContractAddress: process.env.CELO_EAS_CONTRACT_ADDRESS || '0x5ece93bE4BDCF293Ed61FA78698B594F2135AF34',
-    easSchemaId: process.env.CELO_EAS_SCHEMA_ID || '0x911e11e82dc5709a0c674725c0dcc6b1e72102ad816c6eba23038f6bf9f87dac',
+    nftContractAddress: process.env.CELO_NFT_CONTRACT_ADDRESS || '0x85fbbE1694B6add91a815896f0b4B65b3bf61A01',
+    easContractAddress: process.env.CELO_EAS_CONTRACT_ADDRESS || '0xBD5f9BFBD8A708a32450918119d68775F28b911b',
+    easSchemaId: process.env.CELO_EAS_SCHEMA_ID || '0xcf573b05cd63a15003b7a67ed4ea2aa6d9963c6518d0c3efd3bfab12d8d74ac9',
     isTestnet: false
   },
   
@@ -30,11 +30,11 @@ module.exports = {
   optimism: {
     name: 'Optimism',
     chainId: 10,
-    rpcUrl: process.env.OPTIMISM_RPC_URL || 'https://mainnet.optimism.io',
+    rpcUrl: process.env.OPTIMISM_RPC_URL || 'https://optimism-mainnet.infura.io/v3/03ccdfb9f1b1421b803e7c9e0fbee198',
     blockExplorer: 'https://optimistic.etherscan.io',
-    nftContractAddress: process.env.OPTIMISM_NFT_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
+    nftContractAddress: process.env.OPTIMISM_NFT_CONTRACT_ADDRESS || '0x4D673AD5BD926266A8d06EE26103a0D0d9Eea599',
     easContractAddress: process.env.OPTIMISM_EAS_CONTRACT_ADDRESS || '0x4200000000000000000000000000000000000020',
-    easSchemaId: process.env.OPTIMISM_EAS_SCHEMA_ID || '0x911e11e82dc5709a0c674725c0dcc6b1e72102ad816c6eba23038f6bf9f87dac',
+    easSchemaId: process.env.OPTIMISM_EAS_SCHEMA_ID || '0xcf573b05cd63a15003b7a67ed4ea2aa6d9963c6518d0c3efd3bfab12d8d74ac9',
     isTestnet: false
   },
   
@@ -42,11 +42,11 @@ module.exports = {
   arbitrum: {
     name: 'Arbitrum',
     chainId: 42161,
-    rpcUrl: process.env.ARBITRUM_RPC_URL || 'https://arb1.arbitrum.io/rpc',
+    rpcUrl: process.env.ARBITRUM_RPC_URL || 'https://arbitrum-mainnet.infura.io/v3/03ccdfb9f1b1421b803e7c9e0fbee198',
     blockExplorer: 'https://arbiscan.io',
-    nftContractAddress: process.env.ARBITRUM_NFT_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
+    nftContractAddress: process.env.ARBITRUM_NFT_CONTRACT_ADDRESS || '0x4D673AD5BD926266A8d06EE26103a0D0d9Eea599',
     easContractAddress: process.env.ARBITRUM_EAS_CONTRACT_ADDRESS || '0x45CB6Fa0870a8Af06796Ac15915619a0f22cd475',
-    easSchemaId: process.env.ARBITRUM_EAS_SCHEMA_ID || '0x911e11e82dc5709a0c674725c0dcc6b1e72102ad816c6eba23038f6bf9f87dac',
+    easSchemaId: process.env.ARBITRUM_EAS_SCHEMA_ID || '0xcf573b05cd63a15003b7a67ed4ea2aa6d9963c6518d0c3efd3bfab12d8d74ac9',
     isTestnet: false
   },
   
@@ -54,11 +54,11 @@ module.exports = {
   'base-sepolia': {
     name: 'Base Sepolia',
     chainId: 84532,
-    rpcUrl: process.env.BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org',
+    rpcUrl: process.env.BASE_SEPOLIA_RPC_URL || 'https://base-sepolia.infura.io/v3/03ccdfb9f1b1421b803e7c9e0fbee198',
     blockExplorer: 'https://sepolia.basescan.org',
-    nftContractAddress: process.env.BASE_SEPOLIA_NFT_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
+    nftContractAddress: process.env.BASE_SEPOLIA_NFT_CONTRACT_ADDRESS || '0x4D673AD5BD926266A8d06EE26103a0D0d9Eea599',
     easContractAddress: process.env.BASE_SEPOLIA_EAS_CONTRACT_ADDRESS || '0x4200000000000000000000000000000000000020',
-    easSchemaId: process.env.BASE_SEPOLIA_EAS_SCHEMA_ID || '0x911e11e82dc5709a0c674725c0dcc6b1e72102ad816c6eba23038f6bf9f87dac',
+    easSchemaId: process.env.BASE_SEPOLIA_EAS_SCHEMA_ID || '0xcf573b05cd63a15003b7a67ed4ea2aa6d9963c6518d0c3efd3bfab12d8d74ac9',
     isTestnet: true
   },
   
@@ -67,31 +67,31 @@ module.exports = {
     chainId: 44787,
     rpcUrl: process.env.CELO_ALFAJORES_RPC_URL || 'https://alfajores-forno.celo-testnet.org',
     blockExplorer: 'https://alfajores.celoscan.io',
-    nftContractAddress: process.env.CELO_ALFAJORES_NFT_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
-    easContractAddress: process.env.CELO_ALFAJORES_EAS_CONTRACT_ADDRESS || '0x5ece93bE4BDCF293Ed61FA78698B594F2135AF34',
-    easSchemaId: process.env.CELO_ALFAJORES_EAS_SCHEMA_ID || '0x911e11e82dc5709a0c674725c0dcc6b1e72102ad816c6eba23038f6bf9f87dac',
+    nftContractAddress: process.env.CELO_ALFAJORES_NFT_CONTRACT_ADDRESS || '0x85fbbE1694B6add91a815896f0b4B65b3bf61A01', // Using mainnet address
+    easContractAddress: process.env.CELO_ALFAJORES_EAS_CONTRACT_ADDRESS || '0xBD5f9BFBD8A708a32450918119d68775F28b911b',
+    easSchemaId: process.env.CELO_EAS_SCHEMA_ID || '0xcf573b05cd63a15003b7a67ed4ea2aa6d9963c6518d0c3efd3bfab12d8d74ac9',
     isTestnet: true
   },
   
   'optimism-sepolia': {
     name: 'Optimism Sepolia',
     chainId: 11155420,
-    rpcUrl: process.env.OPTIMISM_SEPOLIA_RPC_URL || 'https://sepolia.optimism.io',
+    rpcUrl: process.env.OPTIMISM_SEPOLIA_RPC_URL || 'https://optimism-sepolia.infura.io/v3/03ccdfb9f1b1421b803e7c9e0fbee198',
     blockExplorer: 'https://sepolia-optimistic.etherscan.io',
-    nftContractAddress: process.env.OPTIMISM_SEPOLIA_NFT_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
+    nftContractAddress: process.env.OPTIMISM_SEPOLIA_NFT_CONTRACT_ADDRESS || '0x4D673AD5BD926266A8d06EE26103a0D0d9Eea599',
     easContractAddress: process.env.OPTIMISM_SEPOLIA_EAS_CONTRACT_ADDRESS || '0x4200000000000000000000000000000000000020',
-    easSchemaId: process.env.OPTIMISM_SEPOLIA_EAS_SCHEMA_ID || '0x911e11e82dc5709a0c674725c0dcc6b1e72102ad816c6eba23038f6bf9f87dac',
+    easSchemaId: process.env.OPTIMISM_SEPOLIA_EAS_SCHEMA_ID || '0xcf573b05cd63a15003b7a67ed4ea2aa6d9963c6518d0c3efd3bfab12d8d74ac9',
     isTestnet: true
   },
   
   'arbitrum-sepolia': {
     name: 'Arbitrum Sepolia',
     chainId: 421614,
-    rpcUrl: process.env.ARBITRUM_SEPOLIA_RPC_URL || 'https://sepolia-rollup.arbitrum.io/rpc',
+    rpcUrl: process.env.ARBITRUM_SEPOLIA_RPC_URL || 'https://arbitrum-sepolia.infura.io/v3/03ccdfb9f1b1421b803e7c9e0fbee198',
     blockExplorer: 'https://sepolia.arbiscan.io',
-    nftContractAddress: process.env.ARBITRUM_SEPOLIA_NFT_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000',
+    nftContractAddress: process.env.ARBITRUM_SEPOLIA_NFT_CONTRACT_ADDRESS || '0x4D673AD5BD926266A8d06EE26103a0D0d9Eea599',
     easContractAddress: process.env.ARBITRUM_SEPOLIA_EAS_CONTRACT_ADDRESS || '0x45CB6Fa0870a8Af06796Ac15915619a0f22cd475',
-    easSchemaId: process.env.ARBITRUM_SEPOLIA_EAS_SCHEMA_ID || '0x911e11e82dc5709a0c674725c0dcc6b1e72102ad816c6eba23038f6bf9f87dac',
+    easSchemaId: process.env.ARBITRUM_SEPOLIA_EAS_SCHEMA_ID || '0xcf573b05cd63a15003b7a67ed4ea2aa6d9963c6518d0c3efd3bfab12d8d74ac9',
     isTestnet: true
   }
 };

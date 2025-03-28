@@ -1,25 +1,38 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { Network, Alchemy } from "alchemy-sdk";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { contractAddresses } from "@/lib/chains";
+import { createPublicClient, http, parseAbi } from "viem";
+import { base, baseSepolia, celo, celoAlfajores, optimism, optimismSepolia, arbitrum, arbitrumSepolia } from "wagmi/chains";
+import axios from "axios";
 
-const NFT_CONTRACT_ADDRESS = "0x5Ed6240fCC0B2A231887024321Cc9481ba07f3c6";
+// NFT Contract Address (from Celo for now)
+const NFT_CONTRACT_ADDRESS = contractAddresses[String(celo.id)].contreebutionNFT;
 
-// Configure Alchemy SDK
-const alchemy = new Alchemy({
-  apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
-  network: Network.BASE_SEPOLIA,
-});
+// NFT Contract ABI (only what we need)
+const NFT_ABI = parseAbi([
+  "function balanceOf(address owner) view returns (uint256)",
+  "function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)",
+  "function tokenURI(uint256 tokenId) view returns (string memory)",
+]);
+
+// Define the NFT metadata interface
+interface NFTMetadata {
+  tokenId: string;
+  title: string;
+  description?: string;
+  image: string;
+  balance: number;
+  attributes?: Record<string, unknown>[];
+}
 
 // NFT Card Component
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function NFTCard({ nft }: { nft: any }) {
+function NFTCard({ nft }: { nft: NFTMetadata }) {
   return (
     <div className="rounded-xl bg-gray-100 p-2 transform transition-all duration-300 hover:-translate-y-2
     shadow-[8px_8px_15px_#d1d1d1,-8px_-8px_15px_#ffffff]
@@ -46,7 +59,7 @@ function NFTCard({ nft }: { nft: any }) {
           <p className="text-sm text-gray-600 line-clamp-2">{nft.description}</p>
         )}
         <div className="mt-2 text-sm text-gray-700">
-          Quantity: {nft.balance}
+          Quantity: {nft.balance || 1}
         </div>
       </div>
     </div>
@@ -54,12 +67,31 @@ function NFTCard({ nft }: { nft: any }) {
 }
 
 export default function NFTsPage() {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
   const router = useRouter();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [nfts, setNfts] = useState<any[]>([]);
+  const [nfts, setNfts] = useState<NFTMetadata[]>([]);
   const [loading, setLoading] = useState(true);
-  console.log("nfts", nfts);
+
+  // Find NFT contract address for current chain or fallback to Celo
+  const getContractAddressForChain = (chainId: number) => {
+    return contractAddresses[String(chainId)]?.contreebutionNFT || NFT_CONTRACT_ADDRESS;
+  };
+
+  // Get chain for RPC client
+  const getChainForId = (chainId: number) => {
+    const chainMap = {
+      [base.id]: base,
+      [baseSepolia.id]: baseSepolia,
+      [celo.id]: celo,
+      [celoAlfajores.id]: celoAlfajores,
+      [optimism.id]: optimism,
+      [optimismSepolia.id]: optimismSepolia,
+      [arbitrum.id]: arbitrum,
+      [arbitrumSepolia.id]: arbitrumSepolia,
+    };
+    return chainMap[chainId as keyof typeof chainMap] || celo;
+  };
 
   useEffect(() => {
     async function fetchNFTs() {
@@ -69,36 +101,96 @@ export default function NFTsPage() {
       }
 
       try {
-        const response = await alchemy.nft.getNftsForOwner(
-            address,
-            {
-              contractAddresses: [NFT_CONTRACT_ADDRESS],
-              omitMetadata: false,
-            }
+        const chain = getChainForId(chainId);
+        const contractAddress = getContractAddressForChain(chainId);
+        
+        // Create a public client using the current chain's RPC URL
+        const publicClient = createPublicClient({
+          chain,
+          transport: http()
+        });
+
+        // Get the balance of NFTs for the current address
+        const balance = await publicClient.readContract({
+          address: contractAddress as `0x${string}`,
+          abi: NFT_ABI,
+          functionName: 'balanceOf',
+          args: [address]
+        });
+
+        if (!balance || Number(balance) === 0) {
+          setNfts([]);
+          setLoading(false);
+          return;
+        }
+
+        // For each NFT, get the token ID and URI
+        const tokenPromises = [];
+        for (let i = 0; i < Number(balance); i++) {
+          tokenPromises.push(
+            publicClient.readContract({
+              address: contractAddress as `0x${string}`,
+              abi: NFT_ABI,
+              functionName: 'tokenOfOwnerByIndex',
+              args: [address, BigInt(i)]
+            })
           );
+        }
 
-        // Transform the NFT data
-        const nftData = await Promise.all(
-          response.ownedNfts.map(async (nft) => {
-            const metadata = nft?.raw.metadata;
-            let image = metadata?.image || '';
-            
-            if (image.startsWith('ipfs://')) {
-              image = image.replace('ipfs://', 'https://ipfs.io/ipfs/');
-            }
-
-            return {
-              tokenId: nft.tokenId,
-              title: metadata?.name || `NFT #${nft.tokenId}`,
-              description: metadata?.description,
-              image: image,
-              // Add balance information since ERC1155 tokens can have multiple copies
-              balance: nft.balance,
-            };
+        const tokenIds = await Promise.all(tokenPromises);
+        
+        // For each token ID, get the token URI
+        const uriPromises = tokenIds.map(tokenId => 
+          publicClient.readContract({
+            address: contractAddress as `0x${string}`,
+            abi: NFT_ABI,
+            functionName: 'tokenURI',
+            args: [tokenId]
           })
         );
 
-        console.log("Fetched NFT data:", nftData);
+        const tokenURIs = await Promise.all(uriPromises);
+        
+        // Fetch metadata from each token URI (which is an IPFS URL)
+        const metadataPromises = tokenURIs.map(async (uri, index) => {
+          try {
+            // Convert IPFS URI to HTTP URL through IPFS gateway
+            let url = uri as string;
+            if (url.startsWith('ipfs://')) {
+              url = url.replace('ipfs://', 'https://ipfs.io/ipfs/');
+            }
+            
+            // Attempt to fetch metadata
+            const response = await axios.get(url);
+            const metadata = response.data;
+            
+            // Format image URL if it's an IPFS URL
+            let imageUrl = metadata.image || '';
+            if (imageUrl.startsWith('ipfs://')) {
+              imageUrl = imageUrl.replace('ipfs://', 'https://ipfs.io/ipfs/');
+            }
+            
+            return {
+              tokenId: tokenIds[index].toString(),
+              title: metadata.name || `NFT #${tokenIds[index].toString()}`,
+              description: metadata.description,
+              image: imageUrl,
+              balance: 1, // ERC721 tokens have quantity 1
+              attributes: metadata.attributes
+            };
+          } catch (error) {
+            console.error(`Error fetching metadata for token ${tokenIds[index]}:`, error);
+            return {
+              tokenId: tokenIds[index].toString(),
+              title: `NFT #${tokenIds[index].toString()}`,
+              description: 'Metadata unavailable',
+              image: '',
+              balance: 1
+            };
+          }
+        });
+
+        const nftData = await Promise.all(metadataPromises);
         setNfts(nftData);
       } catch (error) {
         console.error("Error fetching NFTs:", error);
@@ -108,7 +200,7 @@ export default function NFTsPage() {
     }
 
     fetchNFTs();
-  }, [address]);
+  }, [address, chainId]);
 
   if (loading) {
     return (
@@ -147,7 +239,7 @@ export default function NFTsPage() {
         }}>
           <h1 className="text-2xl font-bold mb-6 text-gray-800">Your Research NFTs</h1>
           
-          {!address ? (
+          {!isConnected ? (
             <div className="text-center py-8 rounded-xl bg-gray-100" style={{
               boxShadow: 'inset 5px 5px 10px #d1d1d1, inset -5px -5px 10px #ffffff'
             }}>

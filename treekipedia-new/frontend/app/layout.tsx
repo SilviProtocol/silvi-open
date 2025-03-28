@@ -19,12 +19,14 @@ export const metadata: Metadata = {
     default: 'Treekipedia',
     template: '%s | Treekipedia'
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1
-  },
   description: 'Treekipedia is an open-source, comprehensive database of tree knowledge.',
   keywords: ['Web3', 'Reforestation', 'Environment', 'Climate Change', 'Blockchain', 'NFT', 'Trees', 'Ecology'],
+};
+
+// Viewport must be in a separate export as per Next.js 14+ recommendations
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1
 };
 
 export default function RootLayout({

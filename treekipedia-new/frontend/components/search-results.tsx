@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react";
 export function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q");
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
 
   const { data: results = [], isLoading } = useQuery({
     queryKey: ["trees", query],
