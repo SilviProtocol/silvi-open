@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Basic Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: green;
+            text-align: center;
+        }
+        .test-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: green;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+    <h1>Treekipedia Basic Test Page</h1>
+    
+    <div class="test-box">
+        <h2>CSS Test</h2>
+        <p>This text should be styled with CSS. The heading above should be black, and this box should have a light gray background with a border.</p>
+    </div>
+    
+    <div class="test-box">
+        <h2>JavaScript Test</h2>
+        <p>Current time: <span id="time">Loading...</span></p>
+        <button id="test-button">Click Me!</button>
+        <p id="click-result"></p>
+    </div>
+    
+    <div class="test-box">
+        <h2>Test Result</h2>
+        <p>If you can see proper styling and the current time above, and if the button works when clicked, then the basic CSS and JavaScript are working correctly.</p>
+    </div>
+
+    <script>
+        // Update time
+        function updateTime() {
+            document.getElementById('time').textContent = new Date().toLocaleTimeString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // Button click handler
+        document.getElementById('test-button').addEventListener('click', function() {
+            document.getElementById('click-result').textContent = 'Button was clicked at ' + new Date().toLocaleTimeString();
+        });
+        
+        // Log to console
+        console.log('JavaScript is working!');
+    </script>
+</body>
+</html>

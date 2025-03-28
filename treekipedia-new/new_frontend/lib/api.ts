@@ -1,4 +1,3 @@
-// API utility functions for Treekipedia
 import { mockSpecies, mockLeaderboard, mockUserProfile } from "./mock-data"
 
 /**
