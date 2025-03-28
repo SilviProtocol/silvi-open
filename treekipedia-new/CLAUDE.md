@@ -22,3 +22,6 @@
 - **Error Handling**: Always use try/catch blocks with explicit error types
 - **File Organization**: Keep related components together, maintain clear separation between frontend/backend/contracts
 - **Blockchain**: Follow EIP standards for contract interfaces, document function purposes
+
+## Deployment
+- Using pm2 for running the server and Claude

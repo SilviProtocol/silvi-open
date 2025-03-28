@@ -84,7 +84,9 @@ curl -v -X POST "${API_URL}/research/fund-research" \
     "taxon_id": "'"${TAXON_ID}"'",
     "wallet_address": "'"${WALLET_ADDRESS}"'",
     "chain": "'"${CHAIN}"'",
-    "transaction_hash": "'"${TRANSACTION_HASH}"'"
+    "transaction_hash": "'"${TRANSACTION_HASH}"'",
+    "ipfs_cid": "QmTestCID123",
+    "scientific_name": "Test Species"
   }' 2>&1 | tee curl_output.log
 
 # Save just the response body to a separate file for JSON parsing
@@ -214,5 +216,7 @@ echo -e "2. Ensure NFT contract addresses are correctly set in .env and chains.j
 echo -e "3. Ensure EAS schema ID and EAS contract addresses are correct"
 echo -e "4. Verify all API keys are valid"
 echo -e "5. Check blockchain balances for the wallet: ${WALLET_ADDRESS}"
+echo -e "6. Required fields for /fund-research: taxon_id, wallet_address, chain, transaction_hash, ipfs_cid, scientific_name"
+echo -e "7. EAS schema structure: \"string taxon_id, string ipfs_cid, address wallet_address, uint256 timestamp, uint256 research_version, string scientific_name, bytes32 refUID\""
 
 echo -e "\n${YELLOW}[INFO]${NC} Tests completed!\n"

@@ -20,8 +20,8 @@ module.exports = {
     chainId: 42220,
     rpcUrl: process.env.CELO_RPC_URL || 'https://celo-mainnet.infura.io/v3/03ccdfb9f1b1421b803e7c9e0fbee198',
     blockExplorer: 'https://celoscan.io',
-    nftContractAddress: process.env.CELO_NFT_CONTRACT_ADDRESS || '0x85fbbE1694B6add91a815896f0b4B65b3bf61A01',
-    easContractAddress: process.env.CELO_EAS_CONTRACT_ADDRESS || '0xBD5f9BFBD8A708a32450918119d68775F28b911b',
+    nftContractAddress: process.env.CELO_NFT_CONTRACT_ADDRESS || '0x85FbbE1694B6Add91a815896f0b4B65b3bf61A01',
+    easContractAddress: process.env.CELO_EAS_CONTRACT_ADDRESS || '0x72E1d8ccf5299fb36fEfD8CC4394B8ef7e98Af92',
     easSchemaId: process.env.CELO_EAS_SCHEMA_ID || '0xcf573b05cd63a15003b7a67ed4ea2aa6d9963c6518d0c3efd3bfab12d8d74ac9',
     isTestnet: false
   },
@@ -67,8 +67,9 @@ module.exports = {
     chainId: 44787,
     rpcUrl: process.env.CELO_ALFAJORES_RPC_URL || 'https://alfajores-forno.celo-testnet.org',
     blockExplorer: 'https://alfajores.celoscan.io',
-    nftContractAddress: process.env.CELO_ALFAJORES_NFT_CONTRACT_ADDRESS || '0x85fbbE1694B6add91a815896f0b4B65b3bf61A01', // Using mainnet address
-    easContractAddress: process.env.CELO_ALFAJORES_EAS_CONTRACT_ADDRESS || '0xBD5f9BFBD8A708a32450918119d68775F28b911b',
+    nftContractAddress: process.env.CELO_ALFAJORES_NFT_CONTRACT_ADDRESS || '0x85FbbE1694B6Add91a815896f0b4B65b3bf61A01', // Using mainnet address
+    // For testnet, we'll use the same EAS contract address as mainnet since it's a special case
+    easContractAddress: process.env.CELO_ALFAJORES_EAS_CONTRACT_ADDRESS || '0x72E1d8ccf5299fb36fEfD8CC4394B8ef7e98Af92', 
     easSchemaId: process.env.CELO_EAS_SCHEMA_ID || '0xcf573b05cd63a15003b7a67ed4ea2aa6d9963c6518d0c3efd3bfab12d8d74ac9',
     isTestnet: true
   },
