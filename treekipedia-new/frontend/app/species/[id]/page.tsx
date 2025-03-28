@@ -14,24 +14,24 @@ import { toast } from "react-hot-toast";
 const SpeciesDetailsPage = () => {
   const params = useParams();
   const router = useRouter();
-  const speciesId = params.id;
-  console.log(speciesId);
+  const taxon_id = params.id as string;
+  console.log("taxon_id:", taxon_id);
   const { address } = useAccount();
-  console.log("address", address);
+  console.log("address:", address);
   const {
     data: species,
     isLoading,
     isError,
   } = useQuery<Species>({
-    queryKey: ["species", speciesId],
+    queryKey: ["species", taxon_id],
     queryFn: async () => {
-      if (!speciesId) throw new Error("No species ID provided");
+      if (!taxon_id) throw new Error("No taxon_id provided");
       const { data } = await axios.get(
-        `https://silviapi.herokuapp.com/core/species/${speciesId}`
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://treekipedia-api.silvi.earth'}/species/${taxon_id}`
       );
       return data;
     },
-    enabled: !!speciesId, // Only run query if speciesId exists
+    enabled: !!taxon_id, // Only run query if taxon_id exists
   });
 
   const {
@@ -39,16 +39,16 @@ const SpeciesDetailsPage = () => {
     isLoading: isResearchLoading,
     refetch: refetchResearch,
   } = useQuery<ResearchData>({
-    queryKey: ["research", species?.species_scientific_name],
+    queryKey: ["research", taxon_id],
     queryFn: async () => {
-      if (!species?.species_scientific_name)
-        throw new Error("No scientific name available");
+      if (!taxon_id)
+        throw new Error("No taxon_id available");
       const { data } = await axios.get(
-        `http://64.227.23.153:3000/ai/research/${species?.species_scientific_name}`
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://treekipedia-api.silvi.earth'}/research/${taxon_id}`
       );
       return data;
     },
-    enabled: !!species?.species_scientific_name,
+    enabled: !!taxon_id,
   });
 
   console.log("Research data:", researchData);
@@ -57,7 +57,7 @@ const SpeciesDetailsPage = () => {
     mutationFn: async (payload: ResearchPayload) => {
       console.log("Sending research payload:", payload);
       const response = await axios.post(
-        "http://64.227.23.153:3000/ai/research",
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://treekipedia-api.silvi.earth'}/fund-research`,
         payload
       );
       console.log("Research response:", response.data);
@@ -82,12 +82,17 @@ const SpeciesDetailsPage = () => {
   });
 
   const handleResearch = () => {
-    if (!species) return;
+    if (!species || !address) return;
 
-    const payload = {
-      scientificName: species.species_scientific_name,
-      commonNames: [species.species_common_name],
-      researcherWallet: address!,
+    // Create a transaction hash - in a real implementation, this would come from a blockchain transaction
+    // This is a placeholder for testing purposes
+    const mockTransactionHash = `0x${Math.random().toString(16).substring(2, 42)}`;
+    
+    const payload: ResearchPayload = {
+      taxon_id: taxon_id,
+      wallet_address: address,
+      chain: "celo", // Default to Celo as in the NFTs page
+      transaction_hash: mockTransactionHash,
     };
 
     console.log("Initiating research with payload:", payload);
@@ -199,7 +204,7 @@ const SpeciesDetailsPage = () => {
                   hover:shadow-[inset_5px_5px_10px_#d1d1d1,inset_-5px_-5px_10px_#ffffff] 
                   transition-all duration-300"
                   disabled={researchMutation.isPending}
-                  onClick={() => router.push(`/species/${speciesId}/nfts`)}
+                  onClick={() => router.push(`/species/${taxon_id}/nfts`)}
                 >
                   View my NFTs
                 </Button>

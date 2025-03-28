@@ -2,11 +2,19 @@
 # Treekipedia Backend AI Research Flow Tests
 # This script contains terminal-based tests to verify the AI research flow
 
+# Source .env file to get environment variables
+if [ -f "/root/silvi-open/treekipedia-new/.env" ]; then
+  source "/root/silvi-open/treekipedia-new/.env"
+  echo "Loaded environment variables from .env"
+else
+  echo "Warning: .env file not found"
+fi
+
 # Set the base URL for the API
-API_URL="http://167.172.143.162:3000"
+API_URL="http://localhost:3000"
 TAXON_ID="AngMaFaFb0001-00"
-WALLET_ADDRESS="0x1ee6a2bb0c64396cd0548dF4f51b1e09350111be"
-CHAIN="base"  # Options: base, celo, optimism, arbitrum
+WALLET_ADDRESS="0x4a24d4a7c36257E0bF256EA2970708817C597A2C" # Use our real address
+CHAIN="celo"  # Options: base, celo, optimism, arbitrum
 
 # Test data for blockchain transaction
 TRANSACTION_HASH="0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
@@ -43,27 +51,27 @@ echo -e "${BLUE}[DEBUG]${NC} Environment check for ${CHAIN} chain:"
 case $CHAIN in
   base)
     echo -e "  BASE_RPC_URL: ${BASE_RPC_URL:+"✓ Set"}${BASE_RPC_URL:="✗ Not set"}"
-    echo -e "  BASE_CONTRACT_ADDRESS: ${BASE_CONTRACT_ADDRESS:+"✓ Set"}${BASE_CONTRACT_ADDRESS:="✗ Not set (placeholder required)"}"
+    echo -e "  BASE_NFT_CONTRACT_ADDRESS: ${BASE_NFT_CONTRACT_ADDRESS:+"✓ Set"}${BASE_NFT_CONTRACT_ADDRESS:="✗ Not set"}"
     echo -e "  BASE_EAS_CONTRACT_ADDRESS: ${BASE_EAS_CONTRACT_ADDRESS:+"✓ Set"}${BASE_EAS_CONTRACT_ADDRESS:="✗ Not set"}"
     ;;
   celo)
     echo -e "  CELO_RPC_URL: ${CELO_RPC_URL:+"✓ Set"}${CELO_RPC_URL:="✗ Not set"}"
-    echo -e "  CELO_CONTRACT_ADDRESS: ${CELO_CONTRACT_ADDRESS:+"✓ Set"}${CELO_CONTRACT_ADDRESS:="✗ Not set (placeholder required)"}"
+    echo -e "  CELO_NFT_CONTRACT_ADDRESS: ${CELO_NFT_CONTRACT_ADDRESS:+"✓ Set"}${CELO_NFT_CONTRACT_ADDRESS:="✗ Not set"}"
     echo -e "  CELO_EAS_CONTRACT_ADDRESS: ${CELO_EAS_CONTRACT_ADDRESS:+"✓ Set"}${CELO_EAS_CONTRACT_ADDRESS:="✗ Not set"}"
     ;;
   optimism)
     echo -e "  OPTIMISM_RPC_URL: ${OPTIMISM_RPC_URL:+"✓ Set"}${OPTIMISM_RPC_URL:="✗ Not set"}"
-    echo -e "  OPTIMISM_CONTRACT_ADDRESS: ${OPTIMISM_CONTRACT_ADDRESS:+"✓ Set"}${OPTIMISM_CONTRACT_ADDRESS:="✗ Not set (placeholder required)"}"
+    echo -e "  OPTIMISM_NFT_CONTRACT_ADDRESS: ${OPTIMISM_NFT_CONTRACT_ADDRESS:+"✓ Set"}${OPTIMISM_NFT_CONTRACT_ADDRESS:="✗ Not set"}"
     echo -e "  OPTIMISM_EAS_CONTRACT_ADDRESS: ${OPTIMISM_EAS_CONTRACT_ADDRESS:+"✓ Set"}${OPTIMISM_EAS_CONTRACT_ADDRESS:="✗ Not set"}"
     ;;
   arbitrum)
     echo -e "  ARBITRUM_RPC_URL: ${ARBITRUM_RPC_URL:+"✓ Set"}${ARBITRUM_RPC_URL:="✗ Not set"}"
-    echo -e "  ARBITRUM_CONTRACT_ADDRESS: ${ARBITRUM_CONTRACT_ADDRESS:+"✓ Set"}${ARBITRUM_CONTRACT_ADDRESS:="✗ Not set (placeholder required)"}"
+    echo -e "  ARBITRUM_NFT_CONTRACT_ADDRESS: ${ARBITRUM_NFT_CONTRACT_ADDRESS:+"✓ Set"}${ARBITRUM_NFT_CONTRACT_ADDRESS:="✗ Not set"}"
     echo -e "  ARBITRUM_EAS_CONTRACT_ADDRESS: ${ARBITRUM_EAS_CONTRACT_ADDRESS:+"✓ Set"}${ARBITRUM_EAS_CONTRACT_ADDRESS:="✗ Not set"}"
     ;;
 esac
 
-echo -e "  EAS_SCHEMA_ID: ${EAS_SCHEMA_ID:+"✓ Set"}${EAS_SCHEMA_ID:="✗ Not set"}"
+echo -e "  CELO_EAS_SCHEMA_ID: ${CELO_EAS_SCHEMA_ID:+"✓ Set"}${CELO_EAS_SCHEMA_ID:="✗ Not set"}"
 echo -e "  LIGHTHOUSE_API_KEY: ${LIGHTHOUSE_API_KEY:+"✓ Set"}${LIGHTHOUSE_API_KEY:="✗ Not set"}"
 echo -e "  PERPLEXITY_API_KEY: ${PERPLEXITY_API_KEY:+"✓ Set"}${PERPLEXITY_API_KEY:="✗ Not set"}"
 echo -e "  OPENAI_API_KEY: ${OPENAI_API_KEY:+"✓ Set"}${OPENAI_API_KEY:="✗ Not set"}"
@@ -137,38 +145,46 @@ curl -s "${API_URL}/treederboard" | jq . ||
 # Summary of test results and potential issues
 echo -e "\n${YELLOW}[SUMMARY]${NC} Test Results and Potential Issues:"
 
-# Check for missing contract addresses
-if [[ "${BASE_CONTRACT_ADDRESS}" == "0x..." || -z "${BASE_CONTRACT_ADDRESS}" ]]; then
-  echo -e "${RED}[ISSUE]${NC} BASE_CONTRACT_ADDRESS is a placeholder or missing. NFT minting will fail."
-fi
-
-if [[ -z "${EAS_SCHEMA_ID}" ]]; then
-  echo -e "${RED}[ISSUE]${NC} EAS_SCHEMA_ID is missing. Attestation creation will fail."
-fi
-
-# Check for chain-specific issues
+# Check for missing contract addresses based on selected chain
 case $CHAIN in
   base)
+    if [[ "${BASE_NFT_CONTRACT_ADDRESS}" == "0x..." || -z "${BASE_NFT_CONTRACT_ADDRESS}" ]]; then
+      echo -e "${RED}[ISSUE]${NC} BASE_NFT_CONTRACT_ADDRESS is a placeholder or missing. NFT minting will fail."
+    fi
     if [[ -z "${BASE_EAS_CONTRACT_ADDRESS}" ]]; then
       echo -e "${RED}[ISSUE]${NC} BASE_EAS_CONTRACT_ADDRESS is missing. Attestation creation will fail."
     fi
     ;;
   celo)
+    if [[ "${CELO_NFT_CONTRACT_ADDRESS}" == "0x..." || -z "${CELO_NFT_CONTRACT_ADDRESS}" ]]; then
+      echo -e "${RED}[ISSUE]${NC} CELO_NFT_CONTRACT_ADDRESS is a placeholder or missing. NFT minting will fail."
+    fi
     if [[ -z "${CELO_EAS_CONTRACT_ADDRESS}" ]]; then
       echo -e "${RED}[ISSUE]${NC} CELO_EAS_CONTRACT_ADDRESS is missing. Attestation creation will fail."
     fi
     ;;
   optimism)
+    if [[ "${OPTIMISM_NFT_CONTRACT_ADDRESS}" == "0x..." || -z "${OPTIMISM_NFT_CONTRACT_ADDRESS}" ]]; then
+      echo -e "${RED}[ISSUE]${NC} OPTIMISM_NFT_CONTRACT_ADDRESS is a placeholder or missing. NFT minting will fail."
+    fi
     if [[ -z "${OPTIMISM_EAS_CONTRACT_ADDRESS}" ]]; then
       echo -e "${RED}[ISSUE]${NC} OPTIMISM_EAS_CONTRACT_ADDRESS is missing. Attestation creation will fail."
     fi
     ;;
   arbitrum)
+    if [[ "${ARBITRUM_NFT_CONTRACT_ADDRESS}" == "0x..." || -z "${ARBITRUM_NFT_CONTRACT_ADDRESS}" ]]; then
+      echo -e "${RED}[ISSUE]${NC} ARBITRUM_NFT_CONTRACT_ADDRESS is a placeholder or missing. NFT minting will fail."
+    fi
     if [[ -z "${ARBITRUM_EAS_CONTRACT_ADDRESS}" ]]; then
       echo -e "${RED}[ISSUE]${NC} ARBITRUM_EAS_CONTRACT_ADDRESS is missing. Attestation creation will fail."
     fi
     ;;
 esac
+
+# Check for EAS schema ID
+if [[ -z "${CELO_EAS_SCHEMA_ID}" ]]; then
+  echo -e "${RED}[ISSUE]${NC} CELO_EAS_SCHEMA_ID is missing. Attestation creation will fail."
+fi
 
 # AI service issues
 if [[ -z "${PERPLEXITY_API_KEY}" ]]; then
@@ -194,8 +210,9 @@ echo -e "  docker logs treekipedia-backend         # If using Docker"
 # Final recommendations
 echo -e "\n${YELLOW}[RECOMMENDATIONS]${NC}"
 echo -e "1. Ensure route mounting in server.js includes research routes"
-echo -e "2. Deploy NFT contracts and update CONTRACT_ADDRESS variables"
-echo -e "3. Set up EAS schema ID and update EAS_SCHEMA_ID"
+echo -e "2. Ensure NFT contract addresses are correctly set in .env and chains.js"
+echo -e "3. Ensure EAS schema ID and EAS contract addresses are correct"
 echo -e "4. Verify all API keys are valid"
+echo -e "5. Check blockchain balances for the wallet: ${WALLET_ADDRESS}"
 
 echo -e "\n${YELLOW}[INFO]${NC} Tests completed!\n"

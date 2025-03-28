@@ -15,7 +15,7 @@ export function SearchForm() {
   const { isConnected } = useAccount();
   const [isFocused, setIsFocused] = useState(false);
 
-  const { data: suggestions = [] } = useQuery({
+  const { data: suggestions = [] } = useQuery<string[]>({
     queryKey: ["suggestions", query],
     queryFn: () => getSpeciesSuggestions(query),
     enabled: !!query && query.length >= 2 && isFocused,

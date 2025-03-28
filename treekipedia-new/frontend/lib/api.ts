@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TreeSpecies, ResearchPayload, ResearchData } from './types';
+import { TreeSpecies, ResearchData } from './types';
 
 // Set base URL for API
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
