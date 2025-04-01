@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createConfig, http, WagmiProvider } from 'wagmi'
+import { createConfig, http, WagmiProvider, createStorage } from 'wagmi'
+import { injected } from 'wagmi/connectors'
 import { base, baseSepolia, celo, celoAlfajores, optimism, optimismSepolia, arbitrum, arbitrumSepolia } from 'wagmi/chains'
 import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from 'next-themes'
@@ -22,9 +23,12 @@ const chains = [
 // Get Infura API key from environment
 const infuraApiKey = process.env.NEXT_PUBLIC_INFURA_API_KEY || '03ccdfb9f1b1421b803e7c9e0fbee198';
 
-// Create wagmi config with Infura provider
+// Create wagmi config with connectors and providers
 const config = createConfig({
   chains,
+  connectors: [
+    injected()
+  ],
   transports: {
     [base.id]: http(`https://base-mainnet.infura.io/v3/${infuraApiKey}`),
     [baseSepolia.id]: http(`https://base-sepolia.infura.io/v3/${infuraApiKey}`),
@@ -35,6 +39,9 @@ const config = createConfig({
     [arbitrum.id]: http(`https://arbitrum-mainnet.infura.io/v3/${infuraApiKey}`),
     [arbitrumSepolia.id]: http(`https://arbitrum-sepolia.infura.io/v3/${infuraApiKey}`),
   },
+  storage: createStorage({ 
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined 
+  }),
 })
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -49,7 +56,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }))
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    // Use ThemeProvider without modifying HTML attributes to avoid hydration issues
+    <ThemeProvider disableTransitionOnChange skipInitialClientCheck>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           {children}

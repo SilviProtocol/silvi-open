@@ -16,6 +16,8 @@ module.exports = (pool) => {
    *   wallet_address: String - User's wallet address
    *   chain: String - User's chosen chain for NFT minting
    *   transaction_hash: String - Blockchain transaction hash for funding
+   *   ipfs_cid: String - IPFS CID for the NFT metadata
+   *   scientific_name: String - Scientific name (species field value)
    * }
    */
   router.post('/fund-research', async (req, res) => {
@@ -59,11 +61,12 @@ module.exports = (pool) => {
         return res.status(404).json({ error: 'Species not found' });
       }
       
-      const species = speciesResult.rows[0];
+      const speciesData = speciesResult.rows[0];
       
-      // Use accepted_scientific_name or species as the scientific name
-      const scientificName = species.accepted_scientific_name || species.species;
-      const commonNames = species.common_name;
+      // Use the provided scientific_name or fall back to the species field
+      // Note: species field contains the scientific name
+      const scientificName = scientific_name || speciesData.species;
+      const commonNames = speciesData.common_name;
       
       // Step 1: Perform AI research
       console.log(`Starting AI research for ${scientificName} (${taxon_id})`);

@@ -55,3 +55,6 @@ yarn-error.log*
 # Project specific (can be expanded as needed)
 **/temp
 **/tmp
+**/CLAUDE.md 
+**/API_COMPARE.md 
+**/RESPONSE.md 
