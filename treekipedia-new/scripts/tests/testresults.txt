@@ -1,0 +1,198 @@
+root@tree-vm:~/silvi-open/treekipedia-new# ./tests_ai_research.sh
+[INFO] Starting Treekipedia AI Research Flow Tests...
+[INFO] API URL: http://167.172.143.162:3000
+[INFO] Test Wallet: 0x1ee6a2bb0c64396cd0548dF4f51b1e09350111be
+
+[TEST 1] Checking if the server is running...
+{
+  "message": "Treekipedia Backend is running!"
+}
+
+[TEST 2] Checking available API routes...
+{
+  "message": "Welcome to Treekipedia API",
+  "version": "1.0.0",
+  "endpoints": [
+    "/species - Species search and details",
+    "/treederboard - User contributions leaderboard",
+    "/research - AI research and NFT minting"
+  ]
+}
+
+[TEST 3] Getting species information for taxon_id: AngMaFaFb0001-00...
+{
+  "taxon_id": "AngMaFaFb0001-00",
+  "species": "Abarema cochliocarpos",
+  "family": "Fabaceae",
+  "genus": "Abarema",
+  "subspecies": "",
+  "specific_epithet": null,
+  "accepted_scientific_name": "Abarema cochliocarpos (Gomes) Barneby & J.W.Grimes",
+  "synonyms": null,
+  "common_name": "",
+  "common_countries": "BR; MZ",
+  "countries_introduced": null,
+  "countries_invasive": null,
+  "countries_native": null,
+  "class": "Magnoliopsida",
+  "taxonomic_order": "Fabales",
+  "ecoregions": "Maputaland coastal forests and woodlands",
+  "biomes": "Tropical & Subtropical Moist Broadleaf Forests",
+  "habitat": null,
+  "forest_type": null,
+  "wetland_type": null,
+  "urban_setting": null,
+  "elevation_ranges": null,
+  "compatible_soil_types": null,
+  "associated_species": null,
+  "native_adapted_habitats": null,
+  "agroforestry_use_cases": null,
+  "successional_stage": null,
+  "tolerances": null,
+  "forest_layers": null,
+  "growth_form": null,
+  "leaf_type": null,
+  "deciduous_evergreen": null,
+  "flower_color": null,
+  "fruit_type": null,
+  "bark_characteristics": null,
+  "maximum_height": null,
+  "maximum_diameter": null,
+  "lifespan": null,
+  "maximum_tree_age": null,
+  "conservation_status": null,
+  "climate_change_vulnerability": null,
+  "national_conservation_status": null,
+  "verification_status": null,
+  "threats": null,
+  "timber_value": null,
+  "non_timber_products": null,
+  "cultural_significance": null,
+  "cultivars": null,
+  "nutritional_caloric_value": null,
+  "cultivation_details": null,
+  "stewardship_best_practices": null,
+  "planting_recipes": null,
+  "pruning_maintenance": null,
+  "disease_pest_management": null,
+  "fire_management": null,
+  "general_description": null,
+  "associated_media": null,
+  "ecological_function": null,
+  "default_image": null,
+  "total_occurrences": 12,
+  "allometric_models": null,
+  "allometric_curve": null,
+  "reference_list": null,
+  "data_sources": null,
+  "ipfs_cid": null,
+  "last_updated_date": null,
+  "created_at": "2025-03-21T20:52:33.798Z",
+  "updated_at": "2025-03-21T20:52:33.798Z"
+}
+
+[TEST 4] Running AI research flow for taxon_id: AngMaFaFb0001-00 on base...
+[INFO] This test may take 1-2 minutes to complete (AI research, IPFS upload, and blockchain transactions)...
+[DEBUG] Environment check for base chain:
+  BASE_RPC_URL: ✗ Not set
+  BASE_CONTRACT_ADDRESS: ✗ Not set (placeholder required)
+  BASE_EAS_CONTRACT_ADDRESS: ✗ Not set
+  EAS_SCHEMA_ID: ✗ Not set
+  LIGHTHOUSE_API_KEY: ✗ Not set
+  PERPLEXITY_API_KEY: ✗ Not set
+  OPENAI_API_KEY: ✗ Not set
+[INFO] Sending research request to http://167.172.143.162:3000/research/fund-research...
+Note: Unnecessary use of -X or --request, POST is already inferred.
+*   Trying 167.172.143.162:3000...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Connected to 167.172.143.162 (167.172.143.162) port 3000 (#0)
+> POST /research/fund-research HTTP/1.1
+> Host: 167.172.143.162:3000
+> User-Agent: curl/7.81.0
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 223
+> 
+} [223 bytes data]
+100   223    0     0  100   223      0     10  0:00:22  0:00:21  0:00:01     0* Mark bundle as not supporting multiuse
+< HTTP/1.1 500 Internal Server Error
+< X-Powered-By: Express
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 91
+< ETag: W/"5b-Ta9q8Px7sq0Ub3QrO6uTdVeBORg"
+< Date: Sun, 23 Mar 2025 12:11:36 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< 
+{ [91 bytes data]
+100   314  100    91  100   223      4     10  0:00:22  0:00:21  0:00:01    21
+* Connection #0 to host 167.172.143.162 left intact
+{"error":"Internal server error","message":"value too long for type character varying(50)"}[ERROR] Did not receive valid JSON response. Raw response:
+100   314  100    91  100   223      4     10  0:00:22  0:00:21  0:00:01    21
+[ERROR] Server error (500). Check server logs for details.
+
+[INFO] IPFS CID: 
+[INFO] Attestation UID: 
+
+[TEST 5] Verifying research data was saved for taxon_id: AngMaFaFb0001-00...
+parse error: Invalid numeric literal at line 1, column 10
+[ERROR] Failed to parse research data response
+
+[TEST 6] Checking user's treederboard data for wallet: 0x1ee6a2bb0c64396cd0548dF4f51b1e09350111be...
+{
+  "error": "User not found"
+}
+
+[TEST 7] Skipping IPFS fetch: No IPFS CID available
+[DEBUG] IPFS upload may have failed. Check LIGHTHOUSE_API_KEY in .env
+
+[TEST 8] Checking if user appears on the treederboard...
+[
+  {
+    "id": 2,
+    "wallet_address": "0xabcdef1234567890abcdef1234567890abcdef12",
+    "total_points": 200,
+    "contribution_count": 0,
+    "first_contribution_at": "2025-03-22T15:15:38.602Z",
+    "last_contribution_at": "2025-03-22T15:15:38.602Z"
+  },
+  {
+    "id": 1,
+    "wallet_address": "0x1234567890abcdef1234567890abcdef12345678",
+    "total_points": 150,
+    "contribution_count": 0,
+    "first_contribution_at": "2025-03-22T15:15:38.602Z",
+    "last_contribution_at": "2025-03-22T15:15:38.602Z"
+  },
+  {
+    "id": 3,
+    "wallet_address": "0x7890abcdef1234567890abcdef1234567890abcd",
+    "total_points": 100,
+    "contribution_count": 0,
+    "first_contribution_at": "2025-03-22T15:15:38.602Z",
+    "last_contribution_at": "2025-03-22T15:15:38.602Z"
+  }
+]
+
+[SUMMARY] Test Results and Potential Issues:
+
+[INFO] Database verification commands (if you have psql access):
+  psql $DATABASE_URL -c "SELECT * FROM species WHERE taxon_id = 'AngMaFaFb0001-00';"
+  psql $DATABASE_URL -c "SELECT * FROM contreebution_nfts WHERE taxon_id = 'AngMaFaFb0001-00' AND wallet_address = '0x1ee6a2bb0c64396cd0548dF4f51b1e09350111be';"
+  psql $DATABASE_URL -c "SELECT * FROM users WHERE wallet_address = '0x1ee6a2bb0c64396cd0548dF4f51b1e09350111be';"
+
+[INFO] Check server logs for detailed information:
+  tail -f /var/log/treekipedia.log        # If using standard logging
+  pm2 logs                                # If using PM2
+  docker logs treekipedia-backend         # If using Docker
+
+[RECOMMENDATIONS]
+1. Ensure route mounting in server.js includes research routes
+2. Deploy NFT contracts and update CONTRACT_ADDRESS variables
+3. Set up EAS schema ID and update EAS_SCHEMA_ID
+4. Verify all API keys are valid
+
+[INFO] Tests completed!
+
+root@tree-vm:~/silvi-open/treekipedia-new# 

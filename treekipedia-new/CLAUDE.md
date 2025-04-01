@@ -4,6 +4,7 @@
 - Root directory `/root/silvi-open/treekipedia-new` contains the main `.env` file
 - Each module (`/frontend`, `/backend`, `/contracts`) has its own `package.json` and `node_modules`
 - When using environment variables, reference the root `.env` file with the correct path (e.g., `require('dotenv').config({ path: '../.env' })`)
+- /frontend has a .env.local file for frontend exposed variables.
 
 ## Build Commands
 - Frontend: `cd frontend && yarn dev` (development), `yarn build` (production), `yarn start` (serve production)
@@ -24,4 +25,7 @@
 - **Blockchain**: Follow EIP standards for contract interfaces, document function purposes
 
 ## Deployment
-- Using pm2 for running the server and Claude
+- backend server is running using PM2, on port 3000, with a URL of https://treekipedia-api.silvi.earth for API calls.
+
+## Operation Guidelines
+- Whenever you want to run a curl command, stop, provide the curl command to user, user will run it and provide the results to you.

@@ -1,53 +1,19 @@
-root@tree-vm:~/silvi-open/treekipedia-new/new_frontend# npx shadcn@latest add "https://v0.dev/chat/b/b_CIS7ltCIDwp?token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..y5Eth3hLZgFNbuMx.eViQIDnghKYZKi9f6cNgqgbk-lfteUitZ4RlzSSmXQ4ZdaPxDWvaFMJSIEM.7-l9cmnwLiuAO4nIV7lq_A"
-✔ Checking registry.
-✔ Installing dependencies.
-✔ The file layout.tsx already exists. Would you like to overwrite? … yes
-✔ The file wallet-connect-dialog.tsx already exists. Would you like to overwrite? … no
-✔ The file mock-data.ts already exists. Would you like to overwrite? … yes
-✔ The file wallet-utils.ts already exists. Would you like to overwrite? … yes
-✔ The file api.ts already exists. Would you like to overwrite? … yes
-✔ The file globals.css already exists. Would you like to overwrite? … yes
-✔ The file tailwind.config.ts already exists. Would you like to overwrite? … yes
-✔ The file page.tsx already exists. Would you like to overwrite? … yes
-✔ The file page.tsx already exists. Would you like to overwrite? … yes
-ℹ Updated 8 files:
-  - app/layout.tsx
-  - lib/mock-data.ts
-  - lib/wallet-utils.ts
-  - lib/api.ts
-  - app/globals.css
-  - tailwind.config.ts
-  - app/profile/page.tsx
-  - app/species/[slug]/page.tsx
-ℹ Skipped 27 files: (files might be identical, use --overwrite to overwrite)
-  - app/loading.tsx
-  - components/research-progress.tsx
-  - components/wallet-connect-dialog.tsx
-  - components/logo.tsx
-  - components/user-nav.tsx
-  - app/about/page.tsx
-  - components/main-nav.tsx
-  - components/dual-search.tsx
-  - app/page.tsx
-  - app/treederboard/page.tsx
-  - components/search-autocomplete.tsx
-  - components/ui/card.tsx
-  - components/ui/button.tsx
-  - components/ui/command.tsx
-  - components/ui/dialog.tsx
-  - components/ui/popover.tsx
-  - components/ui/alert.tsx
-  - components/ui/avatar.tsx
-  - components/ui/dropdown-menu.tsx
-  - components/ui/sheet.tsx
-  - components/ui/input.tsx
-  - components/ui/label.tsx
-  - components/ui/separator.tsx
-  - components/ui/tabs.tsx
-  - components/ui/textarea.tsx
-  - components/ui/table.tsx
-  - components/ui/badge.tsx
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this, useLayoutEffect should only be used in components that render exclusively on the client. See https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at ShadowPortal (/root/silvi-open/treekipedia-new/frontend/node_modules/next/src/client/components/react-dev-overlay/ui/components/shadow-portal.tsx:5:32)
+    at DevOverlay (/root/silvi-open/treekipedia-new/frontend/node_modules/next/src/client/components/react-dev-overlay/ui/dev-overlay.tsx:14:3)
+    at ReactDevOverlay (/root/silvi-open/treekipedia-new/frontend/node_modules/next/src/server/dev/next-dev-server.ts:82:10)
+    at div
+    at Body (/root/silvi-open/treekipedia-new/frontend/node_modules/next/src/server/render.tsx:1263:19)
+ GET /search 500 in 3670ms
 
-Please review v0-generated code before incorporating it into your project to ensure completeness and accuracy.
 
-root@tree-vm:~/silvi-open/treekipedia-new/new_frontend# 
+
+Build Error
+
+
+Error: ENOENT: no such file or directory, open '/root/silvi-open/treekipedia-new/frontend/node_modules/engine.io-client/node_modules/ws/wrapper.mjs'
+
+./node_modules/engine.io-client/node_modules/ws/wrapper.mjs
+
+Error: ENOENT: no such file or directory, open '/root/silvi-open/treekipedia-new/frontend/node_modules/engine.io-client/node_modules/ws/wrapper.mjs'
+This error occurred during the build process and can only be dismissed by fixing the error.

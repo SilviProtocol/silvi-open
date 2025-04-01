@@ -89,6 +89,8 @@ export interface ResearchPayload {
   wallet_address: string;
   chain: string;
   transaction_hash: string;
+  ipfs_cid: string;
+  scientific_name: string;
 }
 
 // Research data structure

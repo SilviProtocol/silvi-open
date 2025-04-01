@@ -46,6 +46,7 @@ Details:
 Uses both scientific and common names for broader search coverage.
 Specifies 8 fields clearly and concisely.
 Expects raw text output (e.g., paragraphs or bullet points).
+
 Prompt 2: Morphological Characteristics (Perplexity)
 Prompt:
 

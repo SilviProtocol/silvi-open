@@ -1,180 +1,152 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
-import { useAccount, useBalance, useDisconnect, useChainId, useSwitchChain } from 'wagmi'
-import { getChainName, chainsByNetwork } from '@/lib/chains'
-import { ChevronDown, Wallet } from "lucide-react"
+import { usePathname } from "next/navigation"
+import { useAccount } from 'wagmi'
+import { Menu, User, X } from "lucide-react"
+import { WalletConnectButton } from "./wallet-connect-button"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
+/**
+ * Enhanced Navbar component combining elements from the current implementation
+ * and the v0 design system for better mobile handling and UX
+ */
 export function Navbar() {
-  const { address, isConnected } = useAccount()
-  const { disconnect } = useDisconnect()
-  const chainId = useChainId()
-  const { switchChain } = useSwitchChain()
-  const { data: balance } = useBalance({
-    address: address
-  })
+  const pathname = usePathname()
+  const { isConnected } = useAccount()
   
-  const [dropdownOpen, setDropdownOpen] = useState(false)
-  const [chainMenuOpen, setChainMenuOpen] = useState(false)
-
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen)
-  const toggleChainMenu = () => setChainMenuOpen(!chainMenuOpen)
+  // State management
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
-  // Format address for display (0x1234...5678)
-  const formatAddress = (address?: string) => {
-    if (!address) return ''
-    return `${address.slice(0, 6)}...${address.slice(-4)}`
+  // Routes for navigation
+  const routes = [
+    {
+      href: "/search",
+      label: "Search",
+      active: pathname === "/search" || pathname === "/",
+    },
+    {
+      href: "/treederboard",
+      label: "Treederboard",
+      active: pathname === "/treederboard",
+    },
+    {
+      href: "/about",
+      label: "About",
+      active: pathname === "/about",
+    },
+  ]
+  
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-md border-b border-white/20 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo on the left */}
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/silvi_logo.png" // Make sure to add your logo file to the public directory
-              alt="Logo"
-              width={100}
-              height={100}
-              className=""
-            />
-          </Link>
-
-          {/* Treederboard link and wallet container on the right */}
-          <div className="flex items-center space-x-6">
-            <Link href="/treederboard" className="text-white hover:text-green-300 font-medium">
-              Treederboard
+          <div className="flex items-center">
+            {/* Text Logo */}
+            <Link href="/" className="flex items-center z-10">
+              <span className="text-white font-bold text-xl">Treekipedia</span>
             </Link>
             
-            <div className="wallet-container relative">
-              {!isConnected ? (
-                // Connect Wallet Button
-                <button
-                  onClick={() => document.dispatchEvent(new CustomEvent('wagmi:connectWallet'))}
-                  className="flex items-center space-x-2 bg-white text-black hover:bg-white/90 py-2 px-4 rounded-lg font-medium"
-                >
-                  <Wallet className="h-4 w-4" />
-                  <span>Connect Wallet</span>
-                </button>
-              ) : (
-                // Connected state with dropdown
-                <div className="relative">
-                  <button
-                    onClick={toggleDropdown}
-                    className="flex items-center space-x-2 bg-white text-black hover:bg-white/90 py-2 px-4 rounded-lg font-medium"
-                  >
-                    <div className="w-4 h-4 rounded-full bg-green-500 animate-pulse"></div>
-                    <span>{formatAddress(address)}</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
-                  
-                  {/* Dropdown menu */}
-                  {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-2 z-10">
-                      <div className="px-4 py-3 border-b border-gray-100">
-                        <div className="font-semibold text-sm text-gray-700">{formatAddress(address)}</div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          {balance && `${Number(balance.formatted).toFixed(4)} ${balance.symbol}`}
-                        </div>
-                      </div>
-                      
-                      {/* Chain selection */}
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-500">Network</span>
-                          <button 
-                            onClick={toggleChainMenu}
-                            className="text-sm font-medium text-gray-700 flex items-center"
-                          >
-                            {getChainName(chainId)} 
-                            <ChevronDown className="h-3 w-3 ml-1" />
-                          </button>
-                        </div>
-                        
-                        {/* Chain selection dropdown */}
-                        {chainMenuOpen && (
-                          <div className="mt-2 bg-gray-50 rounded-md p-2">
-                            <div className="mb-1">
-                              <div className="text-xs font-semibold text-gray-500 mb-1">Mainnets</div>
-                              <div className="grid grid-cols-2 gap-1">
-                                {chainsByNetwork.mainnet.map((chain) => (
-                                  <button
-                                    key={chain.id}
-                                    onClick={() => {
-                                      switchChain({ chainId: chain.id })
-                                      setChainMenuOpen(false)
-                                    }}
-                                    className={`text-xs py-1 px-2 rounded ${
-                                      chainId === chain.id 
-                                        ? 'bg-green-100 text-green-700' 
-                                        : 'hover:bg-gray-200'
-                                    }`}
-                                  >
-                                    {chain.name}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                            <div>
-                              <div className="text-xs font-semibold text-gray-500 mb-1">Testnets</div>
-                              <div className="grid grid-cols-2 gap-1">
-                                {chainsByNetwork.testnet.map((chain) => (
-                                  <button
-                                    key={chain.id}
-                                    onClick={() => {
-                                      switchChain({ chainId: chain.id })
-                                      setChainMenuOpen(false)
-                                    }}
-                                    className={`text-xs py-1 px-2 rounded ${
-                                      chainId === chain.id 
-                                        ? 'bg-green-100 text-green-700' 
-                                        : 'hover:bg-gray-200'
-                                    }`}
-                                  >
-                                    {chain.name}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Links */}
-                      <a 
-                        href="https://keys.coinbase.com" 
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Wallet
-                      </a>
-                      <a 
-                        href="https://t.me/SilviProtocol/1" 
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Silvi Telegram
-                      </a>
-                      
-                      {/* Disconnect button */}
-                      <button
-                        onClick={() => {
-                          disconnect()
-                          setDropdownOpen(false)
-                        }}
-                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                      >
-                        Disconnect
-                      </button>
-                    </div>
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex ml-6 space-x-6">
+              {routes.map((route) => (
+                <Link
+                  key={route.href}
+                  href={route.href}
+                  className={cn(
+                    "text-white hover:text-green-300 font-medium transition-colors",
+                    route.active && "text-green-300"
                   )}
-                </div>
+                >
+                  {route.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Right side: Profile and Wallet */}
+          <div className="flex items-center space-x-4">
+            {/* Profile Icon (only when connected) */}
+            {isConnected && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-white hover:bg-white/10 border border-transparent hover:border-white/20"
+                asChild
+              >
+                <Link href="/profile">
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Profile</span>
+                </Link>
+              </Button>
+            )}
+            
+            {/* Wallet Connection */}
+            <div className="wallet-container relative">
+              <WalletConnectButton />
+            </div>
+            
+            {/* Mobile menu button */}
+            <button 
+              className="md:hidden z-10 p-2 rounded-md text-white hover:bg-white/10"
+              onClick={toggleMobileMenu}
+            >
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
               )}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Mobile menu - improved with better animations and structure */}
+      <div 
+        className={`md:hidden fixed inset-0 bg-black/40 backdrop-blur-lg pt-16 px-6 transition-opacity duration-300 ${
+          mobileMenuOpen 
+            ? 'opacity-100 z-40 pointer-events-auto' 
+            : 'opacity-0 -z-10 pointer-events-none'
+        }`}
+      >
+        <div className="flex flex-col space-y-4 mt-4">
+          {routes.map((route) => (
+            <Link 
+              key={route.href}
+              href={route.href} 
+              className={cn(
+                "text-white py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-lg flex items-center",
+                route.active && "bg-white/5 border-l-2 border-green-500 pl-3"
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {route.label}
+            </Link>
+          ))}
+          
+          {isConnected && (
+            <Link 
+              href="/profile" 
+              className={cn(
+                "text-white py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-lg flex items-center",
+                pathname === "/profile" && "bg-white/5 border-l-2 border-green-500 pl-3"
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <User className="h-5 w-5 mr-2" />
+              Profile
+            </Link>
+          )}
+          
+          <div className="pt-4 border-t border-white/20">
+            <div className="flex justify-center" onClick={() => setMobileMenuOpen(false)}>
+              <WalletConnectButton />
             </div>
           </div>
         </div>
