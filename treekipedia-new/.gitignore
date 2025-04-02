@@ -56,7 +56,16 @@ yarn-error.log*
 **/temp
 **/tmp
 
-# Exclude all .md files except API.md and README.md
-**/*.md
-!**/API.md
-!**/README.md
+# Specific markdown files to ignore
+/CLAUDE.md
+/COMPARE_FRONTEND.md
+/DEPLOYMENT_SUMMARY.md
+/ERROR.md
+/FRONTEND.md
+/FRONTEND_PLAN.md
+/LIGHTPAPER.md
+/RESEARCH.md
+/RESPONSE.md
+/SPEC_SHEET.md
+/TREEPAGE.md
+/API_COMPARE.md
