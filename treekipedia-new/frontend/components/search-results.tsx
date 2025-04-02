@@ -10,37 +10,22 @@ import { Loader2 } from "lucide-react";
 export function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q");
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
 
   const { data: results = [], isLoading } = useQuery({
     queryKey: ["trees", query],
     queryFn: () => searchTreeSpecies(query || ""),
-    enabled: !!query && !!isConnected,
+    enabled: !!query,
   });
-
-  if (!isConnected) {
-    return (
-      <div className="h-full flex items-center justify-center p-8">
-        <div className="text-center p-8 rounded-xl">
-          <h3 className="text-lg font-semibold text-green-500 mb-2">
-            Connect Your Wallet
-          </h3>
-          <p className="text-white">
-            Please connect your wallet to start searching for tree species.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (!query) {
     return (
       <div className="h-full flex items-center justify-center p-8">
-        <div className="text-center p-8 rounded-xl">
-          <h3 className="text-lg font-semibold text-green-500 mb-2">
+        <div className="text-center p-8 rounded-xl bg-black/20 backdrop-blur-md border border-white/10">
+          <h3 className="text-lg font-semibold text-green-300 mb-2">
             Start Your Tree Research
           </h3>
-          <p className="text-white">
+          <p className="text-white/80">
             Enter a tree species name in the search box above to discover
             detailed information about different trees.
           </p>
@@ -52,8 +37,8 @@ export function SearchResults() {
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center flex-col gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-green-500" />
-        <p className="text-white p-4 rounded-xl">Searching...</p>
+        <Loader2 className="w-10 h-10 animate-spin text-green-300" />
+        <p className="text-white/80 p-4 rounded-xl">Searching for tree species...</p>
       </div>
     );
   }
@@ -61,12 +46,12 @@ export function SearchResults() {
   if (results.length === 0) {
     return (
       <div className="h-full flex items-center justify-center p-8">
-        <div className="text-center p-8 rounded-xl bg-white shadow-[inset_-12px_-12px_24px_rgba(0,0,0,0.1),_inset_12px_12px_24px_rgba(255,255,255,0.5)]">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+        <div className="text-center p-8 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+          <h3 className="text-lg font-semibold text-white mb-2">
             No Results Found
           </h3>
-          <p className="text-gray-600">
-            We couldn&apos;t find any tree species matching {`${query}`}. Try
+          <p className="text-white/70">
+            We couldn&apos;t find any tree species matching "{query}". Try
             searching with a different name or check your spelling.
           </p>
         </div>
@@ -75,40 +60,42 @@ export function SearchResults() {
   }
 
   return (
-    <div className="h-full flex flex-col p-6">
+    <div className="h-full flex flex-col">
       <div className="flex-1 overflow-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {results.map((tree) => (
           <Link
             key={tree.taxon_id}
             href={`/species/${tree.taxon_id}`}
-            className="bg-white p-6 rounded-xl transition-all duration-300"
+            className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-white hover:bg-white/20 transition-all duration-300"
           >
-            <h2 className="text-xl font-semibold text-gray-800">
+            <h2 className="text-xl font-semibold">
               {tree.common_name}
             </h2>
-            <p className="text-gray-600 italic">
-              {tree.species}
+            <p className="text-white/70 italic">
+              {tree.accepted_scientific_name || tree.species}
             </p>
-            <ul className="mt-4 space-y-2">
-              <li className="text-gray-700">
-                <span className="font-medium text-gray-900">Family:</span>{" "}
-                {tree.family}
+            <ul className="mt-4 space-y-2 text-sm">
+              <li className="flex justify-between items-center p-2 rounded-lg bg-black/30 border border-white/10">
+                <span className="font-medium">Family:</span>
+                <span>{tree.family}</span>
               </li>
-              <li className="text-gray-700">
-                <span className="font-medium text-gray-900">Genus:</span>{" "}
-                {tree.genus}
+              <li className="flex justify-between items-center p-2 rounded-lg bg-black/30 border border-white/10">
+                <span className="font-medium">Genus:</span>
+                <span>{tree.genus}</span>
               </li>
-              <li className="text-gray-700">
-                <span className="font-medium text-gray-900">Subspecies:</span>{" "}
-                {tree.subspecies || "N/A"}
+              {tree.subspecies && (
+                <li className="flex justify-between items-center p-2 rounded-lg bg-black/30 border border-white/10">
+                  <span className="font-medium">Subspecies:</span>
+                  <span>{tree.subspecies}</span>
+                </li>
+              )}
+              <li className="flex justify-between items-center p-2 rounded-lg bg-black/30 border border-white/10">
+                <span className="font-medium">Class:</span>
+                <span>{tree.taxonomic_class}</span>
               </li>
-              <li className="text-gray-700">
-                <span className="font-medium text-gray-900">Class:</span>{" "}
-                {tree.taxonomic_class}
-              </li>
-              <li className="text-gray-700">
-                <span className="font-medium text-gray-900">Order:</span>{" "}
-                {tree.taxonomic_order}
+              <li className="flex justify-between items-center p-2 rounded-lg bg-black/30 border border-white/10">
+                <span className="font-medium">Order:</span>
+                <span>{tree.taxonomic_order}</span>
               </li>
             </ul>
           </Link>

@@ -26,16 +26,8 @@ const leaderboardData = [
 
 export default function TreederboardPage() {
   return (
-    <main className="min-h-screen bg-black text-white">
-      {/* Background with adjusted opacity */}
-      <div 
-        className="absolute inset-0 w-full h-full z-0"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      />
+    <main className="min-h-screen text-white">
+      {/* Remove background overlay */}
       
       <Navbar />
       <div className="relative min-h-screen flex flex-col z-10">

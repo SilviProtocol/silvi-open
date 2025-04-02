@@ -89,6 +89,8 @@ export interface ResearchPayload {
   wallet_address: string;
   chain: string;
   transaction_hash: string;
+  ipfs_cid: string;
+  scientific_name: string;
 }
 
 // Research data structure
@@ -132,7 +134,7 @@ export interface ContreebutionNFT {
   points: number;
   ipfs_cid: string;
   transaction_hash: string;
-  metadata: any; // Using any for now, can be typed further
+  metadata: Record<string, unknown>; // Typed as a generic object
   created_at: string;
 }
 

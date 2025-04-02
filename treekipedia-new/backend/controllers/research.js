@@ -1,4 +1,5 @@
 const express = require('express');
+const { ethers } = require('ethers');
 const { performAIResearch } = require('../services/aiResearch');
 const { uploadToIPFS } = require('../services/ipfs');
 const { createAttestation, mintNFT } = require('../services/blockchain');
@@ -15,17 +16,19 @@ module.exports = (pool) => {
    *   wallet_address: String - User's wallet address
    *   chain: String - User's chosen chain for NFT minting
    *   transaction_hash: String - Blockchain transaction hash for funding
+   *   ipfs_cid: String - IPFS CID for the NFT metadata
+   *   scientific_name: String - Scientific name (species field value)
    * }
    */
   router.post('/fund-research', async (req, res) => {
     try {
-      const { taxon_id, wallet_address, chain, transaction_hash } = req.body;
+      const { taxon_id, wallet_address, chain, transaction_hash, ipfs_cid, scientific_name } = req.body;
       
       // Validate required fields
-      if (!taxon_id || !wallet_address || !chain || !transaction_hash) {
+      if (!taxon_id || !wallet_address || !chain || !transaction_hash || !ipfs_cid || !scientific_name) {
         return res.status(400).json({ 
           error: 'Missing required fields', 
-          required: ['taxon_id', 'wallet_address', 'chain', 'transaction_hash'] 
+          required: ['taxon_id', 'wallet_address', 'chain', 'transaction_hash', 'ipfs_cid', 'scientific_name'] 
         });
       }
 
@@ -39,22 +42,31 @@ module.exports = (pool) => {
       }
 
       // Get species information
+      console.log("Querying species information for taxon_id:", taxon_id);
       const speciesQuery = `
         SELECT taxon_id, species, common_name, accepted_scientific_name 
         FROM species 
         WHERE taxon_id = $1
       `;
-      const speciesResult = await pool.query(speciesQuery, [taxon_id]);
+      let speciesResult;
+      try {
+        speciesResult = await pool.query(speciesQuery, [taxon_id]);
+        console.log("Query result:", speciesResult.rows);
+      } catch (queryError) {
+        console.error("Error in species query:", queryError);
+        throw queryError;
+      }
       
       if (speciesResult.rows.length === 0) {
         return res.status(404).json({ error: 'Species not found' });
       }
       
-      const species = speciesResult.rows[0];
+      const speciesData = speciesResult.rows[0];
       
-      // Use accepted_scientific_name or species as the scientific name
-      const scientificName = species.accepted_scientific_name || species.species;
-      const commonNames = species.common_name;
+      // Use the provided scientific_name or fall back to the species field
+      // Note: species field contains the scientific name
+      const scientificName = scientific_name || speciesData.species;
+      const commonNames = speciesData.common_name;
       
       // Step 1: Perform AI research
       console.log(`Starting AI research for ${scientificName} (${taxon_id})`);
@@ -126,25 +138,26 @@ module.exports = (pool) => {
       
       // Step 4: Create EAS attestation
       console.log(`Creating EAS attestation on ${chain}`);
+      
+      // For now, we'll always use ZeroHash for refUID (blank/initial reference)
+      // In the future, we can implement linking to previous attestations
+      console.log('Using ZeroHash for refUID (initial attestation)');
+      
       const attestationData = {
-        species: scientificName,
+        species: scientific_name || scientificName, // Use provided scientific_name or fallback to DB value
         researcher: wallet_address,
-        ipfsCid: ipfsCid,
-        taxonId: taxon_id
+        ipfsCid: ipfs_cid || ipfsCid, // Use provided ipfs_cid or fallback to generated one
+        taxonId: taxon_id,
+        refUID: ethers.ZeroHash // Always use ZeroHash for now
       };
+      
+      console.log('Attestation data prepared:', attestationData);
       
       const attestationUID = await createAttestation(chain, attestationData);
       
-      // Step 5: Mint NFT
-      console.log(`Minting NFT on ${chain}`);
-      const tokenId = uuidv4().replace(/-/g, '').substring(0, 10);
-      const tokenURI = ipfsCid;
-      
-      const mintReceipt = await mintNFT(chain, wallet_address, tokenId, tokenURI);
-      
-      // Step 6: Store NFT data in contreebution_nfts table
-      console.log('Storing NFT data in database');
-      const nftQuery = `
+      // Step 5: First insert record to get a global_id from the sequence
+      console.log('Storing NFT data in database to get global_id');
+      const insertQuery = `
         INSERT INTO contreebution_nfts (
           taxon_id, 
           wallet_address, 
@@ -157,33 +170,109 @@ module.exports = (pool) => {
         RETURNING *
       `;
       
-      const nftMetadata = {
+      const prelimMetadata = {
         species: scientificName,
         chain: chain,
         attestation_uid: attestationUID,
-        mint_receipt: mintReceipt,
-        research_date: new Date().toISOString()
+        research_date: new Date().toISOString(),
+        minting_status: 'pending'
       };
       
-      const nftValues = [
+      const initialValues = [
         taxon_id,
         wallet_address,
         2, // Default points
         ipfsCid,
         transaction_hash,
-        JSON.stringify(nftMetadata)
+        JSON.stringify(prelimMetadata)
       ];
       
-      const nftResult = await pool.query(nftQuery, nftValues);
+      // Begin transaction to allow rollback if needed
+      const client = await pool.connect();
       
-      // Return complete response with all data
-      res.status(201).json({
-        success: true,
-        research_data: researchData,
-        ipfs_cid: ipfsCid,
-        attestation_uid: attestationUID,
-        nft_details: nftResult.rows[0]
-      });
+      try {
+        await client.query('BEGIN');
+        
+        // Insert record to get global_id
+        const insertResult = await client.query(insertQuery, initialValues);
+        const nftRecord = insertResult.rows[0];
+        const globalId = nftRecord.global_id;
+        
+        console.log(`Generated global_id: ${globalId} for NFT minting`);
+        
+        // Step 6: Mint NFT using the global_id as tokenId
+        console.log(`Minting NFT on ${chain} with tokenId: ${globalId}`);
+        const tokenURI = ipfsCid;
+        
+        const mintReceipt = await mintNFT(chain, wallet_address, globalId, tokenURI);
+        
+        if (mintReceipt.status === 'failed') {
+          console.error(`NFT minting failed: ${mintReceipt.error}`);
+          
+          // Save the failure state for debugging
+          const updateFailedQuery = `
+            UPDATE contreebution_nfts
+            SET metadata = jsonb_set(metadata::jsonb, '{minting_status}', '"failed"')::jsonb ||
+                          jsonb_build_object('error', $1)::jsonb
+            WHERE global_id = $2
+            RETURNING *
+          `;
+          
+          await client.query(updateFailedQuery, [
+            mintReceipt.error, 
+            globalId
+          ]);
+          
+          // Rollback to release the global_id sequence
+          await client.query('ROLLBACK');
+          
+          throw new Error(`NFT minting failed: ${mintReceipt.error}`);
+        }
+        
+        // If minting succeeded, update the record with mint receipt
+        const updateQuery = `
+          UPDATE contreebution_nfts
+          SET 
+            transaction_hash = $1,
+            metadata = jsonb_set(
+              jsonb_set(metadata::jsonb, '{minting_status}', '"completed"')::jsonb,
+              '{mint_receipt}', $2::jsonb
+            )
+          WHERE global_id = $3
+          RETURNING *
+        `;
+        
+        const nftResult = await client.query(updateQuery, [
+          mintReceipt.transactionHash,
+          JSON.stringify(mintReceipt),
+          globalId
+        ]);
+        
+        // Commit the transaction
+        await client.query('COMMIT');
+        
+        // Use the final NFT record
+        const finalNftRecord = nftResult.rows[0];
+        
+        // Return complete response with all data
+        // For attestation_uid, convert to string for consistent API response format
+        // This ensures it's safe to display in JSON responses
+        res.status(201).json({
+          success: true,
+          research_data: researchData,
+          ipfs_cid: ipfsCid,
+          attestation_uid: attestationUID ? attestationUID.toString() : "0x0000000000000000000000000000000000000000000000000000000000000000",
+          nft_details: finalNftRecord
+        });
+      } catch (txError) {
+        // Release the client back to the pool on error
+        if (client) {
+          await client.query('ROLLBACK');
+        }
+        throw txError;
+      } finally {
+        client.release();
+      }
       
     } catch (error) {
       console.error('Error in /fund-research endpoint:', error);

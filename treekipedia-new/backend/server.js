@@ -3,6 +3,7 @@ const { Pool } = require('pg');
 const { ethers } = require('ethers');
 const dotenv = require('dotenv');
 const path = require('path');
+const cors = require('cors');
 
 // Load environment variables from ../.env
 dotenv.config({ path: path.join(__dirname, '../.env') });
@@ -10,7 +11,40 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// CORS Configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',               // Next.js dev server
+    'http://localhost:8000',               // Alternative port if needed
+    'http://167.172.143.162:3001',         // Current frontend deployment (HTTP)
+    'https://167.172.143.162:3001',        // Current frontend deployment (HTTPS)
+    'http://167.172.143.162',              // Base domain without port (HTTP)
+    'https://167.172.143.162',             // Base domain without port (HTTPS)
+    'https://treekipedia.silvi.earth',     // Production frontend
+    'http://treekipedia.silvi.earth',      // Production frontend (HTTP)
+    'https://frontend.silvi.earth',        // Alternative production frontend
+    'http://frontend.silvi.earth',         // Alternative production frontend (HTTP)
+    /\.vercel\.app$/                       // Vercel preview deployments
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key'],
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+
+// Set DEBUG_CORS in .env to 'true' to allow all origins temporarily
+const ALLOW_ALL_ORIGINS = process.env.DEBUG_CORS === 'true';
+
+// Apply CORS middleware before other middleware
+if (ALLOW_ALL_ORIGINS) {
+  console.log('⚠️ WARNING: CORS is configured to allow ALL origins for debugging');
+  app.use(cors({ origin: true, credentials: true }));
+} else {
+  console.log('🔒 CORS is configured with specific allowed origins');
+  app.use(cors(corsOptions));
+}
+
+// Other middleware
 app.use(express.json());
 
 // PostgreSQL Connection
