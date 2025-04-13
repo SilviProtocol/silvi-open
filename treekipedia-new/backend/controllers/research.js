@@ -44,7 +44,7 @@ module.exports = (pool) => {
       // Get species information
       console.log("Querying species information for taxon_id:", taxon_id);
       const speciesQuery = `
-        SELECT taxon_id, species, common_name, accepted_scientific_name 
+        SELECT taxon_id, species, species_scientific_name, common_name, accepted_scientific_name 
         FROM species 
         WHERE taxon_id = $1
       `;
@@ -63,9 +63,9 @@ module.exports = (pool) => {
       
       const speciesData = speciesResult.rows[0];
       
-      // Use the provided scientific_name or fall back to the species field
-      // Note: species field contains the scientific name
-      const scientificName = scientific_name || speciesData.species;
+      // Use the provided scientific_name or fall back to species_scientific_name or species field
+      // Note: Prefer species_scientific_name but fall back to species field for backward compatibility
+      const scientificName = scientific_name || speciesData.species_scientific_name || speciesData.species;
       const commonNames = speciesData.common_name;
       
       // Step 1: Perform AI research
@@ -81,55 +81,70 @@ module.exports = (pool) => {
       console.log('Uploading research data to IPFS');
       const ipfsCid = await uploadToIPFS(researchData);
       
-      // Step 3: Update species table with research data
+      // Step 3: Update species table with research data (using the new AI fields)
       console.log('Updating species table with research data');
       const updateQuery = `
         UPDATE species
         SET 
-          conservation_status = $1,
-          general_description = $2,
-          habitat = $3,
-          elevation_ranges = $4,
-          compatible_soil_types = $5,
-          ecological_function = $6,
-          native_adapted_habitats = $7,
-          agroforestry_use_cases = $8,
-          growth_form = $9,
-          leaf_type = $10,
-          deciduous_evergreen = $11,
-          flower_color = $12,
-          fruit_type = $13,
-          bark_characteristics = $14,
-          maximum_height = $15,
-          maximum_diameter = $16,
-          lifespan = $17,
-          maximum_tree_age = $18,
+          species_scientific_name = COALESCE($1, species_scientific_name),
+          conservation_status_ai = $2,
+          general_description_ai = $3,
+          habitat_ai = $4,
+          elevation_ranges_ai = $5,
+          compatible_soil_types_ai = $6,
+          ecological_function_ai = $7,
+          native_adapted_habitats_ai = $8,
+          agroforestry_use_cases_ai = $9,
+          growth_form_ai = $10,
+          leaf_type_ai = $11,
+          deciduous_evergreen_ai = $12,
+          flower_color_ai = $13,
+          fruit_type_ai = $14,
+          bark_characteristics_ai = $15,
+          maximum_height_ai = $16,
+          maximum_diameter_ai = $17,
+          lifespan_ai = $18,
+          maximum_tree_age_ai = $19,
+          stewardship_best_practices_ai = $20,
+          planting_recipes_ai = $21,
+          pruning_maintenance_ai = $22,
+          disease_pest_management_ai = $23,
+          fire_management_ai = $24,
+          cultural_significance_ai = $25,
           verification_status = 'unverified',
-          ipfs_cid = $19,
+          ipfs_cid = $26,
+          researched = TRUE,
           updated_at = CURRENT_TIMESTAMP
-        WHERE taxon_id = $20
+        WHERE taxon_id = $27
         RETURNING *
       `;
       
       const updateValues = [
-        researchData.conservation_status,
-        researchData.general_description,
-        researchData.habitat,
-        researchData.elevation_ranges,
-        researchData.compatible_soil_types,
-        researchData.ecological_function,
-        researchData.native_adapted_habitats,
-        researchData.agroforestry_use_cases,
-        researchData.growth_form,
-        researchData.leaf_type,
-        researchData.deciduous_evergreen,
-        researchData.flower_color,
-        researchData.fruit_type,
-        researchData.bark_characteristics,
-        researchData.maximum_height,
-        researchData.maximum_diameter,
-        researchData.lifespan,
-        researchData.maximum_tree_age,
+        scientificName,
+        researchData.conservation_status_ai,
+        researchData.general_description_ai,
+        researchData.habitat_ai,
+        researchData.elevation_ranges_ai,
+        researchData.compatible_soil_types_ai,
+        researchData.ecological_function_ai,
+        researchData.native_adapted_habitats_ai,
+        researchData.agroforestry_use_cases_ai,
+        researchData.growth_form_ai,
+        researchData.leaf_type_ai,
+        researchData.deciduous_evergreen_ai,
+        researchData.flower_color_ai,
+        researchData.fruit_type_ai,
+        researchData.bark_characteristics_ai,
+        researchData.maximum_height_ai,
+        researchData.maximum_diameter_ai,
+        researchData.lifespan_ai,
+        researchData.maximum_tree_age_ai,
+        researchData.stewardship_best_practices_ai,
+        researchData.planting_recipes_ai,
+        researchData.pruning_maintenance_ai,
+        researchData.disease_pest_management_ai,
+        researchData.fire_management_ai,
+        researchData.cultural_significance_ai,
         ipfsCid,
         taxon_id
       ];
@@ -343,25 +358,57 @@ module.exports = (pool) => {
       const query = `
         SELECT 
           taxon_id,
-          conservation_status,
-          general_description,
-          habitat,
-          elevation_ranges,
-          compatible_soil_types,
-          ecological_function,
-          native_adapted_habitats,
-          agroforestry_use_cases,
-          growth_form,
-          leaf_type,
-          deciduous_evergreen,
-          flower_color,
-          fruit_type,
-          bark_characteristics,
-          maximum_height,
-          maximum_diameter,
-          lifespan,
-          maximum_tree_age,
+          species_scientific_name,
+          conservation_status_ai,
+          conservation_status_human,
+          general_description_ai,
+          general_description_human,
+          habitat_ai,
+          habitat_human,
+          elevation_ranges_ai,
+          elevation_ranges_human,
+          compatible_soil_types_ai,
+          compatible_soil_types_human,
+          ecological_function_ai,
+          ecological_function_human,
+          native_adapted_habitats_ai,
+          native_adapted_habitats_human,
+          agroforestry_use_cases_ai,
+          agroforestry_use_cases_human,
+          growth_form_ai,
+          growth_form_human,
+          leaf_type_ai,
+          leaf_type_human,
+          deciduous_evergreen_ai,
+          deciduous_evergreen_human,
+          flower_color_ai,
+          flower_color_human,
+          fruit_type_ai,
+          fruit_type_human,
+          bark_characteristics_ai,
+          bark_characteristics_human,
+          maximum_height_ai,
+          maximum_height_human,
+          maximum_diameter_ai,
+          maximum_diameter_human,
+          lifespan_ai,
+          lifespan_human,
+          maximum_tree_age_ai,
+          maximum_tree_age_human,
+          stewardship_best_practices_ai,
+          stewardship_best_practices_human,
+          planting_recipes_ai,
+          planting_recipes_human,
+          pruning_maintenance_ai,
+          pruning_maintenance_human,
+          disease_pest_management_ai,
+          disease_pest_management_human,
+          fire_management_ai,
+          fire_management_human,
+          cultural_significance_ai,
+          cultural_significance_human,
           verification_status,
+          researched,
           ipfs_cid
         FROM species 
         WHERE taxon_id = $1
@@ -375,7 +422,7 @@ module.exports = (pool) => {
       
       // Check if the species has research data
       const species = result.rows[0];
-      if (!species.general_description) {
+      if (!species.researched) {
         return res.status(404).json({ 
           error: 'No research data available for this species',
           species_exists: true,

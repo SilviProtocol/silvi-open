@@ -1,7 +1,8 @@
 // Generic interface for all tree species data based on the new database schema
 export interface TreeSpecies {
   taxon_id: string;
-  species: string;
+  species: string; // Kept for backward compatibility
+  species_scientific_name: string; // New field replacing 'species'
   family: string;
   genus: string;
   subspecies: string | null;
@@ -17,47 +18,96 @@ export interface TreeSpecies {
   taxonomic_order: string;
   ecoregions: string;
   biomes: string;
+  
+  // Original fields kept for backward compatibility
   habitat: string;
-  forest_type: string;
-  wetland_type: string;
-  urban_setting: string;
   elevation_ranges: string;
   compatible_soil_types: string;
-  associated_species: string;
   native_adapted_habitats: string;
   agroforestry_use_cases: string;
-  successional_stage: string;
-  tolerances: string;
-  forest_layers: string;
   growth_form: string;
   leaf_type: string;
   deciduous_evergreen: string;
   flower_color: string;
   fruit_type: string;
   bark_characteristics: string;
-  maximum_height: number | null;
-  maximum_diameter: number | null;
-  lifespan: string;
-  maximum_tree_age: number | null;
   conservation_status: string;
+  general_description: string;
+  ecological_function: string;
+  stewardship_best_practices: string;
+  planting_recipes: string;
+  pruning_maintenance: string;
+  disease_pest_management: string;
+  fire_management: string;
+  cultural_significance: string;
+  
+  // New AI-generated content fields
+  habitat_ai: string;
+  habitat_human: string;
+  elevation_ranges_ai: string; 
+  elevation_ranges_human: string;
+  compatible_soil_types_ai: string;
+  compatible_soil_types_human: string;
+  native_adapted_habitats_ai: string;
+  native_adapted_habitats_human: string;
+  agroforestry_use_cases_ai: string;
+  agroforestry_use_cases_human: string;
+  growth_form_ai: string;
+  growth_form_human: string;
+  leaf_type_ai: string;
+  leaf_type_human: string;
+  deciduous_evergreen_ai: string;
+  deciduous_evergreen_human: string;
+  flower_color_ai: string;
+  flower_color_human: string;
+  fruit_type_ai: string;
+  fruit_type_human: string;
+  bark_characteristics_ai: string;
+  bark_characteristics_human: string;
+  conservation_status_ai: string;
+  conservation_status_human: string;
+  general_description_ai: string;
+  general_description_human: string;
+  ecological_function_ai: string;
+  ecological_function_human: string;
+  stewardship_best_practices_ai: string;
+  stewardship_best_practices_human: string;
+  planting_recipes_ai: string;
+  planting_recipes_human: string;
+  pruning_maintenance_ai: string;
+  pruning_maintenance_human: string;
+  disease_pest_management_ai: string;
+  disease_pest_management_human: string;
+  fire_management_ai: string;
+  fire_management_human: string;
+  cultural_significance_ai: string;
+  cultural_significance_human: string;
+  
+  // Numerical fields with AI/human variants
+  maximum_height: number | null;
+  maximum_height_ai: number | null;
+  maximum_height_human: number | null;
+  maximum_diameter: number | null;
+  maximum_diameter_ai: number | null;
+  maximum_diameter_human: number | null;
+  lifespan: string;
+  lifespan_ai: string;
+  lifespan_human: string;
+  maximum_tree_age: number | null;
+  maximum_tree_age_ai: number | null;
+  maximum_tree_age_human: number | null;
+  
+  // Other fields without AI/human variants
   climate_change_vulnerability: string;
   national_conservation_status: string;
   verification_status: string;
   threats: string;
   timber_value: string;
   non_timber_products: string;
-  cultural_significance: string;
   cultivars: string;
   nutritional_caloric_value: string;
   cultivation_details: string;
-  stewardship_best_practices: string;
-  planting_recipes: string;
-  pruning_maintenance: string;
-  disease_pest_management: string;
-  fire_management: string;
-  general_description: string;
   associated_media: string;
-  ecological_function: string;
   default_image: string;
   total_occurrences: number | null;
   allometric_models: string;
@@ -65,6 +115,14 @@ export interface TreeSpecies {
   reference_list: string;
   data_sources: string;
   ipfs_cid: string;
+  researched: boolean;
+  forest_type: string;
+  wetland_type: string;
+  urban_setting: string;
+  successional_stage: string;
+  tolerances: string;
+  forest_layers: string;
+  
   last_updated_date: string;
   created_at: string;
   updated_at: string;
@@ -90,12 +148,36 @@ export interface ResearchPayload {
   chain: string;
   transaction_hash: string;
   ipfs_cid: string;
-  scientific_name: string;
+  scientific_name: string; // Renamed field (previously 'species')
 }
 
-// Research data structure
+// Research data structure with AI/human field variants
 export interface ResearchData {
   taxon_id: string;
+  species_scientific_name: string;
+  researched: boolean;
+  
+  // AI-generated content fields
+  general_description_ai: string;
+  general_description_human: string;
+  native_adapted_habitats_ai: string;
+  native_adapted_habitats_human: string;
+  stewardship_best_practices_ai: string;
+  stewardship_best_practices_human: string;
+  planting_recipes_ai: string;
+  planting_recipes_human: string;
+  ecological_function_ai: string;
+  ecological_function_human: string;
+  agroforestry_use_cases_ai: string;
+  agroforestry_use_cases_human: string;
+  elevation_ranges_ai: string;
+  elevation_ranges_human: string;
+  compatible_soil_types_ai: string;
+  compatible_soil_types_human: string;
+  conservation_status_ai: string;
+  conservation_status_human: string;
+  
+  // For backward compatibility, include original fields
   general_description: string;
   native_adapted_habitats: string;
   stewardship_best_practices: string;
@@ -105,6 +187,7 @@ export interface ResearchData {
   elevation_ranges: string;
   compatible_soil_types: string;
   conservation_status: string;
+  
   verification_status: string;
   ipfs_cid: string;
   researcher_wallet: string;

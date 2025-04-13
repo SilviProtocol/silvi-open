@@ -69,3 +69,5 @@ yarn-error.log*
 /SPEC_SHEET.md
 /TREEPAGE.md
 /API_COMPARE.md
+/CONTEXT.md
+/.mcp.json
