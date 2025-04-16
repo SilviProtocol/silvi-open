@@ -70,7 +70,7 @@ export function Footer() {
                 href="https://ethereum.org" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
               >
                 Ethereum
               </a>
@@ -78,7 +78,7 @@ export function Footer() {
                 href="https://base.org" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
               >
                 Base
               </a>
@@ -86,7 +86,7 @@ export function Footer() {
                 href="https://celo.org" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
               >
                 Celo
               </a>
@@ -94,7 +94,7 @@ export function Footer() {
                 href="https://optimism.io" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
               >
                 Optimism
               </a>
@@ -102,7 +102,7 @@ export function Footer() {
                 href="https://arbitrum.io" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
               >
                 Arbitrum
               </a>
@@ -110,7 +110,7 @@ export function Footer() {
                 href="https://attestationstation.xyz" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
               >
                 EAS
               </a>
@@ -118,7 +118,7 @@ export function Footer() {
                 href="https://ipfs.tech" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
               >
                 IPFS
               </a>

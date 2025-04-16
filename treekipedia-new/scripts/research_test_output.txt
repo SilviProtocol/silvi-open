@@ -1,0 +1,27 @@
+Starting AI research test...
+Running AI research for Persoonia arborea (AngMaPrPr36449-00)...
+Querying Perplexity for ecological and stewardship data...
+Querying Perplexity API for ecological and stewardship data with message: Provide detailed ecological and practical stewardship information for Persoonia arborea, also known as Tree Geebung, covering stewardship best practices, planting recipes, pruning maintenance, disease/pest management, fire management, compatible soil types, cultural significance, conservation status, general description, habitat, elevation ranges, ecological function, native adapted habitats, and agroforestry use cases.
+Received ecological and stewardship data from Perplexity
+Raw Perplexity ecological data saved to perplexity_ecological_output.txt
+Querying Perplexity for morphological data...
+Querying Perplexity API for morphological data with message: Provide detailed morphological characteristics for Persoonia arborea, also known as Tree Geebung, including growth form, leaf type, deciduous or evergreen status, flower color, fruit type, bark characteristics, maximum height, maximum diameter, lifespan, and maximum tree age.
+Received morphological data from Perplexity
+Raw Perplexity morphological data saved to perplexity_morphological_output.txt
+Structuring data with ChatGPT...
+Calling ChatGPT 4o API to structure data...
+Received structured data from ChatGPT 4o
+Structured ChatGPT data saved to chatgpt_structured_output.json
+Starting AI research for Persoonia arborea (AngMaPrPr36449-00)
+Querying Perplexity API for ecological and stewardship data with message: Provide detailed ecological and practical stewardship information for Persoonia arborea, also known as Tree Geebung, covering stewardship best practices, planting recipes, pruning maintenance, disease/pest management, fire management, compatible soil types, cultural significance, conservation status, general description, habitat, elevation ranges, ecological function, native adapted habitats, and agroforestry use cases.
+Querying Perplexity API for morphological data with message: Provide detailed morphological characteristics for Persoonia arborea, also known as Tree Geebung, including growth form, leaf type, deciduous or evergreen status, flower color, fruit type, bark characteristics, maximum height, maximum diameter, lifespan, and maximum tree age.
+Received morphological data from Perplexity
+Received ecological and stewardship data from Perplexity
+Calling ChatGPT 4o API to structure data...
+Received structured data from ChatGPT 4o
+Research data saved to ai_research_output.json
+Uploading research data to IPFS...
+Uploading data to IPFS via Lighthouse
+Data uploaded to IPFS with CID: bafkreifzbai3t6k6l4mgygzxpd6ngg3dspwv73xn7u6vwwj7afuhybrt5y
+IPFS CID: bafkreifzbai3t6k6l4mgygzxpd6ngg3dspwv73xn7u6vwwj7afuhybrt5y
+AI research test completed successfully

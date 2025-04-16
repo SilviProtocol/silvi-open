@@ -1,5 +1,6 @@
 // Import required modules
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const axios = require('axios');
 
 // Retrieve API keys from environment variables
@@ -95,8 +96,62 @@ async function queryPerplexityMorphological(scientificName, commonNames) {
 async function structureWithChatGPT(ecologicalAndStewardshipData, morphologicalData, scientificName, commonNames) {
   const commonNamesStr = Array.isArray(commonNames) ? commonNames.join(', ') : commonNames;
   
+  // First, check if the data returned matches the requested species
+  const verifyPrompt = `Check if the following data is specifically about ${scientificName} (also known as: ${commonNamesStr}).
+The data appears to be:
+
+Ecological + Stewardship Data (first few lines):
+${ecologicalAndStewardshipData.substring(0, 500)}...
+
+Morphological Characteristics (first few lines):
+${morphologicalData.substring(0, 500)}...
+
+Respond with only a single word: either "correct" if the data is about ${scientificName}, or "wrong" followed by the actual species name mentioned in the data.`;
+
+  // Verify the species first
+  let isDataCorrect = true;
+  let actualSpeciesName = scientificName;
+  
+  try {
+    const verifyUrl = 'https://api.openai.com/v1/chat/completions';
+    const verifyHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENAI_API_KEY}`
+    };
+    const verifyPayload = {
+      model: 'gpt-4o',
+      messages: [
+        { role: 'system', content: 'You are a botanical verification assistant. Respond with only "correct" if the data matches the requested species, or "wrong: [actual species name]" if it doesn\'t.' },
+        { role: 'user', content: verifyPrompt }
+      ],
+      temperature: 0.3,
+      max_tokens: 50
+    };
+    
+    console.log('Verifying species match...');
+    const verifyResponse = await axios.post(verifyUrl, verifyPayload, { headers: verifyHeaders });
+    const verifyOutput = verifyResponse.data.choices[0].message.content.trim().toLowerCase();
+    
+    if (verifyOutput.startsWith('wrong')) {
+      isDataCorrect = false;
+      // Try to extract the actual species name from the response
+      const match = verifyOutput.match(/wrong:\s*(.*)/i);
+      if (match && match[1]) {
+        actualSpeciesName = match[1].trim();
+      }
+      console.warn(`⚠️ DATA MISMATCH WARNING: Requested species "${scientificName}" but received data for "${actualSpeciesName}"`);
+    } else {
+      console.log('✓ Species verification passed - data matches requested species');
+    }
+  } catch (verifyError) {
+    console.error('Error verifying species match:', verifyError.message);
+    // Continue processing even if verification fails
+  }
+  
   const prompt = `You have been provided with raw text data from two sources about the tree species ${scientificName}, also known as ${commonNamesStr}. 
 The first source contains ecological + stewardship information, and the second source contains morphological characteristics. 
+
+${!isDataCorrect ? `⚠️ IMPORTANT: It appears the data provided is actually about ${actualSpeciesName}, NOT ${scientificName}. Please extract what information you can but note any fields that seem clearly irrelevant to ${scientificName}.` : ''}
 
 Your task is to extract and structure the relevant information into a JSON object matching this schema:
 
@@ -132,6 +187,7 @@ For each field:
 - For maximum_height_ai, parse out a numeric value (in meters), using up to 2 decimals.
 - For maximum_diameter_ai, parse out a numeric value (in meters), using up to 2 decimals.
 - For maximum_tree_age_ai, parse out an integer (in years).
+- If you believe the data is for the wrong species, still try to extract general information but omit species-specific details that clearly don't apply.
 
 Return the structured JSON object, ensuring it's suitable for PostgreSQL insertion.
 
@@ -171,6 +227,104 @@ Morphological Characteristics: ${morphologicalData}`;
       } else {
         structuredData = JSON.parse(chatOutput);
       }
+      
+      // CRITICAL FIX: Ensure all fields have _ai suffix and are correctly mapped
+      // This function ensures data is always saved to _ai fields, never to legacy fields
+      console.log("Ensuring AI field consistency and proper field mapping...");
+      
+      const fieldMappings = [
+        ['general_description', 'general_description_ai'],
+        ['habitat', 'habitat_ai'],
+        ['elevation_ranges', 'elevation_ranges_ai'],
+        ['compatible_soil_types', 'compatible_soil_types_ai'],
+        ['ecological_function', 'ecological_function_ai'],
+        ['native_adapted_habitats', 'native_adapted_habitats_ai'],
+        ['agroforestry_use_cases', 'agroforestry_use_cases_ai'],
+        ['growth_form', 'growth_form_ai'],
+        ['leaf_type', 'leaf_type_ai'],
+        ['deciduous_evergreen', 'deciduous_evergreen_ai'],
+        ['flower_color', 'flower_color_ai'],
+        ['fruit_type', 'fruit_type_ai'],
+        ['bark_characteristics', 'bark_characteristics_ai'],
+        ['maximum_height', 'maximum_height_ai'],
+        ['maximum_diameter', 'maximum_diameter_ai'],
+        ['lifespan', 'lifespan_ai'],
+        ['maximum_tree_age', 'maximum_tree_age_ai'],
+        ['stewardship_best_practices', 'stewardship_best_practices_ai'],
+        ['planting_recipes', 'planting_recipes_ai'],
+        ['pruning_maintenance', 'pruning_maintenance_ai'],
+        ['disease_pest_management', 'disease_pest_management_ai'],
+        ['fire_management', 'fire_management_ai'],
+        ['cultural_significance', 'cultural_significance_ai'],
+        ['conservation_status', 'conservation_status_ai']
+      ];
+
+      // Step 1: Initialize all AI fields with empty strings if they don't exist
+      // This ensures every AI field exists in the output
+      for (const [_, aiField] of fieldMappings) {
+        if (structuredData[aiField] === undefined || structuredData[aiField] === null) {
+          structuredData[aiField] = '';
+          console.log(`Initialized missing AI field: ${aiField}`);
+        }
+      }
+      
+      // Step 2: Copy any data from legacy fields (without _ai suffix) to AI fields
+      // This handles cases where the AI model returns data in legacy format
+      for (const [baseField, aiField] of fieldMappings) {
+        // Only copy if base field has content and AI field is empty
+        if (structuredData[baseField] && 
+            (structuredData[aiField] === undefined || 
+             structuredData[aiField] === null || 
+             structuredData[aiField] === '')) {
+          console.log(`Migrating data from legacy field: ${baseField} -> ${aiField}`);
+          structuredData[aiField] = structuredData[baseField];
+        }
+        
+        // Always remove legacy fields to prevent them from being used
+        if (structuredData[baseField] !== undefined) {
+          console.log(`Removing legacy field: ${baseField}`);
+          delete structuredData[baseField];
+        }
+      }
+      
+      // Step 3: Add explicit researched=TRUE flag 
+      // This ensures the species is marked as researched when the data is saved
+      structuredData.researched = true;
+      console.log("Setting researched flag to TRUE");
+      
+      // Step 4: Detailed logging to verify field population
+      const aiFields = Object.keys(structuredData).filter(key => key.endsWith('_ai'));
+      const populatedFields = aiFields.filter(field => 
+        structuredData[field] && 
+        structuredData[field] !== '' && 
+        typeof structuredData[field] === 'string' && 
+        structuredData[field].trim() !== ''
+      );
+      
+      console.log(`AI Fields in data: ${aiFields.length}, Populated: ${populatedFields.length}`);
+      if (populatedFields.length > 0) {
+        console.log(`Populated AI fields: ${populatedFields.join(', ')}`);
+      } else {
+        console.warn("WARNING: No AI fields were populated with content!");
+      }
+      
+      // Step 5: Specifically check critical fields that must be present
+      const criticalFields = [
+        'general_description_ai', 
+        'habitat_ai', 
+        'ecological_function_ai',
+        'stewardship_best_practices_ai'
+      ];
+      
+      console.log("\nVerifying critical fields:");
+      criticalFields.forEach(field => {
+        const hasContent = !!(structuredData[field] && 
+                            structuredData[field] !== '' && 
+                            typeof structuredData[field] === 'string' && 
+                            structuredData[field].trim() !== '');
+                            
+        console.log(`${field}: ${hasContent ? 'PRESENT ✓' : 'EMPTY ✗'}`);
+      });
     } catch (parseError) {
       console.error('Error parsing ChatGPT output as JSON:', parseError);
       throw new Error('Failed to parse GPT response as JSON');
@@ -208,12 +362,12 @@ async function performAIResearch(taxonID, scientificName, commonNames, researche
       commonNames
     );
 
-    // Return the combined result with taxon_id and researched=true
+    // CRITICAL FIX: Always use the input taxonID, not whatever ID might be in the structuredJSON
+    // This ensures we update the correct row in the database
     return {
-      taxon_id: taxonID,
-      species_scientific_name: scientificName,
-      researched: true,
-      ...structuredJSON,
+      taxon_id: taxonID, // Explicitly use the provided taxonID parameter
+      species_scientific_name: scientificName, // Use the requested species name
+      ...structuredJSON, // Include all the structured data fields
       // Include metadata about the research process
       research_metadata: {
         researcher_wallet: researcherWallet,

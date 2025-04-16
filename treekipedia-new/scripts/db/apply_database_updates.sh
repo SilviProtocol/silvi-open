@@ -63,5 +63,26 @@ else
   exit 1
 fi
 
+# Apply the researched flag fix
+echo -e "${YELLOW}Fixing researched flags for all species...${NC}"
+if run_sql_file "${SCRIPT_DIR}/fix_all_researched_flags.sql"; then
+  echo -e "${GREEN}Successfully fixed researched flags for all species${NC}"
+else
+  echo -e "${RED}Error fixing researched flags${NC}"
+  # Don't exit, continue with other updates
+fi
+
+# Optional: Ask if user wants to remove legacy fields
+echo -e "${YELLOW}Do you want to remove legacy fields and migrate data to _ai fields? (y/n)${NC}"
+read -p "This is a more invasive change: " REMOVE_LEGACY
+if [[ "$REMOVE_LEGACY" == "y" || "$REMOVE_LEGACY" == "Y" ]]; then
+  echo -e "${YELLOW}Migrating and removing legacy fields...${NC}"
+  if run_sql_file "${SCRIPT_DIR}/remove_legacy_fields.sql"; then
+    echo -e "${GREEN}Successfully migrated and removed legacy fields${NC}"
+  else
+    echo -e "${RED}Error removing legacy fields${NC}"
+  fi
+fi
+
 echo -e "${GREEN}Database updates completed successfully!${NC}"
 echo -e "${YELLOW}Note: You can use ${SCRIPT_DIR}/updated_species_schema.sql as reference for future schema changes${NC}"

@@ -1,6 +1,11 @@
 // Test script for AI research services
-require('dotenv').config();
-const { performAIResearch } = require('../../backend/services/aiResearch');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+const aiResearchModule = require('../../backend/services/aiResearch');
+const { performAIResearch, 
+        queryPerplexityEcologicalAndStewardship, 
+        queryPerplexityMorphological,
+        structureWithChatGPT } = aiResearchModule;
 const { uploadToIPFS } = require('../../backend/services/ipfs');
 const fs = require('fs');
 
@@ -16,7 +21,28 @@ async function testAIResearch() {
     
     console.log(`Running AI research for ${scientificName} (${taxonId})...`);
     
-    // Step 1: Perform AI research
+    // Directly call the individual components and save their outputs
+    console.log('Querying Perplexity for ecological and stewardship data...');
+    const ecologicalAndStewardshipData = await queryPerplexityEcologicalAndStewardship(scientificName, commonName);
+    fs.writeFileSync('perplexity_ecological_output.txt', ecologicalAndStewardshipData);
+    console.log('Raw Perplexity ecological data saved to perplexity_ecological_output.txt');
+    
+    console.log('Querying Perplexity for morphological data...');
+    const morphologicalData = await queryPerplexityMorphological(scientificName, commonName);
+    fs.writeFileSync('perplexity_morphological_output.txt', morphologicalData);
+    console.log('Raw Perplexity morphological data saved to perplexity_morphological_output.txt');
+    
+    console.log('Structuring data with ChatGPT...');
+    const structuredJSON = await structureWithChatGPT(
+      ecologicalAndStewardshipData,
+      morphologicalData,
+      scientificName,
+      commonName
+    );
+    fs.writeFileSync('chatgpt_structured_output.json', JSON.stringify(structuredJSON, null, 2));
+    console.log('Structured ChatGPT data saved to chatgpt_structured_output.json');
+    
+    // Step 1: Perform AI research (this will duplicate some work but follows the normal flow)
     const researchData = await performAIResearch(
       taxonId,
       scientificName,

@@ -66,13 +66,13 @@ export function SearchResults() {
           <Link
             key={tree.taxon_id}
             href={`/species/${tree.taxon_id}`}
-            className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-white hover:bg-white/20 transition-all duration-300"
+            className="bg-black/30 backdrop-blur-md border border-white/20 p-6 rounded-xl text-white hover:bg-black/40 transition-all duration-300"
           >
             <h2 className="text-xl font-semibold">
               {tree.common_name}
             </h2>
             <p className="text-white/70 italic">
-              {tree.accepted_scientific_name || tree.species}
+              {tree.accepted_scientific_name || tree.species_scientific_name || tree.species}
             </p>
             <ul className="mt-4 space-y-2 text-sm">
               <li className="flex justify-between items-center p-2 rounded-lg bg-black/30 border border-white/10">

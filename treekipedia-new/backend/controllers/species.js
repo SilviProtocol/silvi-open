@@ -23,6 +23,7 @@ module.exports = (pool) => {
         SELECT * FROM species 
         WHERE common_name ILIKE $1 
         OR species ILIKE $1
+        OR species_scientific_name ILIKE $1
         OR accepted_scientific_name ILIKE $1
         ORDER BY common_name
         LIMIT 50
@@ -74,30 +75,39 @@ module.exports = (pool) => {
         `;
         // For common_name, we need to search anywhere in the name as they're often formatted like "Forest Oak"
         queryParams = [`%${query}%`];
-      } else if (field === 'species' || field === 'scientific_name') {
+      } else if (field === 'species' || field === 'scientific_name' || field === 'species_scientific_name') {
         searchQuery = `
-          SELECT taxon_id, common_name, species, accepted_scientific_name 
+          SELECT taxon_id, common_name, species, species_scientific_name, accepted_scientific_name 
           FROM species 
-          WHERE species ILIKE $1
-          ORDER BY species
-          LIMIT 10
-        `;
-        // For scientific names, we can prioritize "starts with" but should also find partial matches
-        queryParams = [`%${query}%`];
-      } else {
-        // Search in both fields (default behavior)
-        searchQuery = `
-          SELECT taxon_id, common_name, species, accepted_scientific_name 
-          FROM species 
-          WHERE common_name ILIKE $1 
-          OR species ILIKE $1
+          WHERE species ILIKE $1 
+          OR species_scientific_name ILIKE $1
           ORDER BY 
             CASE 
-              WHEN common_name ILIKE $2 THEN 0 
+              WHEN species_scientific_name ILIKE $2 THEN 0 
               WHEN species ILIKE $2 THEN 1
               ELSE 2
             END,
-            common_name
+            species_scientific_name, species
+          LIMIT 10
+        `;
+        // For scientific names, we can prioritize "starts with" but should also find partial matches
+        queryParams = [`%${query}%`, `${query}%`];
+      } else {
+        // Search in all name fields (default behavior)
+        searchQuery = `
+          SELECT taxon_id, common_name, species, species_scientific_name, accepted_scientific_name 
+          FROM species 
+          WHERE common_name ILIKE $1 
+          OR species ILIKE $1
+          OR species_scientific_name ILIKE $1
+          ORDER BY 
+            CASE 
+              WHEN common_name ILIKE $2 THEN 0 
+              WHEN species_scientific_name ILIKE $2 THEN 1
+              WHEN species ILIKE $2 THEN 2
+              ELSE 3
+            END,
+            common_name, species_scientific_name
           LIMIT 10
         `;
         // Multiple parameters: first for contains anywhere, second for starts with (for ordering)
@@ -135,7 +145,15 @@ module.exports = (pool) => {
         return res.status(404).json({ error: 'Species not found' });
       }
       
-      res.json(result.rows[0]);
+      // Explicitly ensure the researched flag is a boolean
+      const species = result.rows[0];
+      
+      // Convert to a proper boolean (in case it's null or undefined)
+      species.researched = species.researched === true;
+      
+      console.log(`GET /species/${taxon_id} - researched flag: ${species.researched}`);
+      
+      res.json(species);
     } catch (error) {
       console.error(`Error fetching species with taxon_id "${req.params.taxon_id}":`, error);
       res.status(500).json({ error: 'Internal server error' });

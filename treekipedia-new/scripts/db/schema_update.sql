@@ -9,8 +9,7 @@ ALTER TABLE public.species
 -- Rename 'species' to 'species_scientific_name'
 ADD COLUMN species_scientific_name VARCHAR(300),
 
--- Add researched boolean field
-ADD COLUMN researched BOOLEAN DEFAULT FALSE,
+-- Removed researched boolean field
 
 -- Add new fields with _ai and _human suffixes for existing fields
 -- Conservation and description fields
@@ -78,7 +77,7 @@ UPDATE public.species SET species_scientific_name = species;
 CREATE INDEX idx_species_species_scientific_name ON public.species(species_scientific_name);
 DROP INDEX IF EXISTS idx_species_accepted_scientific_name;
 CREATE INDEX idx_species_accepted_scientific_name ON public.species(accepted_scientific_name);
-CREATE INDEX idx_species_researched ON public.species(researched);
+-- Removed researched index
 
 -- Step 4: Create a complete schema update that we can use for a fresh install
 -- This is a separate SQL file that we'll generate as a reference

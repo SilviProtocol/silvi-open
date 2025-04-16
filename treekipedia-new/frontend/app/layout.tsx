@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { Suspense } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
 });
 
@@ -38,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" style={{ colorScheme: "dark" }}>
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen bg-[url('/background3.png')] bg-fixed bg-cover bg-center text-white flex flex-col`}>
+      <body className={`${montserrat.variable} ${geistMono.variable} font-sans antialiased min-h-screen bg-[url('/background7.png')] bg-fixed bg-cover bg-center text-white flex flex-col`}>
         <Providers>
           <Navbar />
           <main className="flex-1 pt-16">

@@ -115,7 +115,7 @@ export interface TreeSpecies {
   reference_list: string;
   data_sources: string;
   ipfs_cid: string;
-  researched: boolean;
+  researched: boolean; // Flag to indicate if species has been researched
   forest_type: string;
   wetland_type: string;
   urban_setting: string;
@@ -155,7 +155,7 @@ export interface ResearchPayload {
 export interface ResearchData {
   taxon_id: string;
   species_scientific_name: string;
-  researched: boolean;
+  researched: boolean; // Flag to indicate if species has been researched
   
   // AI-generated content fields
   general_description_ai: string;

@@ -50,6 +50,7 @@ async function testEASAttestation() {
       ipfsCid: 'TEST-IPFS-CID',
       researcher: signerAddress,
       species: 'Test Species',
+      species_scientific_name: 'Test Species Scientific Name',
       timestamp: timestamp,
       researchVersion: 1,
       refUID: ethers.ZeroHash

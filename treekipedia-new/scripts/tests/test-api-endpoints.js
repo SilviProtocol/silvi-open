@@ -4,11 +4,11 @@ const assert = require('assert');
 // Configuration with real values from the database
 const BASE_URL = 'https://treekipedia-api.silvi.earth'; // Production server without /api prefix
 const TEST_WALLET_ADDRESS = '0x6B1f82a1d7E24A47c11655E19243F9368C893A18'; // Real user from contreebution_nfts table
-const TEST_TAXON_ID = 'AngMaFaFb0002-00'; // Real taxon_id from the database
+const TEST_TAXON_ID = 'AngNAParc36603-00'; // Taxon ID to test stewardship fields
 const ALTERNATE_TAXON_ID = 'AngMaFaCs1868-00'; // Forest Oak from the database
 const TEST_TRANSACTION_HASH = '0x9430b971ece557e97f6f2eb56c72640d1e5e65f59fc066caf94fd176896f5682'; // Real transaction hash
 const TEST_IPFS_CID = 'bafkreihloxxpzh4c2uwu3nhomu5mlltt2kqyqgmv5gt3oi2qekzbwbzkkm'; // Real IPFS CID
-const TEST_SCIENTIFIC_NAME = 'Abarema levelii'; // Real scientific name (species field value)
+const TEST_SCIENTIFIC_NAME = 'Phoenix dactylifera'; // Date palm
 
 // Helper function for API requests
 async function makeRequest(method, endpoint, data = null, params = null) {
@@ -55,7 +55,7 @@ async function testSpeciesSearch() {
       console.log('  Sample result:', {
         taxon_id: result.data[0].taxon_id,
         common_name: result.data[0].common_name,
-        scientific_name: result.data[0].species // Use species as scientific name
+        scientific_name: result.data[0].species_scientific_name || result.data[0].species // Use new field with fallback
       });
     }
   } else {
@@ -79,15 +79,22 @@ async function testSpeciesSuggestions() {
   });
   console.log('Common name field test result:', result2.success ? `${result2.data.length} results` : 'Failed');
   
-  // Test with field parameter for species (scientific name)
+  // Test with field parameter for species_scientific_name and fallback to species
   const result3 = await makeRequest('get', '/species/suggest', null, { 
+    query: 'quercus', 
+    field: 'species_scientific_name' 
+  });
+  console.log('Scientific name field test (new field):', result3.success ? `${result3.data.length} results` : 'Failed');
+  
+  // Fallback test with old field name for backward compatibility
+  const result4 = await makeRequest('get', '/species/suggest', null, { 
     query: 'quercus', 
     field: 'species' 
   });
-  console.log('Scientific name field test result:', result3.success ? `${result3.data.length} results` : 'Failed');
+  console.log('Scientific name field test (legacy field):', result4.success ? `${result4.data.length} results` : 'Failed');
   
   // Count the test as successful if at least one of the variations worked
-  const anySuccess = result1.success || result2.success || result3.success;
+  const anySuccess = result1.success || result2.success || result3.success || result4.success;
   
   if (anySuccess) {
     let totalResults = 0;
@@ -102,6 +109,9 @@ async function testSpeciesSuggestions() {
     } else if (result3.success && result3.data.length > 0) {
       totalResults = result3.data.length;
       successfulTest = result3;
+    } else if (result4.success && result4.data.length > 0) {
+      totalResults = result4.data.length;
+      successfulTest = result4;
     }
     
     console.log('✅ Success - Species suggestion returned:', totalResults, 'results across all test variations');
@@ -109,7 +119,7 @@ async function testSpeciesSuggestions() {
       console.log('  Sample suggestion:', {
         taxon_id: successfulTest.data[0].taxon_id,
         common_name: successfulTest.data[0].common_name,
-        scientific_name: successfulTest.data[0].species // Use species as scientific name
+        scientific_name: successfulTest.data[0].species_scientific_name || successfulTest.data[0].species // Use new field with fallback
       });
     }
   } else {
@@ -127,7 +137,8 @@ async function testSpeciesDetails() {
   if (result.success) {
     console.log('✅ Success - Species details returned for taxon_id:', ALTERNATE_TAXON_ID);
     console.log('  Species name:', result.data.common_name);
-    console.log('  Scientific name:', result.data.species);
+    console.log('  Scientific name:', result.data.species_scientific_name || result.data.species);
+    console.log('  Researched status:', result.data.researched ? 'Yes' : 'No');
   } else {
     console.log('❌ Failed - Species details:', result.error);
   }
@@ -198,7 +209,7 @@ async function testFundResearch() {
     chain: 'celo', // Value from the NFT records in the database
     transaction_hash: uniqueTransactionHash, // Use unique transaction hash
     ipfs_cid: TEST_IPFS_CID, // Added the required field
-    scientific_name: TEST_SCIENTIFIC_NAME // Using the species field value
+    scientific_name: TEST_SCIENTIFIC_NAME // Using species_scientific_name or species field value
   };
   
   const result = await makeRequest('post', '/research/fund-research', testData);
@@ -235,7 +246,36 @@ async function testGetResearchData() {
   
   if (result.success) {
     console.log('✅ Success - Research data retrieved for taxon_id:', TEST_TAXON_ID);
-    console.log('  Description:', result.data.general_description ? result.data.general_description.slice(0, 50) + '...' : 'N/A');
+    console.log('  Researched flag:', result.data.researched);
+    
+    // Check for both AI and human descriptions
+    const aiDescription = result.data.general_description_ai || 'N/A';
+    const humanDescription = result.data.general_description_human || 'N/A';
+    const legacyDescription = result.data.general_description || 'N/A';
+    
+    console.log('  AI Description:', aiDescription.slice(0, 50) + (aiDescription.length > 50 ? '...' : ''));
+    console.log('  Human Description:', humanDescription.slice(0, 50) + (humanDescription.length > 50 ? '...' : ''));
+    console.log('  Legacy Description:', legacyDescription.slice(0, 50) + (legacyDescription.length > 50 ? '...' : ''));
+    
+    // Check stewardship fields specifically
+    console.log('\n  STEWARDSHIP FIELDS:');
+    console.log('  stewardship_best_practices:', result.data.stewardship_best_practices || 'N/A');
+    console.log('  stewardship_best_practices_ai:', result.data.stewardship_best_practices_ai || 'N/A');
+    console.log('  stewardship_best_practices_human:', result.data.stewardship_best_practices_human || 'N/A');
+    
+    // Log a few other important AI fields to see if they exist
+    console.log('\n  OTHER AI FIELDS:');
+    console.log('  habitat_ai:', (result.data.habitat_ai || 'N/A').slice(0, 50) + ((result.data.habitat_ai && result.data.habitat_ai.length > 50) ? '...' : ''));
+    console.log('  ecological_function_ai:', (result.data.ecological_function_ai || 'N/A').slice(0, 50) + ((result.data.ecological_function_ai && result.data.ecological_function_ai.length > 50) ? '...' : ''));
+    
+    // Add detailed field check
+    const allFields = Object.keys(result.data).filter(k => k.endsWith('_ai'));
+    const nonEmptyAiFields = allFields.filter(f => result.data[f] && result.data[f] !== '');
+    
+    console.log('\n  AI Field Analysis:');
+    console.log('  Total _ai fields:', allFields.length);
+    console.log('  Non-empty _ai fields:', nonEmptyAiFields.length);
+    console.log('  Non-empty field names:', nonEmptyAiFields.join(', '));
   } else {
     console.log('❌ Failed - Research data:', result.error);
   }
