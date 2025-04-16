@@ -210,8 +210,18 @@ Initiates AI research for a tree species by funding through an NFT.
 }
 ```
 
-The `chain` value must be one of: `base`, `celo`, `optimism`, `arbitrum`.
-The `scientific_name` should be the value from the `species` field.
+**Parameters:**
+- `taxon_id` (required): Unique identifier for the species
+- `wallet_address` (required): User's blockchain wallet address
+- `chain` (required): Blockchain chain to use for NFT minting - must be one of: `base`, `celo`, `optimism`, `arbitrum`
+- `transaction_hash` (required): Transaction hash from the funding transaction
+- `ipfs_cid` (required): IPFS CID for the NFT metadata (can be placeholder initially)
+- `scientific_name` (required): Value from `species_scientific_name` or `species` field
+
+**Error Responses:**
+- `400 Bad Request`: Missing required fields or invalid chain selection
+- `404 Not Found`: Species not found with provided taxon_id
+- `409 Conflict`: Species has already been researched
 
 **Response:**
 ```json
@@ -260,28 +270,62 @@ Retrieve research data for a specific species.
 ```json
 {
   "taxon_id": "string",
-  "conservation_status": "string",
-  "general_description": "string",
-  "habitat": "string",
-  "elevation_ranges": "string",
-  "compatible_soil_types": "string",
-  "ecological_function": "string",
-  "native_adapted_habitats": "string",
-  "agroforestry_use_cases": "string",
-  "growth_form": "string",
-  "leaf_type": "string",
-  "deciduous_evergreen": "string",
-  "flower_color": "string",
-  "fruit_type": "string",
-  "bark_characteristics": "string",
-  "maximum_height": "number",
-  "maximum_diameter": "number",
-  "lifespan": "string",
-  "maximum_tree_age": "number",
+  "species_scientific_name": "string",
+  /* researched field removed */
+  "conservation_status_ai": "string",
+  "conservation_status_human": "string",
+  "general_description_ai": "string",
+  "general_description_human": "string",
+  "habitat_ai": "string",
+  "habitat_human": "string",
+  "elevation_ranges_ai": "string",
+  "elevation_ranges_human": "string",
+  "compatible_soil_types_ai": "string",
+  "compatible_soil_types_human": "string",
+  "ecological_function_ai": "string",
+  "ecological_function_human": "string",
+  "native_adapted_habitats_ai": "string",
+  "native_adapted_habitats_human": "string",
+  "agroforestry_use_cases_ai": "string",
+  "agroforestry_use_cases_human": "string",
+  "growth_form_ai": "string",
+  "growth_form_human": "string",
+  "leaf_type_ai": "string",
+  "leaf_type_human": "string",
+  "deciduous_evergreen_ai": "string",
+  "deciduous_evergreen_human": "string",
+  "flower_color_ai": "string",
+  "flower_color_human": "string",
+  "fruit_type_ai": "string",
+  "fruit_type_human": "string",
+  "bark_characteristics_ai": "string",
+  "bark_characteristics_human": "string",
+  "maximum_height_ai": "number",
+  "maximum_height_human": "number",
+  "maximum_diameter_ai": "number",
+  "maximum_diameter_human": "number",
+  "lifespan_ai": "string",
+  "lifespan_human": "string",
+  "maximum_tree_age_ai": "number",
+  "maximum_tree_age_human": "number",
+  "stewardship_best_practices_ai": "string",
+  "stewardship_best_practices_human": "string",
+  "planting_recipes_ai": "string",
+  "planting_recipes_human": "string",
+  "pruning_maintenance_ai": "string",
+  "pruning_maintenance_human": "string",
+  "disease_pest_management_ai": "string",
+  "disease_pest_management_human": "string",
+  "fire_management_ai": "string",
+  "fire_management_human": "string",
+  "cultural_significance_ai": "string",
+  "cultural_significance_human": "string",
   "verification_status": "string",
   "ipfs_cid": "string"
 }
 ```
+
+**Note:** If a species has not been researched, this endpoint will return a 404 status code with a message indicating the species needs research.
 
 **Usage:** Display research results on the Species Page.
 

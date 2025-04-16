@@ -15,7 +15,8 @@ const apiClient = axios.create({
 // Define API endpoints based on new backend structure
 export interface APITreeSpecies {
   taxon_id: string;
-  species: string;
+  species: string; // Legacy field
+  species_scientific_name: string; // New field
   common_name: string;
   family: string;
   genus: string;
@@ -23,6 +24,7 @@ export interface APITreeSpecies {
   taxonomic_class: string;
   taxonomic_order: string;
   accepted_scientific_name?: string;
+  // researched field removed as it's no longer used
 }
 
 /**
@@ -37,7 +39,14 @@ export const searchTreeSpecies = async (query: string): Promise<APITreeSpecies[]
  * Get detailed information about a specific tree species by taxon_id
  */
 export const getSpeciesById = async (taxon_id: string): Promise<TreeSpecies> => {
-  const { data } = await apiClient.get(`/species/${taxon_id}`);
+  // Add cache busting parameter to avoid browser caching
+  const { data } = await apiClient.get(`/species/${taxon_id}?_=${Date.now()}`);
+  
+  // Ensure the researched flag is explicitly set as a boolean
+  if (data.researched === undefined || data.researched === null) {
+    data.researched = false;
+  }
+  
   return data;
 };
 
@@ -48,23 +57,59 @@ export const fundResearch = async (
   taxon_id: string, 
   wallet_address: string, 
   chain: string,
-  transaction_hash: string
+  transaction_hash: string,
+  ipfs_cid: string,
+  scientific_name: string
 ): Promise<ResearchData> => {
-  const { data } = await apiClient.post('/research/fund-research', {
-    taxon_id,
-    wallet_address,
-    chain,
-    transaction_hash
-  });
-  return data;
+  try {
+    const { data } = await apiClient.post('/research/fund-research', {
+      taxon_id,
+      wallet_address,
+      chain,
+      transaction_hash,
+      ipfs_cid,
+      scientific_name
+    });
+    return data;
+  } catch (error) {
+    console.error('Error funding research:', error);
+    if (axios.isAxiosError(error) && error.response?.status === 409) {
+      // If we get a 409 Conflict, it means the species is already researched
+      // Return a basic object indicating this to avoid showing an error
+      return {
+        taxon_id,
+        // No researched flag
+        message: 'This species has already been researched'
+      } as ResearchData;
+    }
+    throw error;
+  }
 };
 
 /**
  * Get research data for a specific species
  */
 export const getResearchData = async (taxon_id: string): Promise<ResearchData> => {
-  const { data } = await apiClient.get(`/research/research/${taxon_id}`);
-  return data;
+  try {
+    const { data } = await apiClient.get(`/research/research/${taxon_id}`);
+    console.log("Research data retrieved successfully");
+    return data;
+  } catch (error) {
+    // If we get a 404, it means research hasn't been done yet
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      console.log(`No research data available for taxon_id: ${taxon_id}`);
+      // Include more fields to make detection easier
+      return { 
+        taxon_id,
+        // No researched flag,
+        general_description_ai: null,
+        ecological_function_ai: null,
+        habitat_ai: null,
+      } as ResearchData; // Return basic stub with researched = false
+    }
+    // Re-throw other errors
+    throw error;
+  }
 };
 
 /**
@@ -100,7 +145,7 @@ export const updateUserProfile = async (wallet_address: string, display_name: st
  */
 export const getSpeciesSuggestions = async (
   query: string, 
-  field?: 'common_name' | 'species'
+  field?: 'common_name' | 'species' | 'species_scientific_name'
 ) => {
   if (!query || query.length < 2) return [];
   
@@ -133,17 +178,20 @@ export const getSpeciesSuggestions = async (
       {
         taxon_id: "48297",
         common_name: "Japanese Maple; Red Maple",
-        species: "Acer palmatum"
+        species: "Acer palmatum",
+        species_scientific_name: "Acer palmatum"
       },
       {
         taxon_id: "48298",
         common_name: "Sugar Maple; Rock Maple",
-        species: "Acer saccharum"
+        species: "Acer saccharum",
+        species_scientific_name: "Acer saccharum"
       },
       {
         taxon_id: "48299",
         common_name: "Bigleaf Maple; Oregon Maple",
-        species: "Acer macrophyllum"
+        species: "Acer macrophyllum",
+        species_scientific_name: "Acer macrophyllum"
       }
     ];
     
@@ -152,12 +200,14 @@ export const getSpeciesSuggestions = async (
       {
         taxon_id: "test-1",
         common_name: "Test Tree One",
-        species: "Testus treeicus"
+        species: "Testus treeicus",
+        species_scientific_name: "Testus treeicus"
       },
       {
         taxon_id: "test-2",
         common_name: "Test Tree Two",
-        species: "Testus arboreus" 
+        species: "Testus arboreus",
+        species_scientific_name: "Testus arboreus"
       }
     ];
     

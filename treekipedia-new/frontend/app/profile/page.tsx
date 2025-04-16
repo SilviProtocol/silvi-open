@@ -63,18 +63,18 @@ export default function ProfilePage() {
             <h1 className="text-3xl font-bold text-white mb-8">My Profile</h1>
 
             {!isConnected ? (
-              <div className="p-8 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-center text-white">
+              <div className="p-8 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-center text-white">
                 <p className="mb-4 text-lg">Connect your wallet to view your profile</p>
               </div>
             ) : isLoading ? (
-              <div className="p-8 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-center text-white">
+              <div className="p-8 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-center text-white">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
                 <p className="mt-4">Loading your profile...</p>
               </div>
             ) : (
               <div className="grid gap-6">
                 {/* Profile Card */}
-                <div className="p-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white">
+                <div className="p-6 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
                   <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
 
                   <div className="grid gap-4">
@@ -121,7 +121,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* NFT Collection Card - Placeholder */}
-                <div className="p-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white">
+                <div className="p-6 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
                   <h2 className="text-xl font-semibold mb-4">My Contreebution NFTs</h2>
                   {userProfile?.nfts && userProfile.nfts.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

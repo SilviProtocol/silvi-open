@@ -155,8 +155,7 @@ CREATE TABLE public.species (
     data_sources TEXT,
     ipfs_cid VARCHAR(300),
     
-    -- Research status
-    researched BOOLEAN DEFAULT FALSE,
+    -- Research status field removed
     
     -- Timestamps
     last_updated_date TIMESTAMP WITHOUT TIME ZONE,
@@ -170,7 +169,7 @@ CREATE TABLE public.species (
 COMMENT ON TABLE public.species IS 'Contains comprehensive tree species data with separate AI and human-verified fields';
 COMMENT ON COLUMN public.species.species IS 'Legacy field, kept for backward compatibility';
 COMMENT ON COLUMN public.species.species_scientific_name IS 'Scientific name of the species (replaces old species field)';
-COMMENT ON COLUMN public.species.researched IS 'Whether this species has been researched by AI';
+-- Removed comment for researched column
 
 -- Treederboard Tables
 -- Users Table
@@ -250,4 +249,4 @@ CREATE INDEX idx_species_taxon_id ON public.species(taxon_id);
 CREATE INDEX idx_species_common_name ON public.species(common_name);
 CREATE INDEX idx_species_species_scientific_name ON public.species(species_scientific_name);
 CREATE INDEX idx_species_accepted_scientific_name ON public.species(accepted_scientific_name);
-CREATE INDEX idx_species_researched ON public.species(researched);
+-- Removed researched index

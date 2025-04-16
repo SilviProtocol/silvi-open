@@ -50,6 +50,8 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Silvi brand colors
+        "silvi-mint": "hsl(var(--silvi-mint))",
         // Chart colors
         chart: {
           1: "hsl(var(--chart-1))",
@@ -65,7 +67,7 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)"],
+        sans: ["Montserrat", "var(--font-sans)", "sans-serif"],
         mono: ["var(--font-mono)"],
       },
     },

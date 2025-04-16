@@ -2,6 +2,21 @@
 
 This directory contains database scripts for Treekipedia, including schema updates, SQL migrations, and database utilities.
 
+## Recent Fixes
+
+### Researched Flag and Legacy Field Migration (2025-04-15)
+
+We've identified and fixed several issues with the database schema and field handling:
+
+1. **Issue:** Some species have legacy fields (e.g., `general_description`) with data but their corresponding AI fields (e.g., `general_description_ai`) are empty, causing the frontend to show "Awaiting research" even though research data exists.
+
+2. **Issue:** The `researched` flag is not being set correctly for species with research data, causing the frontend to show incorrect research status.
+
+3. **Fix Scripts:**
+   - **`fix_target_species.sql`** - Fixes the specific species that was reported as problematic.
+   - **`fix_all_researched_flags.sql`** - Sets researched=TRUE for all species with content.
+   - **`remove_legacy_fields.sql`** - (Optional) Migrates data from legacy fields to AI fields and removes legacy fields.
+
 ## Available Scripts
 
 ### SQL Scripts
@@ -10,6 +25,9 @@ This directory contains database scripts for Treekipedia, including schema updat
 - **update_varchar_fields.sql** - Updates all VARCHAR fields in the species table to VARCHAR(300).
 - **updated_species_schema.sql** - Reference schema showing the species table with updated VARCHAR(300) fields.
 - **schema_update.sql** - Major update to add AI/human field pairs, rename species field, and add researched flag.
+- **fix_target_species.sql** - Fixes researched flag for specific problematic species.
+- **fix_all_researched_flags.sql** - Updates researched flag for all species with content.
+- **remove_legacy_fields.sql** - Migrates data from legacy fields to AI fields and removes them.
 
 ### Shell Scripts
 

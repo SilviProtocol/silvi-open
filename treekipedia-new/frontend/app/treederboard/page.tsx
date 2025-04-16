@@ -1,34 +1,48 @@
-import { Navbar } from "@/components/navbar";
+"use client";
 
-// Sample data for the leaderboard
-const leaderboardData = [
-  { id: 1, rank: 1, username: "ForestGuardian", wallet: "0x71C...a3F2", score: 1250 },
-  { id: 2, rank: 2, username: "EcoWarrior", wallet: "0x89B...e7D4", score: 980 },
-  { id: 3, rank: 3, username: "GreenThumb", wallet: "0x45A...c8E1", score: 840 },
-  { id: 4, rank: 4, username: "TreeHugger", wallet: "0x32F...b9C5", score: 720 },
-  { id: 5, rank: 5, username: "EarthDefender", wallet: "0x67D...a1B8", score: 650 },
-  { id: 6, rank: 6, username: "PlantPioneer", wallet: "0x91C...d4E7", score: 580 },
-  { id: 7, rank: 7, username: "CarbonCrusader", wallet: "0x25E...f7G3", score: 510 },
-  { id: 8, rank: 8, username: "BiodiversityBuilder", wallet: "0x78H...j2K9", score: 470 },
-  { id: 9, rank: 9, username: "ReforestationRanger", wallet: "0x36L...m5N1", score: 420 },
-  { id: 10, rank: 10, username: "ClimateChampion", wallet: "0x59P...r8S6", score: 390 },
-  { id: 11, rank: 11, username: "SeedSpreader", wallet: "0x44T...k2R8", score: 355 },
-  { id: 12, rank: 12, username: "WildlifeWarden", wallet: "0x62U...s9V1", score: 320 },
-  { id: 13, rank: 13, username: "EcosystemEngineer", wallet: "0x73W...z4X7", score: 290 },
-  { id: 14, rank: 14, username: "GreenhouseGuru", wallet: "0x81Y...a6Z3", score: 265 },
-  { id: 15, rank: 15, username: "RainforestRevivalist", wallet: "0x19B...c8D5", score: 240 },
-  { id: 16, rank: 16, username: "BotanicalExplorer", wallet: "0x27F...e0G9", score: 215 },
-  { id: 17, rank: 17, username: "PollutionPreventer", wallet: "0x35H...g2J4", score: 190 },
-  { id: 18, rank: 18, username: "OxygenOptimizer", wallet: "0x53K...i4L6", score: 165 },
-  { id: 19, rank: 19, username: "ArborealAdvocate", wallet: "0x71M...k6N2", score: 140 },
-  { id: 20, rank: 20, username: "SustainabilitySteward", wallet: "0x89P...m8Q7", score: 115 },
-];
+import { useState, useEffect } from "react";
+import { Navbar } from "@/components/navbar";
+import { getTreederboard } from "@/lib/api";
+import { Loader2, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { formatAddress } from "@/lib/utils";
+
+// Types for Treederboard data
+interface TreederboardUser {
+  id: number;
+  wallet_address: string;
+  display_name?: string;
+  total_points: number;
+  contribution_count: number;
+  first_contribution_at?: string;
+  last_contribution_at?: string;
+}
 
 export default function TreederboardPage() {
+  const [leaderboard, setLeaderboard] = useState<TreederboardUser[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchLeaderboard() {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await getTreederboard(50); // Get top 50 users
+        setLeaderboard(data);
+      } catch (err) {
+        console.error("Failed to fetch leaderboard:", err);
+        setError("Failed to load the Treederboard. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchLeaderboard();
+  }, []);
+
   return (
     <main className="min-h-screen text-white">
-      {/* Remove background overlay */}
-      
       <Navbar />
       <div className="relative min-h-screen flex flex-col z-10">
         {/* Modern header section */}
@@ -39,105 +53,155 @@ export default function TreederboardPage() {
               <div className="absolute -bottom-2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></div>
             </h1>
             <div className="mb-2">
-              <p className="text-gray-300 max-w-3xl mx-auto text-lg opacity-80 font-light">
-                This leaderboard showcases our top contributors. Rankings are based on the score earned for Research funding and social media shares.
+              <p className="text-silvi-mint max-w-3xl mx-auto text-lg opacity-80 font-light">
+                This leaderboard showcases our top contributors. Rankings are based on the points earned for research funding and tree stewardship.
               </p>
             </div>
           </div>
         </div>
         
-        {/* Leaderboard section - similar to search results in species page */}
+        {/* Leaderboard section */}
         <div className="flex-1 mx-auto w-full max-w-6xl px-4 mb-6 -mt-2">
           <div className="mb-2">
-            <h2 className="text-xl font-semibold text-white sticky top-0">
+            <h2 className="text-xl font-semibold text-silvi-mint sticky top-0">
               Top Contreebutors
-              <span className="ml-2 bg-green-600/80 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+              <span className="ml-2 bg-emerald-600/80 text-silvi-mint text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
                 LIVE RANKINGS
               </span>
             </h2>
             
-            {/* CTA section moved to top of table */}
-            <div className="mt-3 mb-3 p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-              <div className="flex items-center justify-between">
-                <p className="text-gray-300 text-sm pl-2 pr-4">
+            {/* CTA section */}
+            <div className="mt-3 mb-3 p-3 rounded-xl bg-black/30 backdrop-blur-md border border-white/20">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <p className="text-silvi-mint text-sm pl-2 pr-4">
                   Join our community efforts to see your name on the Treederboard!
                 </p>
-                <div className="flex space-x-4">
-                  {/* Neomorphic Fund Research button */}
-                  <button className="bg-emerald-800/30 text-emerald-300 font-medium py-2 px-5 rounded-lg
-                    transition-all duration-300 shadow-[inset_-2px_-2px_5px_rgba(0,0,0,0.2),inset_2px_2px_5px_rgba(255,255,255,0.1)]
-                    hover:shadow-[inset_-1px_-1px_3px_rgba(0,0,0,0.2),inset_1px_1px_3px_rgba(255,255,255,0.1)]
-                    active:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.3),inset_-2px_-2px_5px_rgba(255,255,255,0.1)]
-                    active:translate-y-[1px]">
+                <div className="flex flex-wrap gap-4">
+                  <Link 
+                    href="/search"
+                    className="bg-emerald-800/30 text-emerald-300 font-medium py-2 px-5 rounded-lg
+                      transition-all duration-300 shadow-[inset_-2px_-2px_5px_rgba(0,0,0,0.2),inset_2px_2px_5px_rgba(255,255,255,0.1)]
+                      hover:shadow-[inset_-1px_-1px_3px_rgba(0,0,0,0.2),inset_1px_1px_3px_rgba(255,255,255,0.1)]
+                      active:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.3),inset_-2px_-2px_5px_rgba(255,255,255,0.1)]
+                      active:translate-y-[1px]"
+                  >
                     Fund Research
-                  </button>
+                  </Link>
                   
-                  {/* Neomorphic Share on X button */}
-                  <button className="bg-zinc-800/40 text-white font-medium py-2 px-5 rounded-lg
-                    transition-all duration-300 shadow-[inset_-2px_-2px_5px_rgba(0,0,0,0.2),inset_2px_2px_5px_rgba(255,255,255,0.1)]
-                    hover:shadow-[inset_-1px_-1px_3px_rgba(0,0,0,0.2),inset_1px_1px_3px_rgba(255,255,255,0.1)]
-                    active:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.3),inset_-2px_-2px_5px_rgba(255,255,255,0.1)]
-                    active:translate-y-[1px]
-                    flex items-center">
+                  <a 
+                    href="https://twitter.com/intent/tweet?text=I'm%20helping%20to%20build%20the%20tree%20knowledge%20commons%20on%20Treekipedia!%20Check%20it%20out%20at%20https://treekipedia.silvi.earth"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-zinc-800/40 text-silvi-mint font-medium py-2 px-5 rounded-lg
+                      transition-all duration-300 shadow-[inset_-2px_-2px_5px_rgba(0,0,0,0.2),inset_2px_2px_5px_rgba(255,255,255,0.1)]
+                      hover:shadow-[inset_-1px_-1px_3px_rgba(0,0,0,0.2),inset_1px_1px_3px_rgba(255,255,255,0.1)]
+                      active:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.3),inset_-2px_-2px_5px_rgba(255,255,255,0.1)]
+                      active:translate-y-[1px]
+                      flex items-center"
+                  >
                     Share on <span className="ml-1 font-bold">𝕏</span>
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
           </div>
-          <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 overflow-auto max-h-[432px]">
-            <table className="min-w-full divide-y divide-white/10">
-              <thead className="bg-white/5">
-                <tr>
-                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider w-16">
-                    Rank
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    User
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Wallet
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-300 uppercase tracking-wider w-24">
-                    Score
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
-                {leaderboardData.map((entry) => (
-                  <tr 
-                    key={entry.id} 
-                    className={`hover:bg-white/10 transition-colors ${
-                      entry.rank === 1 ? "border-l-4 border-yellow-500" : 
-                      entry.rank === 2 ? "border-l-4 border-gray-400" : 
-                      entry.rank === 3 ? "border-l-4 border-amber-700" : ""
-                    }`}
-                  >
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      <div className={`text-base font-bold ${
-                        entry.rank === 1 ? "text-yellow-500" : 
-                        entry.rank === 2 ? "text-gray-400" : 
-                        entry.rank === 3 ? "text-amber-700" : "text-gray-400"
-                      }`}>
-                        {entry.rank}
-                      </div>
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      <div className="text-sm font-medium text-white">{entry.username}</div>
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      <div className="inline-flex items-center px-2.5 py-1 rounded-md bg-white/10 backdrop-blur-sm text-xs font-medium text-gray-300">
-                        {entry.wallet}
-                      </div>
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      <div className="text-base font-bold text-green-400">{entry.score}</div>
-                    </td>
+
+          {/* Loading state */}
+          {isLoading && (
+            <div className="flex flex-col items-center justify-center p-12 text-silvi-mint">
+              <Loader2 className="h-12 w-12 animate-spin mb-4" />
+              <p>Loading Treederboard data...</p>
+            </div>
+          )}
+
+          {/* Error state */}
+          {error && !isLoading && (
+            <div className="p-6 rounded-xl bg-black/30 backdrop-blur-md border border-red-500/30 text-center">
+              <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-4" />
+              <p className="text-silvi-mint">{error}</p>
+              <button 
+                onClick={() => window.location.reload()}
+                className="mt-4 px-4 py-2 bg-black/30 border border-white/20 rounded-lg text-silvi-mint hover:bg-black/50"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {/* Data table */}
+          {!isLoading && !error && (
+            <div className="p-3 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 overflow-auto max-h-[432px]">
+              <table className="min-w-full divide-y divide-white/10">
+                <thead className="bg-white/5">
+                  <tr>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-silvi-mint uppercase tracking-wider w-16">
+                      Rank
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-silvi-mint uppercase tracking-wider">
+                      User
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-silvi-mint uppercase tracking-wider">
+                      Wallet
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-silvi-mint uppercase tracking-wider w-28">
+                      Points
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-silvi-mint uppercase tracking-wider w-28">
+                      Trees
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-white/10">
+                  {leaderboard.map((user, index) => (
+                    <tr 
+                      key={user.id} 
+                      className={`hover:bg-white/10 transition-colors ${
+                        index === 0 ? "border-l-4 border-yellow-500" : 
+                        index === 1 ? "border-l-4 border-gray-400" : 
+                        index === 2 ? "border-l-4 border-amber-700" : ""
+                      }`}
+                    >
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className={`text-base font-bold ${
+                          index === 0 ? "text-yellow-500" : 
+                          index === 1 ? "text-gray-400" : 
+                          index === 2 ? "text-amber-700" : "text-gray-400"
+                        }`}>
+                          {index + 1}
+                        </div>
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="text-sm font-medium text-silvi-mint">
+                          {user.display_name || `Tree Steward #${user.id}`}
+                        </div>
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="inline-flex items-center px-2.5 py-1 rounded-md bg-black/40 backdrop-blur-sm text-xs font-medium text-silvi-mint/80">
+                          <Link href={`/profile?address=${user.wallet_address}`}>
+                            {formatAddress(user.wallet_address)}
+                          </Link>
+                        </div>
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="text-base font-bold text-emerald-300">{user.total_points}</div>
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="text-base text-silvi-mint">{user.contribution_count}</div>
+                      </td>
+                    </tr>
+                  ))}
+
+                  {leaderboard.length === 0 && !isLoading && (
+                    <tr>
+                      <td colSpan={5} className="px-3 py-8 text-center text-silvi-mint/70">
+                        No contributions yet. Be the first to fund research and join the Treederboard!
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </main>

@@ -44,13 +44,18 @@ export function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-md border-b border-white/20 shadow-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-md border-b border-silvi-mint/20 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            {/* Text Logo */}
+            {/* Image Logo */}
             <Link href="/" className="flex items-center z-10">
-              <span className="text-white font-bold text-xl">Treekipedia</span>
+              <img 
+                src="/treekipedialogo.svg" 
+                alt="Treekipedia" 
+                className="h-8 text-silvi-mint filter brightness-100 saturate-0"
+                style={{ filter: 'brightness(0) saturate(100%) invert(98%) sepia(5%) saturate(401%) hue-rotate(53deg) brightness(103%) contrast(94%)' }}
+              />
             </Link>
             
             {/* Desktop Navigation */}
@@ -60,8 +65,8 @@ export function Navbar() {
                   key={route.href}
                   href={route.href}
                   className={cn(
-                    "text-white hover:text-green-300 font-medium transition-colors",
-                    route.active && "text-green-300"
+                    "text-silvi-mint hover:text-emerald-300 font-medium transition-colors",
+                    route.active && "text-emerald-300"
                   )}
                 >
                   {route.label}
@@ -121,8 +126,8 @@ export function Navbar() {
               key={route.href}
               href={route.href} 
               className={cn(
-                "text-white py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-lg flex items-center",
-                route.active && "bg-white/5 border-l-2 border-green-500 pl-3"
+                "text-silvi-mint py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-lg flex items-center",
+                route.active && "bg-white/5 border-l-2 border-emerald-300 pl-3"
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
@@ -134,8 +139,8 @@ export function Navbar() {
             <Link 
               href="/profile" 
               className={cn(
-                "text-white py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-lg flex items-center",
-                pathname === "/profile" && "bg-white/5 border-l-2 border-green-500 pl-3"
+                "text-silvi-mint py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-lg flex items-center",
+                pathname === "/profile" && "bg-white/5 border-l-2 border-emerald-300 pl-3"
               )}
               onClick={() => setMobileMenuOpen(false)}
             >

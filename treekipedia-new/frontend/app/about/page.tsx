@@ -12,7 +12,7 @@ export default function AboutPage() {
             <h1 className="text-3xl font-bold text-white mb-8">About Treekipedia</h1>
 
             <div className="grid gap-6">
-              <div className="p-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white">
+              <div className="p-6 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
                 <h2 className="text-xl font-semibold mb-4">Our Mission</h2>
                 <p className="mb-4">
                   Treekipedia is dedicated to creating the world&apos;s most comprehensive, accessible database of tree species information. 
@@ -24,7 +24,7 @@ export default function AboutPage() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white">
+              <div className="p-6 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
                 <h2 className="text-xl font-semibold mb-4">How It Works</h2>
                 <div className="grid gap-4">
                   <div className="p-4 rounded-lg bg-black/30 border border-white/10">
@@ -57,7 +57,7 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              <div className="p-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white">
+              <div className="p-6 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
                 <h2 className="text-xl font-semibold mb-4">Blockchain Integration</h2>
                 <p className="mb-4">
                   Treekipedia leverages blockchain technology in several innovative ways:

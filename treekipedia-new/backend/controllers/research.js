@@ -42,23 +42,55 @@ module.exports = (pool) => {
       }
 
       // Get species information
-      console.log("Querying species information for taxon_id:", taxon_id);
+      console.log("Querying species information for taxon_id:", taxon_id, "Type:", typeof taxon_id);
+      
+      // Validate taxon_id to ensure it's properly formatted
+      if (!taxon_id || typeof taxon_id !== 'string') {
+        console.error("Invalid taxon_id format:", taxon_id);
+        return res.status(400).json({ error: 'Invalid taxon_id format', received: taxon_id });
+      }
+      
+      // Logging additional debug info about the request
+      console.log("REQUEST BODY:", req.body);
+      console.log("HEADERS:", req.headers);
+      
       const speciesQuery = `
         SELECT taxon_id, species, species_scientific_name, common_name, accepted_scientific_name 
         FROM species 
         WHERE taxon_id = $1
       `;
+      
+      // Execute the query with enhanced logging
       let speciesResult;
       try {
+        console.log("Executing SQL query with params:", [taxon_id]);
         speciesResult = await pool.query(speciesQuery, [taxon_id]);
+        console.log("Query result rows:", speciesResult.rows.length);
         console.log("Query result:", speciesResult.rows);
+        
+        // Additional check - if rows are empty, try to find by a more flexible search
+        if (speciesResult.rows.length === 0) {
+          console.log("No results found for exact taxon_id match. Trying to run diagnostic query...");
+          
+          // Run a diagnostic query to see if the taxon_id exists in different format
+          const diagnosticQuery = `
+            SELECT taxon_id, species_scientific_name
+            FROM species
+            WHERE taxon_id LIKE $1
+            LIMIT 5
+          `;
+          const diagnosticResult = await pool.query(diagnosticQuery, [`%${taxon_id}%`]);
+          console.log("Diagnostic query found similar taxon_ids:", diagnosticResult.rows);
+        }
+        
       } catch (queryError) {
         console.error("Error in species query:", queryError);
         throw queryError;
       }
       
       if (speciesResult.rows.length === 0) {
-        return res.status(404).json({ error: 'Species not found' });
+        console.error("Species not found for taxon_id:", taxon_id);
+        return res.status(404).json({ error: 'Species not found', taxon_id: taxon_id });
       }
       
       const speciesData = speciesResult.rows[0];
@@ -77,12 +109,39 @@ module.exports = (pool) => {
         wallet_address
       );
       
+      // IMPORTANT: Explicitly log the research data to verify it's formatting
+      console.log(`Research complete. Result taxon_id: ${researchData.taxon_id}`);
+      console.log(`Research data researched flag: ${researchData.researched}`);
+      console.log('Research data field sample:', {
+        general_description_ai: researchData.general_description_ai ? researchData.general_description_ai.substring(0, 50) + '...' : 'null',
+        stewardship_best_practices_ai: researchData.stewardship_best_practices_ai ? researchData.stewardship_best_practices_ai.substring(0, 50) + '...' : 'null'
+      });
+      
+      // CRITICAL: Force the researched flag to be set to true
+      if (!researchData.researched) {
+        console.log('WARNING: researched flag not set in researchData, explicitly setting it to TRUE');
+        researchData.researched = true;
+      }
+      
       // Step 2: Upload research data to IPFS
       console.log('Uploading research data to IPFS');
       const ipfsCid = await uploadToIPFS(researchData);
       
       // Step 3: Update species table with research data (using the new AI fields)
       console.log('Updating species table with research data');
+      
+      // Add detailed debug logging for specific fields
+      console.log('RESEARCH DATA FIELD VALUES:');
+      console.log(`agroforestry_use_cases_ai: ${researchData.agroforestry_use_cases_ai ? 'PRESENT' : 'NULL'}`);
+      console.log(`stewardship_best_practices_ai: ${researchData.stewardship_best_practices_ai ? 'PRESENT' : 'NULL'}`);
+      
+      // Check if taxon_id matches what's expected
+      if (researchData.taxon_id !== taxon_id) {
+        console.error(`WARNING: researchData.taxon_id (${researchData.taxon_id}) doesn't match request taxon_id (${taxon_id})`);
+        // Ensure we're using the correct one
+        console.log('Forcing correct taxon_id for database update');
+        researchData.taxon_id = taxon_id;
+      }
       const updateQuery = `
         UPDATE species
         SET 
@@ -101,10 +160,10 @@ module.exports = (pool) => {
           flower_color_ai = $13,
           fruit_type_ai = $14,
           bark_characteristics_ai = $15,
-          maximum_height_ai = $16,
-          maximum_diameter_ai = $17,
+          maximum_height_ai = NULLIF($16, '')::NUMERIC,
+          maximum_diameter_ai = NULLIF($17, '')::NUMERIC,
           lifespan_ai = $18,
-          maximum_tree_age_ai = $19,
+          maximum_tree_age_ai = NULLIF($19, '')::INTEGER,
           stewardship_best_practices_ai = $20,
           planting_recipes_ai = $21,
           pruning_maintenance_ai = $22,
@@ -113,7 +172,7 @@ module.exports = (pool) => {
           cultural_significance_ai = $25,
           verification_status = 'unverified',
           ipfs_cid = $26,
-          researched = TRUE,
+          researched = TRUE,  /* Set researched flag to TRUE */
           updated_at = CURRENT_TIMESTAMP
         WHERE taxon_id = $27
         RETURNING *
@@ -150,6 +209,78 @@ module.exports = (pool) => {
       ];
       
       const updateResult = await pool.query(updateQuery, updateValues);
+      
+      // Verify the update worked correctly
+      if (updateResult.rowCount === 0) {
+        console.error(`ERROR: Database update failed - no rows matched taxon_id=${taxon_id}`);
+        throw new Error(`Species update failed: No matching record found with taxon_id=${taxon_id}`);
+      } else {
+        console.log(`SUCCESS: Species with taxon_id=${taxon_id} updated with AI research data fields`);
+        
+        // MIGRATION FIX: Check if any of the AI fields are still empty but legacy fields have data
+        // This helps fix existing records where data might be in the wrong field
+        const migrationCheck = await pool.query(`
+          SELECT * FROM species WHERE taxon_id = $1
+        `, [taxon_id]);
+        
+        if (migrationCheck.rows.length > 0) {
+          const speciesRecord = migrationCheck.rows[0];
+          const fieldUpdates = [];
+          const fieldParams = [];
+          let paramCounter = 1;
+          
+          // Check each legacy field and corresponding _ai field
+          const fieldMappings = [
+            ['general_description', 'general_description_ai'],
+            ['habitat', 'habitat_ai'],
+            ['elevation_ranges', 'elevation_ranges_ai'],
+            ['compatible_soil_types', 'compatible_soil_types_ai'],
+            ['ecological_function', 'ecological_function_ai'],
+            ['native_adapted_habitats', 'native_adapted_habitats_ai'],
+            ['agroforestry_use_cases', 'agroforestry_use_cases_ai'],
+            ['growth_form', 'growth_form_ai'],
+            ['leaf_type', 'leaf_type_ai'],
+            ['deciduous_evergreen', 'deciduous_evergreen_ai'],
+            ['flower_color', 'flower_color_ai'],
+            ['fruit_type', 'fruit_type_ai'],
+            ['bark_characteristics', 'bark_characteristics_ai'],
+            ['stewardship_best_practices', 'stewardship_best_practices_ai'],
+            ['planting_recipes', 'planting_recipes_ai'],
+            ['pruning_maintenance', 'pruning_maintenance_ai'],
+            ['disease_pest_management', 'disease_pest_management_ai'],
+            ['fire_management', 'fire_management_ai'],
+            ['cultural_significance', 'cultural_significance_ai'],
+            ['conservation_status', 'conservation_status_ai']
+          ];
+          
+          // Build SQL update for each field that needs migration
+          for (const [baseField, aiField] of fieldMappings) {
+            if (speciesRecord[baseField] && 
+                (!speciesRecord[aiField] || speciesRecord[aiField] === '')) {
+              console.log(`Migrating data from ${baseField} to ${aiField}`);
+              fieldUpdates.push(`${aiField} = $${paramCounter}`);
+              fieldParams.push(speciesRecord[baseField]);
+              paramCounter++;
+            }
+          }
+          
+          // If we found fields to update, run the migration
+          if (fieldUpdates.length > 0) {
+            // Add taxon_id as the last parameter
+            fieldParams.push(taxon_id);
+            
+            const migrationQuery = `
+              UPDATE species
+              SET ${fieldUpdates.join(', ')}
+              WHERE taxon_id = $${paramCounter}
+            `;
+            
+            console.log(`Running migration for ${fieldUpdates.length} fields`);
+            const migrationResult = await pool.query(migrationQuery, fieldParams);
+            console.log(`Migration complete: ${migrationResult.rowCount} row updated`);
+          }
+        }
+      }
       
       // Step 4: Create EAS attestation
       console.log(`Creating EAS attestation on ${chain}`);
@@ -201,6 +332,9 @@ module.exports = (pool) => {
         transaction_hash,
         JSON.stringify(prelimMetadata)
       ];
+      
+      // The researched flag is still being set in the UPDATE query above to TRUE
+      console.log(`NOTE: Researched flag for taxon_id=${taxon_id} is being set to TRUE in the main update query`)
       
       // Begin transaction to allow rollback if needed
       const client = await pool.connect();
@@ -359,6 +493,7 @@ module.exports = (pool) => {
         SELECT 
           taxon_id,
           species_scientific_name,
+          researched,
           conservation_status_ai,
           conservation_status_human,
           general_description_ai,
@@ -408,7 +543,6 @@ module.exports = (pool) => {
           cultural_significance_ai,
           cultural_significance_human,
           verification_status,
-          researched,
           ipfs_cid
         FROM species 
         WHERE taxon_id = $1
@@ -422,13 +556,24 @@ module.exports = (pool) => {
       
       // Check if the species has research data
       const species = result.rows[0];
-      if (!species.researched) {
+      // Check if ANY AI research field is populated
+      const hasAnyResearchData = Object.keys(species).some(key => 
+        key.endsWith('_ai') && 
+        species[key] !== null && 
+        species[key] !== undefined
+      );
+      
+      if (!hasAnyResearchData) {
         return res.status(404).json({ 
           error: 'No research data available for this species',
           species_exists: true,
           taxon_id: taxon_id
         });
       }
+      
+      // Ensure researched is explicitly true and log a confirmation
+      species.researched = true;
+      console.log(`GET /research/${req.params.taxon_id} - Returning research data with researched=true`);
       
       res.json(species);
     } catch (error) {

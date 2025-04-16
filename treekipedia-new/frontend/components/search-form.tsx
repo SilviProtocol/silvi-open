@@ -13,11 +13,16 @@ import { useQuery } from "@tanstack/react-query";
 interface Suggestion {
   taxon_id: string;
   common_name: string;
-  species: string; // Primary scientific name field to use
+  species: string; // Legacy scientific name field
+  species_scientific_name?: string; // New scientific name field
   accepted_scientific_name?: string; // Not used in our UI
 }
 
-export function SearchForm() {
+interface SearchFormProps {
+  placeholder?: string;
+}
+
+export function SearchForm({ placeholder = "Search for trees..." }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
@@ -183,10 +188,12 @@ export function SearchForm() {
     return item.common_name.toLowerCase().includes(query.toLowerCase());
   });
   
-  // Use species field as primary scientific name
-  const scientificNameMatches = validSuggestions.filter(item => 
-    item?.species?.toLowerCase().includes(query.toLowerCase())
-  );
+  // Use species_scientific_name field as primary scientific name with fallback to species
+  const scientificNameMatches = validSuggestions.filter(item => {
+    // First check the new field, then fall back to the legacy field
+    const scientificName = item?.species_scientific_name || item?.species;
+    return scientificName?.toLowerCase().includes(query.toLowerCase());
+  });
 
   // Update URL with search query
   useEffect(() => {
@@ -229,7 +236,7 @@ export function SearchForm() {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search for any tree species..."
+              placeholder={placeholder}
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
@@ -249,7 +256,7 @@ export function SearchForm() {
                   }
                 }, 200);
               }}
-              className="w-full flex-grow px-6 py-4 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white placeholder-white/70 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+              className="w-full flex-grow px-6 py-4 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-silvi-mint placeholder-silvi-mint/70 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
             />
             <button 
               type="submit"
@@ -330,7 +337,7 @@ export function SearchForm() {
                                 
                                 {/* Scientific name */}
                                 <div className="text-xs text-white/70 italic mt-1">
-                                  {suggestion.species}
+                                  {suggestion.species_scientific_name || suggestion.species}
                                 </div>
                                 
                                 {/* Expanded view of all common names */}
