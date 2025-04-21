@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { TreeSpecies } from "@/lib/types";
 import { useResearchProcess } from "../hooks/useResearchProcess";
+import { SponsorshipButton } from "@/components/sponsorship-button";
 
 interface ResearchCardProps {
   species: TreeSpecies;
@@ -115,17 +116,12 @@ export function ResearchCard({
             </div>
           )}
 
-          <Button
+          <SponsorshipButton
+            taxonId={taxonId}
+            speciesName={species?.species_scientific_name || species?.species || ''}
+            onSponsorshipComplete={refetchResearch}
             className="w-full bg-emerald-600 hover:bg-emerald-700"
-            onClick={startResearch}
-            disabled={isResearching || !address}
-          >
-            {!address
-              ? "Connect Wallet to Fund"
-              : isResearching
-              ? "Processing Research..."
-              : "Fund Research ($3)"}
-          </Button>
+          />
         </div>
       )}
 
