@@ -1,0 +1,13 @@
+{
+  "name": "Size Test",
+  "description": "Testing IPFS size limits",
+  "test_id": "1745128135902",
+  "stewardship_best_practices": "Test stewardship practices - this is the field we want to ensure is included",
+  "planting_recipes": "Test planting recipes",
+  "research_metadata": {
+    "test": true,
+    "timestamp": "2025-04-20T05:48:55.902Z"
+  },
+  "field_0": "CUoADwehzJ2zCbbuN1eX01AI2Dv9fuzucLwAnsyYpPfIwTfqDWNyMIUXlIBHRAkijyYcaw2NToxo2rnRgtfwmFPFFo1R0tAGGbAeqCKLeu2TDN5xwI3OO7aECZufjoRa8FqurGRimRkMntjCEVnNAhgGmdHoQnDKawBYUUwiGd0uIuxfFFd29VeRvXgJsMEUXjDEIIOoje66in32dW2uKLsj2wLrYRhyialwZMCoBhPruoGdGBVVg1lG6Q73blJOh47E60M2Hq1nXi5bOf4AyY2lekyvBPKG7FrE7HVn8ZIXKWTLqvp6TG2UvnYq5SLvHaqJ2qrqrW4ORf6715qFVI4ftcsIntVu3ZIbJ5OU5n0qkv0DBBr3cYemessPrDnO0NIkVU45V6rEXXpGNicuAbTjWmopimRMam0pCBdmd1vjzd5TUWT7XQ0bDEqd0zucBFpVtrQ65ONSOus9Ar4orLB8ZSnH6q2THP0VuUeT0LSzuxXxXopk",
+  "field_1": "5D9Iw9UGoYmWVI0PuLhO3Sxk2K91XRkbTC0WfemTPNgyII6lo8ftyhE0EPc5XwRfRFsDex4tWCSzYd8lmvsjTG9ODxYDqHgII0TrSE6cUIEn1lUm64AYygo136ET5Nfg47kEwoqPIO4YURD51L0L2odym0rfLYShG4lQghoq9QUQGxIf"
+}
