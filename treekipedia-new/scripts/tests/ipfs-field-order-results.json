@@ -1,0 +1,17 @@
+{
+  "early": {
+    "success": true,
+    "stewardshipPresent": true,
+    "fieldsLost": []
+  },
+  "late": {
+    "success": true,
+    "stewardshipPresent": true,
+    "fieldsLost": []
+  },
+  "many": {
+    "success": true,
+    "stewardshipPresent": true,
+    "fieldsLost": []
+  }
+}

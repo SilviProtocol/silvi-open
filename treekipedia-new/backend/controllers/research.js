@@ -1,7 +1,7 @@
 const express = require('express');
 const { ethers } = require('ethers');
 const { performAIResearch } = require('../services/aiResearch');
-const { uploadToIPFS } = require('../services/ipfs');
+const { uploadToIPFS, getFromIPFS } = require('../services/ipfs');
 const { createAttestation, mintNFT } = require('../services/blockchain');
 const { v4: uuidv4 } = require('uuid');
 
@@ -25,10 +25,10 @@ module.exports = (pool) => {
       const { taxon_id, wallet_address, chain, transaction_hash, ipfs_cid, scientific_name } = req.body;
       
       // Validate required fields
-      if (!taxon_id || !wallet_address || !chain || !transaction_hash || !ipfs_cid || !scientific_name) {
+      if (!taxon_id || !wallet_address || !chain || !transaction_hash) {
         return res.status(400).json({ 
           error: 'Missing required fields', 
-          required: ['taxon_id', 'wallet_address', 'chain', 'transaction_hash', 'ipfs_cid', 'scientific_name'] 
+          required: ['taxon_id', 'wallet_address', 'chain', 'transaction_hash'] 
         });
       }
 
@@ -123,11 +123,7 @@ module.exports = (pool) => {
         researchData.researched = true;
       }
       
-      // Step 2: Upload research data to IPFS
-      console.log('Uploading research data to IPFS');
-      const ipfsCid = await uploadToIPFS(researchData);
-      
-      // Step 3: Update species table with research data (using the new AI fields)
+      // Step 2: Update species table with research data (using the new AI fields)
       console.log('Updating species table with research data');
       
       // Add detailed debug logging for specific fields
@@ -142,6 +138,7 @@ module.exports = (pool) => {
         console.log('Forcing correct taxon_id for database update');
         researchData.taxon_id = taxon_id;
       }
+      
       const updateQuery = `
         UPDATE species
         SET 
@@ -171,10 +168,9 @@ module.exports = (pool) => {
           fire_management_ai = $24,
           cultural_significance_ai = $25,
           verification_status = 'unverified',
-          ipfs_cid = $26,
           researched = TRUE,  /* Set researched flag to TRUE */
           updated_at = CURRENT_TIMESTAMP
-        WHERE taxon_id = $27
+        WHERE taxon_id = $26
         RETURNING *
       `;
       
@@ -204,7 +200,6 @@ module.exports = (pool) => {
         researchData.disease_pest_management_ai,
         researchData.fire_management_ai,
         researchData.cultural_significance_ai,
-        ipfsCid,
         taxon_id
       ];
       
@@ -282,65 +277,43 @@ module.exports = (pool) => {
         }
       }
       
-      // Step 4: Create EAS attestation
-      console.log(`Creating EAS attestation on ${chain}`);
-      
-      // For now, we'll always use ZeroHash for refUID (blank/initial reference)
-      // In the future, we can implement linking to previous attestations
-      console.log('Using ZeroHash for refUID (initial attestation)');
-      
-      const attestationData = {
-        species: scientific_name || scientificName, // Use provided scientific_name or fallback to DB value
-        researcher: wallet_address,
-        ipfsCid: ipfs_cid || ipfsCid, // Use provided ipfs_cid or fallback to generated one
-        taxonId: taxon_id,
-        refUID: ethers.ZeroHash // Always use ZeroHash for now
-      };
-      
-      console.log('Attestation data prepared:', attestationData);
-      
-      const attestationUID = await createAttestation(chain, attestationData);
-      
-      // Step 5: First insert record to get a global_id from the sequence
-      console.log('Storing NFT data in database to get global_id');
-      const insertQuery = `
-        INSERT INTO contreebution_nfts (
-          taxon_id, 
-          wallet_address, 
-          points, 
-          ipfs_cid, 
-          transaction_hash, 
-          metadata
-        )
-        VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING *
-      `;
-      
-      const prelimMetadata = {
-        species: scientificName,
-        chain: chain,
-        attestation_uid: attestationUID,
-        research_date: new Date().toISOString(),
-        minting_status: 'pending'
-      };
-      
-      const initialValues = [
-        taxon_id,
-        wallet_address,
-        2, // Default points
-        ipfsCid,
-        transaction_hash,
-        JSON.stringify(prelimMetadata)
-      ];
-      
-      // The researched flag is still being set in the UPDATE query above to TRUE
-      console.log(`NOTE: Researched flag for taxon_id=${taxon_id} is being set to TRUE in the main update query`)
-      
       // Begin transaction to allow rollback if needed
       const client = await pool.connect();
       
       try {
         await client.query('BEGIN');
+        
+        // Step 3: First insert record to get a global_id from the sequence
+        console.log('Storing preliminary NFT data in database to get global_id');
+        const insertQuery = `
+          INSERT INTO contreebution_nfts (
+            taxon_id, 
+            wallet_address, 
+            points, 
+            ipfs_cid, 
+            transaction_hash, 
+            metadata
+          )
+          VALUES ($1, $2, $3, $4, $5, $6)
+          RETURNING *
+        `;
+        
+        // Use empty string as placeholder for ipfs_cid - will update later
+        const prelimMetadata = {
+          species: scientificName,
+          chain: chain,
+          research_date: new Date().toISOString(),
+          minting_status: 'pending'
+        };
+        
+        const initialValues = [
+          taxon_id,
+          wallet_address,
+          2, // Default points
+          '', // Empty placeholder for ipfs_cid
+          transaction_hash,
+          JSON.stringify(prelimMetadata)
+        ];
         
         // Insert record to get global_id
         const insertResult = await client.query(insertQuery, initialValues);
@@ -349,9 +322,248 @@ module.exports = (pool) => {
         
         console.log(`Generated global_id: ${globalId} for NFT minting`);
         
-        // Step 6: Mint NFT using the global_id as tokenId
+        // Step 4: Now that we have the global_id, format metadata and upload to IPFS
+        console.log('Formatting metadata for NFT standards');
+        
+        // DETAILED DEBUG: Log ALL keys in the researchData object
+        console.log('FULL RESEARCH DATA KEYS:', Object.keys(researchData).join(', '));
+        
+        // Log the presence and values of stewardship fields
+        console.log('STEWARDSHIP FIELDS DETAILED CHECK:');
+        console.log('- stewardship_best_practices_ai:', 
+                    researchData.stewardship_best_practices_ai ? 
+                    `PRESENT (${researchData.stewardship_best_practices_ai.substring(0, 50)}...)` : 
+                    'MISSING');
+        console.log('- planting_recipes_ai:', 
+                    researchData.planting_recipes_ai ? 
+                    `PRESENT (${researchData.planting_recipes_ai.substring(0, 50)}...)` : 
+                    'MISSING');
+        console.log('- pruning_maintenance_ai:', 
+                    researchData.pruning_maintenance_ai ? 
+                    `PRESENT (${researchData.pruning_maintenance_ai.substring(0, 50)}...)` : 
+                    'MISSING');
+        console.log('- disease_pest_management_ai:', 
+                    researchData.disease_pest_management_ai ? 
+                    `PRESENT (${researchData.disease_pest_management_ai.substring(0, 50)}...)` : 
+                    'MISSING');
+        console.log('- fire_management_ai:', 
+                    researchData.fire_management_ai ? 
+                    `PRESENT (${researchData.fire_management_ai.substring(0, 50)}...)` : 
+                    'MISSING');
+        console.log('- cultural_significance_ai:', 
+                    researchData.cultural_significance_ai ? 
+                    `PRESENT (${researchData.cultural_significance_ai.substring(0, 50)}...)` : 
+                    'MISSING');
+        
+        // Create NFT metadata - in the NFT metadata, store the values with standard field names (no _ai suffix)
+        // This is for user-friendliness in NFT viewers, while maintaining internal _ai/_human differentiation
+        // REFACTORED & FIXED: Create metadata object with a cleaner approach and explicit field ordering
+        // First create core NFT metadata fields
+        let formattedData = {
+          // NFT standard metadata (always first per standards)
+          name: `Research Contreebution #${globalId}`,
+          description: "Thank you for sponsoring tree research!",
+          image: "ipfs://bafkreibkta2e54ddqjlrmxmacjvqcpj7w6o3a4oww6ea7hldjazio22c3e",
+          
+          // Core identification
+          taxon_id: researchData.taxon_id,
+          scientific_name: scientificName,
+          
+          // Simple fields (group 1)
+          conservation_status: researchData.conservation_status_ai || '',
+          general_description: researchData.general_description_ai || '',
+          habitat: researchData.habitat_ai || '',
+          
+          // Simple fields (group 2)
+          elevation_ranges: researchData.elevation_ranges_ai || '',
+          compatible_soil_types: researchData.compatible_soil_types_ai || '',
+          ecological_function: researchData.ecological_function_ai || '',
+          native_adapted_habitats: researchData.native_adapted_habitats_ai || '',
+          agroforestry_use_cases: researchData.agroforestry_use_cases_ai || '',
+          
+          // Morphological fields
+          growth_form: researchData.growth_form_ai || '',
+          leaf_type: researchData.leaf_type_ai || '',
+          deciduous_evergreen: researchData.deciduous_evergreen_ai || '',
+          flower_color: researchData.flower_color_ai || '',
+          fruit_type: researchData.fruit_type_ai || '',
+          bark_characteristics: researchData.bark_characteristics_ai || '',
+          
+          // Numeric fields  
+          maximum_height: researchData.maximum_height_ai || null,
+          maximum_diameter: researchData.maximum_diameter_ai || null,
+          maximum_tree_age: researchData.maximum_tree_age_ai || null,
+          lifespan: researchData.lifespan_ai || '',
+        };
+
+        // CRITICAL FIX: Add stewardship fields separately to ensure they appear in the metadata
+        // This ensures the fields are explicitly added and properly serialized
+        formattedData.stewardship_best_practices = researchData.stewardship_best_practices_ai || 
+          'Best practices for care and maintenance.';
+        formattedData.planting_recipes = researchData.planting_recipes_ai || 
+          'Recommendations for planting.';
+        formattedData.pruning_maintenance = researchData.pruning_maintenance_ai || 
+          'Guidelines for pruning and maintenance.';
+        formattedData.disease_pest_management = researchData.disease_pest_management_ai || 
+          'Management of pests and diseases.';
+        formattedData.fire_management = researchData.fire_management_ai || 
+          'Fire management considerations.';
+        formattedData.cultural_significance = researchData.cultural_significance_ai || 
+          'Cultural and historical importance.';
+        
+        // Add metadata at the end
+        formattedData.research_metadata = {
+          researcher_wallet: wallet_address,
+          research_date: new Date().toISOString(),
+          research_method: "AI-assisted (Perplexity + GPT-4o)",
+          verification_status: "unverified"
+        };
+        
+        // Verify the final metadata object has the stewardship fields
+        console.log('FINAL METADATA CHECK:');
+        console.log('stewardship_best_practices field exists:', formattedData.hasOwnProperty('stewardship_best_practices'));
+        console.log('planting_recipes field exists:', formattedData.hasOwnProperty('planting_recipes'));
+        console.log('pruning_maintenance field exists:', formattedData.hasOwnProperty('pruning_maintenance'));
+        
+        // CRITICAL: Log the exact JSON that will be sent to IPFS
+        const metadataJson = JSON.stringify(formattedData, null, 2);
+        console.log('METADATA JSON KEYS:', Object.keys(JSON.parse(metadataJson)).join(', '));
+        console.log('METADATA JSON CONTAINS STEWARDSHIP:', metadataJson.includes('stewardship_best_practices'));
+        
+        // CRITICAL FIX: Ensure stewardship fields are present by copying directly from researchData
+        // This ensures even if database fields are empty, AI-generated fields are used
+        console.log('CRITICAL STEWARDSHIP FIELDS CHECK:');
+        
+        // Check stewardship fields and fallback to researchData fields
+        if (!formattedData.stewardship_best_practices && researchData.stewardship_best_practices_ai) {
+          console.log('Adding missing stewardship_best_practices from AI data');
+          formattedData.stewardship_best_practices = researchData.stewardship_best_practices_ai;
+        }
+        
+        if (!formattedData.planting_recipes && researchData.planting_recipes_ai) {
+          console.log('Adding missing planting_recipes from AI data');
+          formattedData.planting_recipes = researchData.planting_recipes_ai;
+        }
+        
+        if (!formattedData.pruning_maintenance && researchData.pruning_maintenance_ai) {
+          console.log('Adding missing pruning_maintenance from AI data');
+          formattedData.pruning_maintenance = researchData.pruning_maintenance_ai;
+        }
+        
+        if (!formattedData.disease_pest_management && researchData.disease_pest_management_ai) {
+          console.log('Adding missing disease_pest_management from AI data');
+          formattedData.disease_pest_management = researchData.disease_pest_management_ai;
+        }
+        
+        if (!formattedData.fire_management && researchData.fire_management_ai) {
+          console.log('Adding missing fire_management from AI data');
+          formattedData.fire_management = researchData.fire_management_ai;
+        }
+        
+        if (!formattedData.cultural_significance && researchData.cultural_significance_ai) {
+          console.log('Adding missing cultural_significance from AI data');
+          formattedData.cultural_significance = researchData.cultural_significance_ai;
+        }
+        
+        // Log stewardship field values to verify content
+        if (formattedData.stewardship_best_practices) {
+          console.log('Stewardship_best_practices content:', 
+                     formattedData.stewardship_best_practices.substring(0, 50) + '...');
+        } else {
+          console.log('WARNING: stewardship_best_practices still MISSING after fix!');
+        }
+        
+        // Keep metadata size reasonable by checking total size
+        const metadataSize = JSON.stringify(formattedData).length;
+        console.log(`Metadata size: ${metadataSize} bytes (${Math.round(metadataSize/1024)} KB)`);
+        
+        // If metadata is too large (>100KB), truncate very long text fields
+        if (metadataSize > 100000) {
+          console.log('Metadata is large, truncating long text fields');
+          Object.keys(formattedData).forEach(key => {
+            if (typeof formattedData[key] === 'string' && formattedData[key].length > 2000) {
+              formattedData[key] = formattedData[key].substring(0, 2000) + '... (truncated)';
+            }
+          });
+        }
+        
+        // Create a test object with ONLY the stewardship fields for verification
+        const stFields = {
+          stewardship_best_practices: formattedData.stewardship_best_practices,
+          planting_recipes: formattedData.planting_recipes,
+          pruning_maintenance: formattedData.pruning_maintenance
+        };
+        
+        // Log the stringified version to check for JSON issues
+        console.log('FINAL STEWARDSHIP FIELDS CHECK:', JSON.stringify(stFields));
+        
+        console.log('Uploading formatted metadata to IPFS');
+        const ipfsCid = await uploadToIPFS(formattedData);
+        console.log(`Metadata uploaded to IPFS with CID: ${ipfsCid}`);
+        
+        // Retrieve from IPFS to verify what was actually stored
+        try {
+          const retrievedData = await getFromIPFS(ipfsCid);
+          console.log('IPFS retrieval test - keys in stored data:', Object.keys(retrievedData).join(', '));
+          console.log('IPFS stored stewardship_best_practices?', retrievedData.hasOwnProperty('stewardship_best_practices'));
+        } catch (e) {
+          console.log('Failed to verify IPFS content:', e.message);
+        }
+        
+        // Step 5: Update species table with ipfs_cid
+        const updateSpeciesQuery = `
+          UPDATE species
+          SET ipfs_cid = $1
+          WHERE taxon_id = $2
+        `;
+        await client.query(updateSpeciesQuery, [ipfsCid, taxon_id]);
+        
+        // Step 6: Update the NFT record with the IPFS CID
+        const updateNftQuery = `
+          UPDATE contreebution_nfts
+          SET ipfs_cid = $1,
+              metadata = jsonb_set(metadata::jsonb, '{ipfs_cid}', $2::jsonb)
+          WHERE global_id = $3
+          RETURNING *
+        `;
+        
+        await client.query(updateNftQuery, [
+          ipfsCid, 
+          JSON.stringify(ipfsCid),
+          globalId
+        ]);
+        
+        // Step 7: Create EAS attestation with the properly formatted IPFS CID
+        console.log(`Creating EAS attestation on ${chain}`);
+        
+        const attestationData = {
+          species: scientificName,
+          researcher: wallet_address,
+          ipfsCid: ipfsCid,
+          taxonId: taxon_id,
+          refUID: ethers.ZeroHash // Always use ZeroHash for initial attestation
+        };
+        
+        console.log('Attestation data prepared:', attestationData);
+        
+        const attestationUID = await createAttestation(chain, attestationData);
+        console.log(`Attestation created with UID: ${attestationUID}`);
+        
+        // Update NFT record with attestation UID
+        const updateAttestationQuery = `
+          UPDATE contreebution_nfts
+          SET metadata = jsonb_set(metadata::jsonb, '{attestation_uid}', $1::jsonb)
+          WHERE global_id = $2
+        `;
+        
+        await client.query(updateAttestationQuery, [
+          JSON.stringify(attestationUID),
+          globalId
+        ]);
+        
+        // Step 8: Mint NFT with proper URI format
         console.log(`Minting NFT on ${chain} with tokenId: ${globalId}`);
-        const tokenURI = ipfsCid;
+        const tokenURI = `ipfs://${ipfsCid}`;
         
         const mintReceipt = await mintNFT(chain, wallet_address, globalId, tokenURI);
         

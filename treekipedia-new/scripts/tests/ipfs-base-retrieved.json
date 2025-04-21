@@ -1,0 +1,11 @@
+{
+  "name": "Size Test",
+  "description": "Testing IPFS size limits",
+  "test_id": "1745128135902",
+  "stewardship_best_practices": "Test stewardship practices - this is the field we want to ensure is included",
+  "planting_recipes": "Test planting recipes",
+  "research_metadata": {
+    "test": true,
+    "timestamp": "2025-04-20T05:48:55.902Z"
+  }
+}

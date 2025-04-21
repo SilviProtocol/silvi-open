@@ -43,10 +43,9 @@ export function useResearchProcess(
     setResearchStatus("starting");
 
     try {
-      // Use a randomly generated transaction hash for testing
-      // In production, this would come from an actual blockchain transaction
+      // In production, this should be a real transaction hash from the blockchain transaction
+      // Future improvement: Use a real transaction from wallet connection
       const transactionHash = `0x${Math.random().toString(16).substring(2, 42)}`;
-      const tempIpfsCid = "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi";
       const scientificName = species.species_scientific_name || species.species;
 
       setResearchStatus("processing");
@@ -57,13 +56,14 @@ export function useResearchProcess(
         messageIndex++;
       }, 3000);
 
-      // Call the fundResearch API
+      // Call the fundResearch API - note that ipfs_cid is optional per API.md
+      // The backend will generate the IPFS CID, so we don't need to provide one
       const response = await fundResearch(
         taxonId,
         address,
         "celo", // Default to Celo for now
         transactionHash,
-        tempIpfsCid,
+        "", // Empty ipfs_cid - backend will generate it
         scientificName
       );
 

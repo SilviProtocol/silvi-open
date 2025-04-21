@@ -141,7 +141,7 @@ export const updateUserProfile = async (wallet_address: string, display_name: st
 
 /**
  * Get auto-complete suggestions for species search
- * Exactly matching the structure in test-api-endpoints.js that works
+ * Follows the API.md specification for /species/suggest
  */
 export const getSpeciesSuggestions = async (
   query: string, 
@@ -150,109 +150,20 @@ export const getSpeciesSuggestions = async (
   if (!query || query.length < 2) return [];
   
   try {
-    // Create the params object exactly like in the test script
+    // Create the params object according to API spec
     const params: Record<string, string> = { query };
     if (field) {
       params.field = field;
     }
     
-    console.log(`API START REQUEST: /species/suggest with params:`, params);
-    console.log(`API BASE URL: ${API_BASE_URL}`);
-    
     // Use the get method with params passed separately (not in URL)
     const response = await apiClient.get('/species/suggest', { params });
     
-    // More verbose logging to help debug
-    console.log(`API SUCCESS: ${response.status}`);
-    console.log(`API DATA LENGTH: ${response.data?.length || 0}`);
-    
-    // Force log to browser console, but safely check for window first
-    if (typeof window !== 'undefined') {
-      window.console.log("API RAW RESPONSE:", response);
-    } else {
-      console.log("Server-side: API response received");
-    }
-    
-    // Create a hardcoded maple-related temporary result for testing
-    const mapleTestData = [
-      {
-        taxon_id: "48297",
-        common_name: "Japanese Maple; Red Maple",
-        species: "Acer palmatum",
-        species_scientific_name: "Acer palmatum"
-      },
-      {
-        taxon_id: "48298",
-        common_name: "Sugar Maple; Rock Maple",
-        species: "Acer saccharum",
-        species_scientific_name: "Acer saccharum"
-      },
-      {
-        taxon_id: "48299",
-        common_name: "Bigleaf Maple; Oregon Maple",
-        species: "Acer macrophyllum",
-        species_scientific_name: "Acer macrophyllum"
-      }
-    ];
-    
-    // Basic fallback test data for non-maple searches
-    const basicTestData = [
-      {
-        taxon_id: "test-1",
-        common_name: "Test Tree One",
-        species: "Testus treeicus",
-        species_scientific_name: "Testus treeicus"
-      },
-      {
-        taxon_id: "test-2",
-        common_name: "Test Tree Two",
-        species: "Testus arboreus",
-        species_scientific_name: "Testus arboreus"
-      }
-    ];
-    
-    // If searching for maple, use maple test data, otherwise use basic test data
-    const testResult = query.toLowerCase().includes('maple') ? mapleTestData : basicTestData;
-    
-    // If the API returns data, use that; for 'maple' queries, ensure we have maple data
-    let finalResult = [];
-    
-    if (response.data && response.data.length > 0) {
-      finalResult = response.data;
-      console.log(`API returned ${finalResult.length} results`);
-    } 
-    
-    // If we have no results, or we're specifically searching for maple, include our test data
-    if (finalResult.length === 0 || query.toLowerCase().includes('maple')) {
-      console.log(`Including test ${query.toLowerCase().includes('maple') ? 'maple' : 'generic'} data`);
-      // Avoid duplicates if the API already returned some of our test data
-      const newTestData = testResult.filter(test => 
-        !finalResult.some(item => item.taxon_id === test.taxon_id)
-      );
-      finalResult = finalResult.concat(newTestData);
-    }
-      
-    console.log("FINAL RESULT TO RETURN:", finalResult.length, "items");
-    return finalResult;
+    // Return actual API response
+    return response.data;
   } catch (error) {
-    console.error("API ERROR:", error);
-    
-    // Even if there's an error, return test data so we can see if the UI works
-    const testResult = [
-      {
-        taxon_id: "error-1",
-        common_name: "Error Test 1",
-        species: "Error Species 1"
-      },
-      {
-        taxon_id: "error-2",
-        common_name: "Error Test 2",
-        species: "Error Species 2"
-      }
-    ];
-    
-    console.log("RETURNING TEST DATA DUE TO ERROR");
-    return testResult;
+    console.error("Error fetching species suggestions:", error);
+    return []; // Return empty array on error
   }
 };
 

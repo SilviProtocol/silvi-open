@@ -12,6 +12,7 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -40,11 +41,23 @@ export default function ProfilePage() {
 
     try {
       setIsUpdating(true);
+      setSaveSuccess(false); // Reset save success state
+      
       const updatedProfile = await updateUserProfile(address, displayName);
+      
+      // Update the user profile with the new display name
       setUserProfile({
         ...userProfile,
         display_name: updatedProfile.display_name,
       });
+      
+      // Show success message
+      setSaveSuccess(true);
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
     } catch (error) {
       console.error("Failed to update profile:", error);
     } finally {
@@ -89,18 +102,32 @@ export default function ProfilePage() {
                       <label htmlFor="displayName" className="block text-sm font-medium mb-1">
                         Display Name
                       </label>
-                      <div className="flex gap-2">
-                        <input
-                          id="displayName"
-                          type="text"
-                          value={displayName}
-                          onChange={(e) => setDisplayName(e.target.value)}
-                          placeholder="Enter display name"
-                          className="p-3 rounded-lg bg-black/30 border border-white/10 w-full text-white"
-                        />
-                        <Button onClick={handleUpdateProfile} disabled={isUpdating}>
-                          {isUpdating ? "Saving..." : "Save"}
-                        </Button>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex gap-2">
+                          <input
+                            id="displayName"
+                            type="text"
+                            value={displayName}
+                            onChange={(e) => setDisplayName(e.target.value)}
+                            placeholder="Enter display name"
+                            className="p-3 rounded-lg bg-black/30 border border-white/10 w-full text-white"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleUpdateProfile();
+                              }
+                            }}
+                          />
+                          <Button onClick={handleUpdateProfile} disabled={isUpdating}>
+                            {isUpdating ? "Saving..." : "Save"}
+                          </Button>
+                        </div>
+                        
+                        {/* Success message */}
+                        {saveSuccess && (
+                          <div className="text-emerald-400 text-sm px-2 py-1 rounded animate-pulse">
+                            ✅ Display name saved successfully!
+                          </div>
+                        )}
                       </div>
                     </div>
 

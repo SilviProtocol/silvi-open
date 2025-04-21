@@ -1,0 +1,51 @@
+[
+  {
+    "targetSize": 1000,
+    "actualSize": 1013,
+    "success": true,
+    "stewardshipPresent": true,
+    "fieldsLost": []
+  },
+  {
+    "targetSize": 2000,
+    "actualSize": 2013,
+    "success": true,
+    "stewardshipPresent": true,
+    "fieldsLost": []
+  },
+  {
+    "targetSize": 4000,
+    "actualSize": 4013,
+    "success": true,
+    "stewardshipPresent": true,
+    "fieldsLost": []
+  },
+  {
+    "targetSize": 8000,
+    "actualSize": 8011,
+    "success": true,
+    "stewardshipPresent": true,
+    "fieldsLost": []
+  },
+  {
+    "targetSize": 16000,
+    "actualSize": 16014,
+    "success": true,
+    "stewardshipPresent": true,
+    "fieldsLost": []
+  },
+  {
+    "targetSize": 32000,
+    "actualSize": 32014,
+    "success": true,
+    "stewardshipPresent": true,
+    "fieldsLost": []
+  },
+  {
+    "targetSize": 64000,
+    "actualSize": 64015,
+    "success": true,
+    "stewardshipPresent": true,
+    "fieldsLost": []
+  }
+]

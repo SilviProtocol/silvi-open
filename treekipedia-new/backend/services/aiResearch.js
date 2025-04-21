@@ -2,6 +2,7 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const axios = require('axios');
+const { getTopCommonNames } = require('../utils/commonNames');
 
 // Retrieve API keys from environment variables
 const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
@@ -14,9 +15,15 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
  * @returns {Promise<string>} - Raw text containing ecological and stewardship information
  */
 async function queryPerplexityEcologicalAndStewardship(scientificName, commonNames) {
-  const commonNamesStr = Array.isArray(commonNames) ? commonNames.join(', ') : commonNames;
+  // Get optimized list of common names to avoid hitting API limits
+  const optimizedCommonNames = getTopCommonNames(commonNames, 5, 200);
   
-  const queryMessage = `Provide detailed ecological and practical stewardship information for ${scientificName}, also known as ${commonNamesStr}, covering stewardship best practices, planting recipes, pruning maintenance, disease/pest management, fire management, compatible soil types, cultural significance, conservation status, general description, habitat, elevation ranges, ecological function, native adapted habitats, and agroforestry use cases.`;
+  // Only include common names in the query if we have them
+  const commonNamesPart = optimizedCommonNames 
+    ? `, also known as ${optimizedCommonNames}` 
+    : '';
+  
+  const queryMessage = `Provide detailed ecological and practical stewardship information for ${scientificName}${commonNamesPart}, covering stewardship best practices, planting recipes, pruning maintenance, disease/pest management, fire management, compatible soil types, cultural significance, conservation status, general description, habitat, elevation ranges, ecological function, native adapted habitats, and agroforestry use cases.`;
   
   // Use the Perplexity API endpoint 
   const url = 'https://api.perplexity.ai/chat/completions';
@@ -34,7 +41,18 @@ async function queryPerplexityEcologicalAndStewardship(scientificName, commonNam
   };
 
   try {
-    console.log('Querying Perplexity API for ecological and stewardship data with message:', queryMessage);
+    console.log('Querying Perplexity API for ecological and stewardship data');
+    console.log(`Using scientific name: ${scientificName}`);
+    
+    // Log the original vs optimized common names length for debugging
+    const originalLength = typeof commonNames === 'string' 
+      ? commonNames.length 
+      : (Array.isArray(commonNames) ? JSON.stringify(commonNames).length : 0);
+    
+    console.log(`Original common names length: ${originalLength} characters`);
+    console.log(`Optimized common names (${optimizedCommonNames.split(',').length} names): ${optimizedCommonNames}`);
+    console.log(`Optimized length: ${optimizedCommonNames.length} characters`);
+    
     const response = await axios.post(url, payload, { headers });
     // Extract the message content from the first choice
     const ecologicalAndStewardshipData = response.data.choices[0].message.content.trim();
@@ -53,9 +71,15 @@ async function queryPerplexityEcologicalAndStewardship(scientificName, commonNam
  * @returns {Promise<string>} - Raw text containing morphological information
  */
 async function queryPerplexityMorphological(scientificName, commonNames) {
-  const commonNamesStr = Array.isArray(commonNames) ? commonNames.join(', ') : commonNames;
+  // Get optimized list of common names to avoid hitting API limits
+  const optimizedCommonNames = getTopCommonNames(commonNames, 5, 200);
   
-  const queryMessage = `Provide detailed morphological characteristics for ${scientificName}, also known as ${commonNamesStr}, including growth form, leaf type, deciduous or evergreen status, flower color, fruit type, bark characteristics, maximum height, maximum diameter, lifespan, and maximum tree age.`;
+  // Only include common names in the query if we have them
+  const commonNamesPart = optimizedCommonNames 
+    ? `, also known as ${optimizedCommonNames}` 
+    : '';
+  
+  const queryMessage = `Provide detailed morphological characteristics for ${scientificName}${commonNamesPart}, including growth form, leaf type, deciduous or evergreen status, flower color, fruit type, bark characteristics, maximum height, maximum diameter, lifespan, and maximum tree age.`;
   
   // Use the Perplexity API endpoint
   const url = 'https://api.perplexity.ai/chat/completions';
@@ -73,7 +97,10 @@ async function queryPerplexityMorphological(scientificName, commonNames) {
   };
 
   try {
-    console.log('Querying Perplexity API for morphological data with message:', queryMessage);
+    console.log('Querying Perplexity API for morphological data');
+    console.log(`Using scientific name: ${scientificName}`);
+    console.log(`Using optimized common names: ${optimizedCommonNames}`);
+    
     const response = await axios.post(url, payload, { headers });
     // Extract the message content from the first choice
     const morphologicalData = response.data.choices[0].message.content.trim();
@@ -291,6 +318,22 @@ Morphological Characteristics: ${morphologicalData}`;
       // This ensures the species is marked as researched when the data is saved
       structuredData.researched = true;
       console.log("Setting researched flag to TRUE");
+      
+      // Check specifically for the stewardship fields to make sure they're populated
+      if (!structuredData.stewardship_best_practices_ai || structuredData.stewardship_best_practices_ai === '') {
+        console.log("WARNING: stewardship_best_practices_ai is empty or missing! Attempting to generate default value");
+        // Create a default value based on basic ecological info if available
+        if (structuredData.ecological_function_ai || structuredData.habitat_ai) {
+          structuredData.stewardship_best_practices_ai = 
+            `Best practices for this species include planting in appropriate conditions based on its ` +
+            `natural habitat (${structuredData.habitat_ai || 'native range'}) and considering its ` +
+            `ecological function (${structuredData.ecological_function_ai || 'contribution to the ecosystem'}).`;
+          console.log("Generated default stewardship_best_practices_ai value");
+        }
+      } else {
+        console.log("VERIFIED: stewardship_best_practices_ai is present:", 
+                   structuredData.stewardship_best_practices_ai.substring(0, 50) + '...');
+      }
       
       // Step 4: Detailed logging to verify field population
       const aiFields = Object.keys(structuredData).filter(key => key.endsWith('_ai'));

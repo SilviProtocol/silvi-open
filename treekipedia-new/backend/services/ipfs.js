@@ -16,8 +16,75 @@ async function uploadToIPFS(data) {
   try {
     console.log('Uploading data to IPFS via Lighthouse');
     
-    // Convert data to JSON string
-    const jsonData = JSON.stringify(data, null, 2);
+    // CRITICAL FIX: First verify stewardship fields are present in data
+    // This ensures these fields don't get lost during the serialization process
+    const hasStewFields = 'stewardship_best_practices' in data || 
+                           'planting_recipes' in data || 
+                           'pruning_maintenance' in data;
+    console.log(`Stewardship fields present in data before serialization: ${hasStewFields}`);
+    
+    if (hasStewFields) {
+      console.log('Stewardship sample:', data.stewardship_best_practices?.substring(0, 30) + '...');
+    } else {
+      console.log('WARNING: No stewardship fields found in data object!');
+    }
+    
+    // Create a new object to ensure field order is maintained
+    // This is a more robust approach than relying on native object property order
+    const orderedData = {
+      // NFT standard metadata (always first per standards)
+      name: data.name,
+      description: data.description,
+      image: data.image,
+      
+      // Core identification
+      taxon_id: data.taxon_id,
+      scientific_name: data.scientific_name,
+      
+      // Regular fields
+      conservation_status: data.conservation_status,
+      general_description: data.general_description,
+      habitat: data.habitat,
+      elevation_ranges: data.elevation_ranges,
+      compatible_soil_types: data.compatible_soil_types,
+      ecological_function: data.ecological_function,
+      native_adapted_habitats: data.native_adapted_habitats,
+      agroforestry_use_cases: data.agroforestry_use_cases,
+      
+      // Morphological fields
+      growth_form: data.growth_form,
+      leaf_type: data.leaf_type,
+      deciduous_evergreen: data.deciduous_evergreen,
+      flower_color: data.flower_color,
+      fruit_type: data.fruit_type,
+      bark_characteristics: data.bark_characteristics,
+      
+      // Numeric fields
+      maximum_height: data.maximum_height,
+      maximum_diameter: data.maximum_diameter,
+      maximum_tree_age: data.maximum_tree_age,
+      lifespan: data.lifespan,
+      
+      // CRITICAL: Explicitly include stewardship fields
+      stewardship_best_practices: data.stewardship_best_practices,
+      planting_recipes: data.planting_recipes,
+      pruning_maintenance: data.pruning_maintenance,
+      disease_pest_management: data.disease_pest_management,
+      fire_management: data.fire_management,
+      cultural_significance: data.cultural_significance,
+    };
+    
+    // Add research_metadata at the end if present
+    if (data.research_metadata) {
+      orderedData.research_metadata = data.research_metadata;
+    }
+    
+    // Convert ordered data to JSON string
+    const jsonData = JSON.stringify(orderedData, null, 2);
+    
+    // Verify stewardship fields in serialized JSON
+    console.log('JSON contains stewardship fields:', 
+                jsonData.includes('stewardship_best_practices'));
     
     // Create FormData object
     const formData = new FormData();

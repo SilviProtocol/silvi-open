@@ -208,7 +208,8 @@ async function testFundResearch() {
     wallet_address: TEST_WALLET_ADDRESS,
     chain: 'celo', // Value from the NFT records in the database
     transaction_hash: uniqueTransactionHash, // Use unique transaction hash
-    ipfs_cid: TEST_IPFS_CID, // Added the required field
+    // Note: With the updated implementation, we don't need to provide ipfs_cid
+    // as it will be generated after the global_id is assigned
     scientific_name: TEST_SCIENTIFIC_NAME // Using species_scientific_name or species field value
   };
   
@@ -218,6 +219,63 @@ async function testFundResearch() {
     console.log('✅ Success - Research funded');
     console.log('  IPFS CID:', result.data.ipfs_cid);
     console.log('  Attestation UID:', result.data.attestation_uid);
+    
+    // Extract and display the NFT minting transaction hash, if available
+    if (result.data.nft_details && result.data.nft_details.transaction_hash) {
+      console.log('  NFT Minting TX Hash:', result.data.nft_details.transaction_hash);
+    } else if (result.data.nft_details && result.data.nft_details.metadata) {
+      // Try to extract from metadata JSON
+      try {
+        const metadata = typeof result.data.nft_details.metadata === 'string' 
+          ? JSON.parse(result.data.nft_details.metadata)
+          : result.data.nft_details.metadata;
+          
+        if (metadata.mint_receipt && metadata.mint_receipt.transactionHash) {
+          console.log('  NFT Minting TX Hash:', metadata.mint_receipt.transactionHash);
+        }
+      } catch (e) {
+        console.log('  ⚠️ Could not parse NFT metadata JSON');
+      }
+    }
+    
+    // Test NFT metadata format in IPFS
+    if (result.data.ipfs_cid) {
+      try {
+        // Try to fetch the IPFS metadata using gateway to verify format
+        console.log('  Testing IPFS metadata format...');
+        const ipfsResponse = await axios.get(`https://gateway.lighthouse.storage/ipfs/${result.data.ipfs_cid}`);
+        const metadata = ipfsResponse.data;
+        
+        console.log('  Metadata check:');
+        console.log('    Has name field:', !!metadata.name);
+        console.log('    Name format correct:', metadata.name?.includes('#'));
+        console.log('    Has description field:', !!metadata.description);
+        console.log('    Has image field:', !!metadata.image);
+        console.log('    Image has ipfs:// prefix:', metadata.image?.startsWith('ipfs://'));
+        
+        // Check for stewardship fields
+        console.log('    Has stewardship fields:',
+          !!metadata.stewardship_best_practices || 
+          !!metadata.planting_recipes || 
+          !!metadata.pruning_maintenance);
+        
+        if (metadata.stewardship_best_practices) {
+          console.log('    Sample stewardship content:', 
+            metadata.stewardship_best_practices.substring(0, 50) + '...');
+        }
+        
+        if (!metadata.name || !metadata.description || !metadata.image || !metadata.name.includes('#')) {
+          console.log('  ⚠️ Metadata format warning: Missing required NFT fields or incorrect format');
+        } else if (!metadata.stewardship_best_practices) {
+          console.log('  ⚠️ Metadata warning: Stewardship fields are missing');
+        } else {
+          console.log('  ✅ Metadata format completely correct including stewardship fields');
+        }
+      } catch (error) {
+        console.log('  ⚠️ Could not verify IPFS metadata format:', error.message);
+      }
+    }
+    
     return true;
   } else {
     console.log('❌ Failed - Fund research:', result.error);

@@ -1,0 +1,20 @@
+{
+  "name": "Research Contreebution Test",
+  "description": "Thank you for sponsoring tree research!",
+  "image": "ipfs://bafkreibkta2e54ddqjlrmxmacjvqcpj7w6o3a4oww6ea7hldjazio22c3e",
+  "taxon_id": "AngNAParc36603-00",
+  "scientific_name": "Phoenix dactylifera",
+  "conservation_status": "Phoenix dactylifera is not currently endangered due to extensive cultivation worldwide. Some wild relatives and genetic diversity are at risk due to habitat loss and over-reliance on a narrow genetic base.",
+  "general_description": "Phoenix dactylifera, the Date Palm, is a large, single-trunked palm renowned for its edible fruit. Native to the Middle East and North Africa, it has been cultivated for millennia and can reach heights of up to 23 meters.",
+  "habitat": "Date Palms thrive in arid environments with hot, dry summers and are highly adapted to desert oases.",
+  "ecological_function": "Provides significant shade and microhabitat in desert environments. Offers food and shelter for a wide range of fauna. Its deep root system helps stabilize soil and prevent erosion.",
+  "stewardship_best_practices": "Date palms prefer full sun (minimum six hours of direct light per day) and well-drained soils. Sandy or loamy soils are ideal, and they tolerate a wide pH range and moderate salinity. Young trees need regular, deep watering, while established palms are drought-tolerant. Prune only to remove dead or broken fronds and avoid over-pruning. Remove dry, dead fronds to reduce fire risk.",
+  "planting_recipes": "Dig a hole twice as wide as the root ball and slightly shallower than its depth. Amend native soil with compost if organic matter is low, ensuring drainage is not impeded. Plant so the root crown sits just above soil level. Backfill and gently tamp soil, then water thoroughly. Mulch with 3 inches of organic matter, keeping mulch a few inches away from the trunk.",
+  "pruning_maintenance": "Prune only to remove dead, yellow, or broken fronds. Remove flower and fruit stalks if fruit production is not desired. Remove suckers at the base to focus energy on the main trunk. Best time to prune is late spring or early summer.",
+  "research_metadata": {
+    "researcher_wallet": "0xTEST_WALLET",
+    "research_date": "2025-04-20T05:39:32.809Z",
+    "research_method": "AI-assisted (Perplexity + GPT-4o)",
+    "verification_status": "unverified"
+  }
+}

@@ -21,7 +21,8 @@ module.exports = (pool) => {
       const query = `
         SELECT 
           id, 
-          wallet_address, 
+          wallet_address,
+          display_name,
           total_points, 
           contribution_count, 
           first_contribution_at, 
@@ -52,7 +53,8 @@ module.exports = (pool) => {
       const userQuery = `
         SELECT 
           id, 
-          wallet_address, 
+          wallet_address,
+          display_name,
           total_points, 
           contribution_count, 
           first_contribution_at, 
