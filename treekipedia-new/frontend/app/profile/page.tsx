@@ -5,6 +5,7 @@ import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { getUserProfile, updateUserProfile } from "@/lib/api";
+import { SponsorshipStatus } from "@/components/sponsorship-status";
 
 export default function ProfilePage() {
   const { address, isConnected } = useAccount();
@@ -147,7 +148,10 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* NFT Collection Card - Placeholder */}
+                {/* Sponsorship Status Card */}
+                <SponsorshipStatus />
+
+                {/* NFT Collection Card */}
                 <div className="p-6 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
                   <h2 className="text-xl font-semibold mb-4">My Contreebution NFTs</h2>
                   {userProfile?.nfts && userProfile.nfts.length > 0 ? (

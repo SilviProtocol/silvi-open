@@ -140,6 +140,57 @@ export const updateUserProfile = async (wallet_address: string, display_name: st
 };
 
 /**
+ * Get payment status by transaction hash
+ */
+export const getPaymentStatus = async (transaction_hash: string) => {
+  try {
+    const { data } = await apiClient.get(`/sponsorships/transaction/${transaction_hash}`);
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return { 
+        status: 'not_found',
+        transaction_hash 
+      };
+    }
+    throw error;
+  }
+};
+
+/**
+ * Get all sponsorships by a user's wallet address
+ */
+export const getUserSponsorships = async (wallet_address: string, limit = 20, offset = 0) => {
+  try {
+    const { data } = await apiClient.get(`/sponsorships/user/${wallet_address}`, {
+      params: { limit, offset }
+    });
+    return data;
+  } catch (error) {
+    console.error('Error fetching user sponsorships:', error);
+    return [];
+  }
+};
+
+/**
+ * Get all sponsorships for a specific species
+ */
+export const getSpeciesSponsorships = async (taxon_id: string, limit = 20, offset = 0) => {
+  try {
+    const { data } = await apiClient.get(`/sponsorships/species/${taxon_id}`, {
+      params: { limit, offset }
+    });
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return [];
+    }
+    console.error('Error fetching species sponsorships:', error);
+    return [];
+  }
+};
+
+/**
  * Get auto-complete suggestions for species search
  * Follows the API.md specification for /species/suggest
  */

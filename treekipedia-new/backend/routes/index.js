@@ -2,6 +2,7 @@ const express = require('express');
 const speciesController = require('../controllers/species');
 const treederboardController = require('../controllers/treederboard');
 const researchController = require('../controllers/research');
+const sponsorshipController = require('../controllers/sponsorship');
 
 module.exports = (pool) => {
   const router = express.Router();
@@ -15,6 +16,9 @@ module.exports = (pool) => {
   // Set up research routes (/research)
   router.use('/research', researchController(pool));
   
+  // Set up sponsorship routes (/sponsorships)
+  router.use('/sponsorships', sponsorshipController(pool));
+  
   // Default route
   router.get('/', (req, res) => {
     res.json({
@@ -23,7 +27,8 @@ module.exports = (pool) => {
       endpoints: [
         '/species - Species search and details',
         '/treederboard - User contributions leaderboard',
-        '/research - AI research and NFT minting'
+        '/research - AI research and NFT minting',
+        '/sponsorships - Sponsorship payment tracking and webhooks'
       ]
     });
   });
