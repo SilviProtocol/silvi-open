@@ -148,10 +148,24 @@ module.exports = (pool) => {
       // Explicitly ensure the researched flag is a boolean
       const species = result.rows[0];
       
-      // Convert to a proper boolean (in case it's null or undefined)
-      species.researched = species.researched === true;
+      // Before relying on the database flag, check if any AI fields are populated
+      // This provides a more reliable way to determine if research has been done
+      const hasAnyAiFields = Object.keys(species).some(key => 
+        key.endsWith('_ai') && 
+        species[key] !== null && 
+        species[key] !== undefined && 
+        species[key] !== ''
+      );
       
-      console.log(`GET /species/${taxon_id} - researched flag: ${species.researched}`);
+      // If AI fields are populated, force researched to true regardless of the database value
+      if (hasAnyAiFields) {
+        species.researched = true;
+      } else {
+        // Otherwise, use the database value (defaulting to false)
+        species.researched = species.researched === true;
+      }
+      
+      console.log(`GET /species/${taxon_id} - researched flag: ${species.researched}, hasAiFields: ${hasAnyAiFields}`);
       
       res.json(species);
     } catch (error) {

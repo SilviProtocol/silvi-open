@@ -91,7 +91,8 @@ export const fundResearch = async (
  */
 export const getResearchData = async (taxon_id: string): Promise<ResearchData> => {
   try {
-    const { data } = await apiClient.get(`/research/research/${taxon_id}`);
+    // Use the correct research data endpoint with cache busting
+    const { data } = await apiClient.get(`/research/${taxon_id}?_=${Date.now()}`);
     console.log("Research data retrieved successfully");
     return data;
   } catch (error) {

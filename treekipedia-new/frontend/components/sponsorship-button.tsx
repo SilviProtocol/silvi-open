@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { 
   useAccount, 
   useChainId, 
@@ -24,16 +24,58 @@ interface SponsorshipButtonProps {
   speciesName: string
   onSponsorshipComplete?: () => void
   className?: string
+  
+  // New props for integration with ResearchCard
+  setIsResearching: (isResearching: boolean) => void
+  setProgressMessage: (message: string) => void
+  setProgressPercent: (percent: number) => void
 }
 
-type SponsorshipStatus = 'idle' | 'connecting' | 'switching_chain' | 'preparing' | 'transferring' | 
-  'confirming' | 'completed' | 'error' | 'needs_verification'
+// Transaction-related messages for the first phase
+const transactionMessages = [
+  "Connecting to blockchain...",
+  "Preparing USDC transfer...",
+  "Sending transaction...",
+  "Waiting for confirmation...",
+  "Verifying payment...",
+  "Processing transaction...",
+  "Preparing research process..."
+];
+
+// Research-related messages from useResearchProcess
+const researchMessages = [
+  "Scanning the forest canopy...",
+  "Consulting botanical references...",
+  "Exploring native habitats...",
+  "Analyzing growth patterns...",
+  "Documenting ecological relationships...",
+  "Examining soil preferences...",
+  "Cataloging cultural significance...",
+  "Mapping geographical distribution...",
+  "Calculating conservation status...",
+  "Determining stewardship practices..."
+];
+
+type SponsorshipStatus = 
+  'idle' | 
+  'connecting' | 
+  'switching_chain' | 
+  'preparing' | 
+  'transferring' | 
+  'tx_confirming' |  // New: Transaction confirmation phase
+  'researching' |    // New: Research phase
+  'completed' | 
+  'error' | 
+  'needs_verification'
 
 export function SponsorshipButton({ 
   taxonId, 
   speciesName,
   onSponsorshipComplete,
-  className = ''
+  className = '',
+  setIsResearching,
+  setProgressMessage,
+  setProgressPercent
 }: SponsorshipButtonProps) {
   const { address, isConnected } = useAccount()
   const chainId = useChainId()
@@ -45,7 +87,7 @@ export function SponsorshipButton({
   const [transactionHash, setTransactionHash] = useState<string | null>(null)
   const [isPolling, setIsPolling] = useState(false)
   const [treasuryAddress, setTreasuryAddress] = useState<string | null>(null)
-  const [isConfirming, setIsConfirming] = useState(false)
+  const messageIntervalRef = useRef<NodeJS.Timeout | null>(null)
   
   // Get chain configuration
   const currentChainConfig = contractAddresses[chainId?.toString() || '0']
@@ -71,6 +113,46 @@ export function SponsorshipButton({
   // Check if user has sufficient USDC balance
   const hasSufficientBalance = usdcBalance ? 
     parseFloat(usdcBalance.formatted) >= SPONSORSHIP_AMOUNT : false
+    
+  // Start cycling messages based on current phase
+  const startMessageCycling = (phase: 'transaction' | 'research') => {
+    // Clear any existing interval
+    if (messageIntervalRef.current) {
+      clearInterval(messageIntervalRef.current);
+    }
+    
+    let messageIndex = 0;
+    const messages = phase === 'transaction' ? transactionMessages : researchMessages;
+    
+    // Set initial progress bar percentage
+    setProgressPercent(phase === 'transaction' ? 33 : 33); // Transaction phase shows 33%
+    
+    // Set initial message
+    setProgressMessage(messages[0]);
+    
+    // Start cycling messages
+    messageIntervalRef.current = setInterval(() => {
+      messageIndex = (messageIndex + 1) % messages.length;
+      setProgressMessage(messages[messageIndex]);
+      
+      // During research phase, gradually increase the progress percentage
+      if (phase === 'research') {
+        setProgressPercent(prev => {
+          // Ensure we don't exceed 100%
+          const increment = (100 - 33) / (researchMessages.length * 2); // Spread progress over multiple cycles
+          return Math.min(100, prev + increment);
+        });
+      }
+    }, 3000);
+  };
+  
+  // Clean up message cycling
+  const stopMessageCycling = () => {
+    if (messageIntervalRef.current) {
+      clearInterval(messageIntervalRef.current);
+      messageIntervalRef.current = null;
+    }
+  };
   
   // Handle "Sponsor" button click
   const handleSponsor = async () => {
@@ -158,23 +240,32 @@ export function SponsorshipButton({
         console.error('Sponsorship preparation failed:', err)
         setError(err.message || 'Failed to prepare sponsorship')
         setStatus('error')
+        setIsResearching(false)
       }
     } catch (err: any) {
       console.error('Sponsorship error:', err)
       setError(err.message || 'Failed to sponsor research')
       setStatus('error')
+      setIsResearching(false)
     }
   }
   
   // Handle USDC transfer - updated for wagmi v2
   const handleTransfer = (treasuryAddr: string) => {
     setStatus('transferring')
+    
+    // Start the research UI display
+    setIsResearching(true)
+    startMessageCycling('transaction')
+    
     try {
       // Ensure treasury address is valid before proceeding
       if (!treasuryAddr || !treasuryAddr.startsWith('0x')) {
         console.error(`Invalid treasury address: ${treasuryAddr}`)
         setError('Invalid treasury address configuration. Please try another chain.')
         setStatus('error')
+        setIsResearching(false)
+        stopMessageCycling()
         return;
       }
       
@@ -194,12 +285,16 @@ export function SponsorshipButton({
       console.error('Transfer error:', err)
       setError(err.message || 'Failed to transfer USDC')
       setStatus('error')
+      setIsResearching(false)
+      stopMessageCycling()
     }
   }
   
   // Set up poller for transaction confirmation
   const startPollingForStatus = async (txHash: string) => {
     setIsPolling(true)
+    setStatus('tx_confirming')
+    
     let retries = 0
     const maxRetries = 10 // 10 x 5 seconds = 50 seconds max
     let notFoundCount = 0
@@ -212,12 +307,31 @@ export function SponsorshipButton({
         
         if (status.status === 'completed' || status.status === 'confirmed') {
           console.log('Payment confirmed by backend')
-          setStatus('completed')
-          setIsPolling(false)
           
-          // Call the callback if provided
+          // Switch to research phase
+          setStatus('researching')
+          
+          // Change to research message cycling
+          startMessageCycling('research')
+          
+          // Call the callback to trigger the actual research process
           if (onSponsorshipComplete) {
             onSponsorshipComplete()
+            
+            // Setup a periodic check for the next 60 seconds to ensure UI updates
+            // This addresses the case where backend processing completes but UI doesn't update
+            // Set up more modest polling - just 3 additional attempts over 15 seconds
+            // This should be enough to catch when the backend updates the status
+            const additionalChecks = [5000, 10000, 15000]; // 5s, 10s, 15s after completion
+            
+            additionalChecks.forEach((delay, index) => {
+              setTimeout(() => {
+                console.log(`Additional data refresh #${index + 1} after ${delay/1000}s`);
+                onSponsorshipComplete();
+              }, delay);
+            });
+            
+            // No need for cleanup since we're using setTimeout instead of setInterval
           }
           
           return
@@ -232,11 +346,26 @@ export function SponsorshipButton({
           // the backend might not be tracking it but the transaction is still valid
           if (notFoundCount >= maxNotFoundCount) {
             console.log('Transaction confirmed on chain but not found in backend after multiple attempts')
-            setStatus('completed')
-            setIsPolling(false)
+            
+            // Switch to research phase
+            setStatus('researching')
+            
+            // Change to research message cycling
+            startMessageCycling('research')
             
             if (onSponsorshipComplete) {
               onSponsorshipComplete()
+              
+              // Set up more modest polling - just 3 additional attempts over 15 seconds
+              // This should be enough to catch when the backend updates the status
+              const additionalChecks = [5000, 10000, 15000]; // 5s, 10s, 15s after completion
+              
+              additionalChecks.forEach((delay, index) => {
+                setTimeout(() => {
+                  console.log(`Additional data refresh #${index + 1} after ${delay/1000}s`);
+                  onSponsorshipComplete();
+                }, delay);
+              });
             }
             
             return
@@ -250,7 +379,8 @@ export function SponsorshipButton({
           setStatus('needs_verification')
           setError('Transaction was sent, but research process could not be verified. Please check again later.')
           setIsPolling(false)
-          // Don't trigger refresh since we're not sure it actually completed
+          setIsResearching(false)
+          stopMessageCycling()
           return
         }
         
@@ -267,8 +397,8 @@ export function SponsorshipButton({
           setStatus('needs_verification')
           setError('Transaction sent but verification failed. The research might still be processing. Please check again later.')
           setIsPolling(false)
-          
-          // Don't call onSponsorshipComplete since we're not sure it actually completed
+          setIsResearching(false)
+          stopMessageCycling()
           return
         }
         
@@ -286,8 +416,6 @@ export function SponsorshipButton({
     if (isTransferSuccess && transferTxHash) {
       toast.success('USDC transfer complete')
       setTransactionHash(transferTxHash)
-      setStatus('confirming')
-      setIsConfirming(true)
       
       // Report the transaction hash to the backend to link it with the sponsorship
       // Always send all available data to ensure the backend can process it even if there are DB issues
@@ -312,21 +440,31 @@ export function SponsorshipButton({
     }
   }, [isTransferSuccess, transferTxHash, sponsorshipId])
   
+  // Clean up on unmount
+  useEffect(() => {
+    return () => {
+      stopMessageCycling();
+    };
+  }, []);
+  
   // Button text based on status
   const getButtonText = () => {
+    if (!isConnected) {
+      return 'Connect Wallet to Fund Research'
+    }
+    
     switch (status) {
       case 'idle':
-        return `Sponsor This Tree ($${SPONSORSHIP_AMOUNT} USDC)`
+        return 'Sponsor This Tree'
       case 'connecting':
         return 'Connect Wallet'
       case 'switching_chain':
         return 'Switch Network'
       case 'preparing':
-        return 'Preparing Sponsorship...'
       case 'transferring':
-        return 'Sending USDC...'
-      case 'confirming':
-        return 'Waiting for Confirmation...'
+      case 'tx_confirming':
+      case 'researching':
+        return 'Processing...'
       case 'completed':
         return 'Sponsorship Complete!'
       case 'needs_verification':
@@ -342,10 +480,11 @@ export function SponsorshipButton({
   const isButtonDisabled = [
     'preparing', 
     'transferring', 
-    'confirming', 
+    'tx_confirming',
+    'researching',
     'completed',
     'needs_verification'
-  ].includes(status) || isTransferring || isConfirming || isPolling
+  ].includes(status) || isTransferring || isPolling
   
   return (
     <div className="w-full flex flex-col gap-2">
@@ -375,28 +514,9 @@ export function SponsorshipButton({
       </Button>
       
       {/* Display errors */}
-      {error && (
+      {error && !isResearching && (
         <div className="text-red-500 text-sm mt-1">
           {error}
-        </div>
-      )}
-      
-      {/* Status messages */}
-      {status === 'confirming' && transactionHash && (
-        <div className="text-sm text-gray-500 mt-1">
-          Transaction hash: {transactionHash.substring(0, 10)}...{transactionHash.substring(transactionHash.length - 8)}
-        </div>
-      )}
-      
-      {status === 'completed' && (
-        <div className="text-sm text-green-500 mt-1">
-          Research for {speciesName} has been funded successfully!
-        </div>
-      )}
-      
-      {status === 'needs_verification' && transactionHash && (
-        <div className="text-sm text-yellow-500 mt-1">
-          USDC transfer complete, but research process verification failed. Transaction: {transactionHash.substring(0, 6)}...{transactionHash.substring(transactionHash.length - 4)}
         </div>
       )}
     </div>

@@ -123,7 +123,7 @@ export function useResearchProcess(
   // Polling implementation with exponential backoff
   const startPollingForResearch = useCallback(() => {
     let attempts = 0;
-    const maxAttempts = 20;
+    const maxAttempts = 30; // Increased from 20 to 30 attempts
     const baseInterval = 3000; // Start with 3 seconds
 
     const pollForData = async () => {
@@ -151,6 +151,14 @@ export function useResearchProcess(
         ]);
 
         // Check if research completed
+        // Log what data we're getting from API for debugging
+        console.log(`Poll attempt ${attempts}: Research data:`, {
+          hasResearchData: !!researchResult.data,
+          researchedFlag: speciesResult.data?.researched === true,
+          hasSpeciesAiFields: !!speciesResult.data?.general_description_ai,
+          hasResearchAiFields: !!researchResult.data?.general_description_ai
+        });
+
         const researchedFlag = speciesResult.data?.researched === true;
         const hasAiData = !!(
           researchResult.data?.general_description_ai ||
@@ -163,9 +171,18 @@ export function useResearchProcess(
             clearInterval(messageIntervalRef.current);
           }
           
+          console.log("Research complete detection - data found!");
+          
           setResearchStatus("complete");
           setIsResearching(false);
           toast.success("Research completed successfully!");
+          
+          // Force refetch one more time to ensure UI reflects new data
+          setTimeout(() => {
+            refetchSpecies();
+            refetchResearch();
+          }, 1000);
+          
           return;
         }
 

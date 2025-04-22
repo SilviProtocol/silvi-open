@@ -103,8 +103,8 @@ app.use('/species', speciesRoutes);
 const treederboardRoutes = require('./controllers/treederboard')(pool);
 app.use('/treederboard', treederboardRoutes);
 
-const researchRoutes = require('./controllers/research')(pool);
-app.use('/research', researchRoutes);
+const research = require('./controllers/research')(pool);
+app.use('/research', research.router);
 
 const sponsorshipRoutes = require('./controllers/sponsorship')(pool);
 app.use('/sponsorships', sponsorshipRoutes);

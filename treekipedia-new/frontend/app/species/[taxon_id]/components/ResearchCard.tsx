@@ -25,12 +25,37 @@ export function ResearchCard({
   const router = useRouter();
   const [isResearching, setIsResearching] = React.useState(false);
   const [progressMessage, setProgressMessage] = React.useState("");
+  const [progressPercent, setProgressPercent] = React.useState(33); // Default to 33% for transaction phase
+  
+  // Handle manual refresh to force UI update
+  const forceRefresh = React.useCallback(async () => {
+    try {
+      console.log("Forcing data refresh...");
+      // Perform both refetches and wait for them to complete
+      await Promise.all([
+        refetchSpecies(),
+        refetchResearch()
+      ]);
+      console.log("Data refreshed successfully");
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    }
+  }, [refetchSpecies, refetchResearch]);
   
   // Handle sponsorship completion
   const handleSponsorshipComplete = () => {
-    refetchResearch();
-    refetchSpecies();
+    forceRefresh();
   };
+  
+  // Monitor researched status changes and force updates
+  React.useEffect(() => {
+    // If we were in researching state but isResearched becomes true,
+    // make sure we update the UI and stop researching animation
+    if (isResearching && isResearched) {
+      console.log("Research completed, updating UI state");
+      setIsResearching(false);
+    }
+  }, [isResearched, isResearching]);
 
   return (
     <div className="rounded-xl bg-black/30 backdrop-blur-md border border-white/20 p-6 text-white mb-6 sticky top-4">
@@ -72,8 +97,8 @@ export function ResearchCard({
               <div className="relative pt-1">
                 <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-emerald-900/30">
                   <div
-                    className="animate-pulse bg-emerald-500 h-full rounded"
-                    style={{ width: "80%" }}
+                    className="animate-pulse bg-emerald-500 h-full rounded transition-all duration-1000 ease-in-out"
+                    style={{ width: `${progressPercent}%` }}
                   ></div>
                 </div>
               </div>
@@ -116,12 +141,15 @@ export function ResearchCard({
             </div>
           )}
 
-          {/* Use the new SponsorshipButton for direct USDC transfer */}
+          {/* Use the enhanced SponsorshipButton for direct USDC transfer */}
           <SponsorshipButton
             taxonId={taxonId}
             speciesName={species?.species_scientific_name || species?.species || ''}
             onSponsorshipComplete={handleSponsorshipComplete}
             className="w-full bg-emerald-600 hover:bg-emerald-700"
+            setIsResearching={setIsResearching}
+            setProgressMessage={setProgressMessage}
+            setProgressPercent={setProgressPercent}
           />
         </div>
       )}
@@ -162,7 +190,8 @@ export function ResearchCard({
   );
 }
 
-// Using direct USDC transfer approach instead of smart contract
+// Using direct USDC transfer approach with two-phase UI
+// Phase 1: Transaction - Shows progress bar at 33% with transaction-related messages
+// Phase 2: Research - Progress bar fills from 33% to 100% with research-related messages
 // This approach uses a direct USDC transfer to a treasury wallet
 // The backend monitors these transfers and triggers the research process
-// No smart contract is needed for payment processing

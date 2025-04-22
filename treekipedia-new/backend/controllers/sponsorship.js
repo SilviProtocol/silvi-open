@@ -7,37 +7,7 @@ const { performAIResearch } = require('../services/aiResearch');
 
 const SPONSORSHIP_AMOUNT = 0.01; // 0.01 USDC per species (reduced from 3 USDC for testing)
 
-// Infura webhook secret from environment variables
-const WEBHOOK_SECRET = process.env.INFURA_WEBHOOK_SECRET || 'webhook-secret-placeholder';
-
-/**
- * Verify webhook signature from Infura
- * @param {object} req Express request object
- * @returns {boolean} Whether the signature is valid
- */
-function verifyWebhookSignature(req) {
-  // For testing purposes, skip verification if explicitly allowed in env
-  if (process.env.SKIP_WEBHOOK_VERIFICATION === 'true') {
-    console.log('WARNING: Skipping webhook signature verification');
-    return true;
-  }
-
-  const signature = req.headers['x-infura-signature'];
-  if (!signature) {
-    console.error('Missing webhook signature');
-    return false;
-  }
-
-  const payload = JSON.stringify(req.body);
-  const hmac = crypto.createHmac('sha256', WEBHOOK_SECRET);
-  const expectedSignature = hmac.update(payload).digest('hex');
-
-  // Use constant-time comparison to prevent timing attacks
-  return crypto.timingSafeEqual(
-    Buffer.from(signature, 'hex'),
-    Buffer.from(expectedSignature, 'hex')
-  );
-}
+// Webhook functionality removed - using direct transaction monitoring
 
 // Map to store active monitoring tasks by sponsorship ID
 const monitoringTasks = new Map();
@@ -117,26 +87,27 @@ module.exports = (pool) => {
       const chainConfig = chains[chainKey];
       console.log("Found chain config:", chainConfig ? "Yes" : "No");
       
-      // Store the mapped chain key for later use
+      // Store both the original chain ID and the mapped chain key
       const originalChain = chain;
-      chain = chainKey;
+      const mappedChain = chainKey;
       
       if (!chainConfig) {
         return res.status(400).json({ 
           error: 'Invalid chain', 
           supported_chains: Object.keys(chains),
-          received_chain: chain
+          received_chain: originalChain,
+          mapped_chain: mappedChain
         });
       }
       
       // Validate treasury address exists
       const treasuryAddress = chainConfig.treasuryAddress;
-      console.log(`Treasury address for chain ${chain}:`, treasuryAddress);
+      console.log(`Treasury address for chain ${mappedChain}:`, treasuryAddress);
       
       if (!treasuryAddress) {
         return res.status(500).json({ 
           error: 'Treasury address not configured for this chain',
-          chain,
+          chain: mappedChain,
           chain_config: chainConfig
         });
       }
@@ -179,7 +150,7 @@ module.exports = (pool) => {
         `;
         const insertResult = await client.query(sponsorshipInsert, [
           wallet_address,
-          chain,
+          mappedChain,
           null, // Transaction hash will be updated when payment is detected
           SPONSORSHIP_AMOUNT,
           'pending' // Status is pending until payment is detected
@@ -240,6 +211,12 @@ module.exports = (pool) => {
         chain
       });
       
+      // Initialize variables first before any conditional logic
+      let foundSponsorshipId = sponsorship_id;
+      let foundWalletAddress = wallet_address;
+      let foundChain = chain;
+      let shouldProcessDirectly = false;
+      
       // Map numeric chain ID to chain name if needed
       let chainKey = chain;
       if (chain && /^\d+$/.test(chain)) {
@@ -256,7 +233,7 @@ module.exports = (pool) => {
         };
         chainKey = chainIdMapping[chain] || chain;
         console.log(`Mapped numeric chain ID ${chain} to chain key: ${chainKey}`);
-        chain = chainKey;
+        foundChain = chainKey; // Set the mapped chain to foundChain
       }
       
       // Validate required fields
@@ -267,14 +244,10 @@ module.exports = (pool) => {
         });
       }
       
-      let foundSponsorshipId = sponsorship_id;
-      let foundWalletAddress = wallet_address;
-      let foundChain = chain;
-      let shouldProcessDirectly = false;
-      
       // Try to update an existing sponsorship if we have an ID
       if (sponsorship_id) {
         try {
+          console.log(`Attempting to update existing sponsorship ${sponsorship_id} with transaction hash ${transaction_hash}`);
           const updateQuery = `
             UPDATE sponsorships
             SET transaction_hash = $1, updated_at = CURRENT_TIMESTAMP
@@ -284,19 +257,21 @@ module.exports = (pool) => {
           const result = await pool.query(updateQuery, [transaction_hash, sponsorship_id]);
           
           if (result.rows.length > 0) {
-            console.log(`Updated existing sponsorship ${sponsorship_id} with transaction hash ${transaction_hash}`);
+            console.log(`Successfully updated sponsorship ${sponsorship_id} with transaction hash ${transaction_hash}`);
             foundWalletAddress = result.rows[0].wallet_address;
             foundChain = result.rows[0].chain;
+            console.log(`Retrieved wallet address ${foundWalletAddress} and chain ${foundChain} for sponsorship`);
           } else {
-            console.log(`Sponsorship ID ${sponsorship_id} not found in database`);
+            console.log(`Sponsorship ID ${sponsorship_id} not found in database - will process directly`);
             shouldProcessDirectly = true;
           }
         } catch (dbError) {
           console.error(`Database error updating sponsorship:`, dbError);
+          console.log(`Due to database error, will attempt to process transaction directly`);
           shouldProcessDirectly = true;
         }
       } else {
-        console.log(`No sponsorship_id provided, will process transaction directly`);
+        console.log(`No sponsorship_id provided, will process transaction directly with provided information`);
         shouldProcessDirectly = true;
       }
       
@@ -400,59 +375,7 @@ module.exports = (pool) => {
     }
   });
 
-  /**
-   * POST /webhook
-   * Receive webhook events from Infura about sponsorship transactions
-   */
-  router.post('/webhook', async (req, res) => {
-    try {
-      // Verify webhook signature
-      if (!verifyWebhookSignature(req)) {
-        return res.status(401).json({ error: 'Invalid webhook signature' });
-      }
-
-      const eventData = req.body;
-      console.log('Received webhook event:', JSON.stringify(eventData, null, 2));
-
-      // Identify the chain the event came from (base, celo, optimism, arbitrum)
-      const chain = eventData.network || eventData.chainId;
-      if (!chain) {
-        return res.status(400).json({ error: 'Missing chain information in webhook event' });
-      }
-
-      // Process different event types
-      if (eventData.event === 'SponsorshipReceived') {
-        // Single species sponsorship
-        await processSingleSponsorship(
-          pool,
-          chain,
-          eventData.args.sender,
-          eventData.args.taxon_id,
-          eventData.args.amount,
-          eventData.args.transaction_hash || eventData.transactionHash
-        );
-      } else if (eventData.event === 'MassSponsorshipReceived') {
-        // Multiple species sponsorship
-        await processMassSponsorship(
-          pool,
-          chain,
-          eventData.args.sender,
-          eventData.args.taxon_ids,
-          eventData.args.totalAmount,
-          eventData.args.transaction_hash || eventData.transactionHash
-        );
-      } else {
-        console.warn(`Unknown event type: ${eventData.event}`);
-        return res.status(400).json({ error: 'Unsupported event type' });
-      }
-
-      // Acknowledge receipt of webhook
-      res.status(200).json({ success: true });
-    } catch (error) {
-      console.error('Error processing webhook:', error);
-      res.status(500).json({ error: 'Error processing webhook', details: error.message });
-    }
-  });
+  // Webhook route removed - using direct transaction monitoring instead
 
   /**
    * GET /sponsorships/transaction/:transaction_hash
@@ -681,12 +604,31 @@ module.exports = (pool) => {
 
       await client.query('COMMIT');
 
+      // Map chain ID to name if needed before triggering research
+      // This is to ensure we use the correct chain key format (e.g., "base-sepolia" not "84532")
+      let chainKey = chain;
+      if (/^\d+$/.test(chain)) {
+        // This is a numeric chain ID, map it to a chain key
+        const chainIdMapping = {
+          '8453': 'base',
+          '42220': 'celo',
+          '10': 'optimism',
+          '42161': 'arbitrum',
+          '84532': 'base-sepolia',
+          '44787': 'celo-alfajores',
+          '11155420': 'optimism-sepolia',
+          '421614': 'arbitrum-sepolia'
+        };
+        chainKey = chainIdMapping[chain] || chain;
+        console.log(`Mapped numeric chain ID ${chain} to chain key: ${chainKey}`);
+      }
+      
       // Trigger research process in the background
       triggerResearch(
         pool,
         taxon_id,
         sender,
-        chain,
+        chainKey, // Use the mapped chain key
         transaction_hash,
         speciesData.species_scientific_name,
         speciesData.common_name
@@ -827,36 +769,28 @@ module.exports = (pool) => {
       `;
       await pool.query(updateQuery, [transaction_hash, taxon_id]);
 
-      // Call the existing fund-research endpoint logic
-      // This is a direct call to avoid HTTP overhead
-      const researchController = require('./research')(pool);
+      // Call the performResearch function directly from research controller
+      console.log(`Calling performResearch directly for ${taxon_id}`);
       
-      // Prepare the request body
-      const requestBody = {
-        taxon_id,
-        wallet_address,
-        chain,
-        transaction_hash,
-        scientific_name
-      };
-
-      // Create a mock response object to capture the result
-      const mockResponse = {
-        status: function(code) {
-          this.statusCode = code;
-          return this;
-        },
-        json: function(data) {
-          this.data = data;
-          return this;
-        }
-      };
-
-      // Call the fund-research handler directly
-      await researchController.fundResearch(
-        { body: requestBody },
-        mockResponse
+      // Import the research controller to get the performResearch function
+      const research = require('./research')(pool);
+      
+      // Call the standalone function directly with all necessary parameters
+      const result = await research.performResearch(
+        pool, 
+        taxon_id, 
+        wallet_address, 
+        chain, 
+        transaction_hash, 
+        scientific_name, 
+        common_name
       );
+      
+      // Create a mock response for backward compatibility
+      const mockResponse = {
+        statusCode: 201,
+        data: result
+      };
 
       // Check if research was successful
       if (mockResponse.statusCode !== 201) {
@@ -908,22 +842,23 @@ module.exports = (pool) => {
   function startTransactionMonitoring(transactionHash, sponsorshipId, walletAddress, chain, pool) {
     // Skip if already monitoring this transaction
     if (monitoringTasks.has(transactionHash)) {
+      console.log(`Already monitoring transaction ${transactionHash}, skipping duplicate request`);
       return;
     }
     
-    console.log(`Starting monitoring for transaction ${transactionHash} on ${chain}`);
+    console.log(`Starting monitoring for transaction ${transactionHash} on ${chain} for sponsorship ID ${sponsorshipId}`);
     
     // Get provider for the specified chain
     const provider = providers[chain];
     if (!provider) {
-      console.error(`No provider available for chain ${chain}`);
+      console.error(`No provider available for chain ${chain} - unable to monitor transaction`);
       return;
     }
     
     // Get the chain configuration to get the USDC and treasury addresses
     const chainConfig = chains[chain];
     if (!chainConfig) {
-      console.error(`No chain configuration found for ${chain}`);
+      console.error(`No chain configuration found for ${chain} - unable to monitor transaction`);
       return;
     }
     
@@ -940,14 +875,20 @@ module.exports = (pool) => {
     // Function to check transaction status
     const checkTransaction = async () => {
       try {
+        // Log each checking attempt
+        console.log(`Checking transaction ${transactionHash} status...`);
+        
         // Get transaction receipt
         const receipt = await provider.getTransactionReceipt(transactionHash);
+        console.log(`Transaction receipt status:`, receipt ? receipt.status : 'pending');
         
         if (receipt && receipt.status === 1) {
           // Transaction successful - verify it's a USDC transfer
+          console.log(`Transaction ${transactionHash} confirmed on chain, retrieving details...`);
           const transaction = await provider.getTransaction(transactionHash);
           
           if (transaction) {
+            console.log(`Transaction details retrieved, verifying it's a USDC transfer...`);
             // Create an ERC20 interface to parse the transaction data
             // ethers v6 uses Interface directly instead of utils.Interface
             const erc20Interface = new ethers.Interface([
@@ -957,50 +898,58 @@ module.exports = (pool) => {
             try {
               // Try to decode the transaction data
               const decodedData = erc20Interface.parseTransaction({ data: transaction.data, value: transaction.value });
+              console.log(`Transaction decoded: function=${decodedData.name}, to=${decodedData.args[0]}`);
               
               // Check if it's a transfer to our treasury address
-              if (
-                decodedData.name === 'transfer' && 
-                decodedData.args[0].toLowerCase() === treasuryAddress.toLowerCase()
-              ) {
+              const toAddressMatches = decodedData.name === 'transfer' && 
+                decodedData.args[0].toLowerCase() === treasuryAddress.toLowerCase();
+              
+              console.log(`Treasury address match: ${toAddressMatches}`);
+              
+              if (toAddressMatches) {
                 // Verify amount is 0.01 USDC (account for 6 decimals)
                 // In ethers v6, formatUnits is a direct export, not under utils
                 const amount = Number(ethers.formatUnits(decodedData.args[1], 6));
+                console.log(`Transaction amount: ${amount} USDC`);
                 
                 if (Math.abs(amount - SPONSORSHIP_AMOUNT) < 0.005) { // Small tolerance for rounding errors (0.005 is 50% of 0.01)
-                  console.log(`Valid payment detected: ${amount} USDC to ${treasuryAddress}`);
+                  console.log(`Payment verified: ${amount} USDC to ${treasuryAddress}`);
                   
                   // Confirm the sponsorship in the database
+                  console.log(`Confirming sponsorship ${sponsorshipId} in database...`);
                   await confirmSponsorship(pool, sponsorshipId, transactionHash);
                   
                   // Stop monitoring
                   clearTimeout(monitoringTasks.get(transactionHash));
                   monitoringTasks.delete(transactionHash);
-                  console.log(`Successfully confirmed sponsorship ${sponsorshipId}`);
+                  console.log(`Successfully confirmed sponsorship ${sponsorshipId} and initiated research`);
                   return;
                 } else {
                   console.log(`Invalid amount: expected ${SPONSORSHIP_AMOUNT}, got ${amount}`);
                 }
               } else {
-                console.log('Not a transfer to our treasury address or not a transfer function call');
+                console.log('Transaction is not a USDC transfer to our treasury address');
               }
             } catch (decodeError) {
               console.error('Error decoding transaction:', decodeError);
+              console.log('Transaction data:', transaction.data);
             }
           }
         } else if (receipt && receipt.status === 0) {
           // Transaction failed - update status
-          console.log(`Transaction ${transactionHash} failed, updating sponsorship status to failed`);
+          console.log(`Transaction ${transactionHash} failed on chain, updating sponsorship status to failed`);
           await updateSponsorshipStatus(pool, sponsorshipId, 'failed');
           
           // Stop monitoring
           clearTimeout(monitoringTasks.get(transactionHash));
           monitoringTasks.delete(transactionHash);
           return;
+        } else {
+          console.log(`Transaction ${transactionHash} is still pending, waiting for confirmation`);
         }
         
         // Continue monitoring if no definitive result yet
-        console.log(`Transaction ${transactionHash} still pending or not matching criteria, continuing to monitor`);
+        console.log(`Scheduling next check for transaction ${transactionHash} in ${MONITORING_INTERVAL/1000} seconds`);
         
         // Schedule next check
         const timeout = setTimeout(checkTransaction, MONITORING_INTERVAL);
@@ -1009,13 +958,15 @@ module.exports = (pool) => {
         console.error(`Error checking transaction ${transactionHash}:`, error);
         
         // Schedule retry
+        console.log(`Scheduling retry for transaction ${transactionHash} in ${MONITORING_INTERVAL/1000} seconds due to error`);
         const timeout = setTimeout(checkTransaction, MONITORING_INTERVAL);
         monitoringTasks.set(transactionHash, timeout);
       }
     };
     
     // Start the first check
-    const timeout = setTimeout(checkTransaction, MONITORING_INTERVAL);
+    console.log(`Starting first check for transaction ${transactionHash} in 5 seconds`);
+    const timeout = setTimeout(checkTransaction, 5000); // Start first check sooner (5 seconds)
     monitoringTasks.set(transactionHash, timeout);
   }
   
@@ -1055,6 +1006,24 @@ module.exports = (pool) => {
       
       await client.query('COMMIT');
       
+      // Map chain ID to name if needed before triggering research
+      let chainKey = sponsorship.chain;
+      if (/^\d+$/.test(sponsorship.chain)) {
+        // This is a numeric chain ID, map it to a chain key
+        const chainIdMapping = {
+          '8453': 'base',
+          '42220': 'celo',
+          '10': 'optimism',
+          '42161': 'arbitrum',
+          '84532': 'base-sepolia',
+          '44787': 'celo-alfajores',
+          '11155420': 'optimism-sepolia',
+          '421614': 'arbitrum-sepolia'
+        };
+        chainKey = chainIdMapping[sponsorship.chain] || sponsorship.chain;
+        console.log(`Mapped numeric chain ID ${sponsorship.chain} to chain key: ${chainKey}`);
+      }
+      
       // Trigger research process for each species
       for (const item of itemsResult.rows) {
         // Trigger research
@@ -1062,7 +1031,7 @@ module.exports = (pool) => {
           pool,
           item.taxon_id,
           sponsorship.wallet_address,
-          sponsorship.chain,
+          chainKey, // Use the mapped chain key
           transactionHash,
           item.species_scientific_name,
           item.common_name

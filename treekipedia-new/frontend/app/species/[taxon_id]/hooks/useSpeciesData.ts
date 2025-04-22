@@ -35,8 +35,17 @@ export function useSpeciesData(taxonId: string) {
     // ONLY check the explicit researched flag from the database
     // This is the source of truth and prevents treating species with
     // legacy content as being researched
-    return speciesQuery.data?.researched === true;
-  }, [speciesQuery.data]);
+    const hasResearchedFlag = speciesQuery.data?.researched === true;
+    
+    // Just log the checks for debugging without using them for the decision
+    console.log(`Research detection check for ${taxonId}:`, {
+      hasResearchedFlag,
+      researchQueryStatus: researchQuery.status
+    });
+    
+    // Only return true when the researched flag is explicitly set to true
+    return hasResearchedFlag;
+  }, [speciesQuery.data, researchQuery.status, taxonId]);
 
   // Helper for accessing field values with precedence:
   // 1. Human data (if available)

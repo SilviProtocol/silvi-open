@@ -43,3 +43,4 @@ COMMENT ON FUNCTION get_sponsorship_status(TEXT) IS 'Returns detailed status for
 
 -- Verify function exists after creation
 SELECT pg_get_functiondef('get_sponsorship_status'::regproc);
+

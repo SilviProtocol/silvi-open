@@ -35,21 +35,45 @@ After detailed analysis of the database schema:
 ## Improved Multi-Chain Payment Flow Recommendations
 
 ### 1. Frontend Component Refinement
-Refine the existing SponsorshipButton component to maintain multi-chain support while improving the flow:
+Refine the existing SponsorshipButton component to maintain multi-chain support while improving the flow and restoring the polished UX from the original research flow:
 
 ```
 User connects wallet → Button becomes enabled → User clicks button →
 Chain handling (maintain multi-chain support) → System checks USDC balance → 
-User confirms transfer → Backend registers payment → 
-Research process triggered → UI updates
+User confirms transfer → Show transaction loading UI (1/3 progress) →
+Payment confirmed → Show research loading UI (completing progress) →
+Research complete → UI updates to completed state
 ```
 
-#### SponsorshipButton.tsx Improvement Plan
-1. Preserve multi-chain support (Base, Celo, Optimism, Arbitrum and their testnets)
-2. Simplify status handling and error reporting
-3. Create a consistent error handling pattern
-4. Improve the chain switching UX with better error messages
-5. Add more verbose logging for easier debugging
+#### SponsorshipButton.tsx and ResearchCard UI Integration Plan
+
+1. **Button Text States**:
+   - When wallet not connected: "Connect Wallet to Fund Research"
+   - When wallet connected but idle: "Sponsor This Tree"  
+   - During transaction/research: Button disabled with "Processing..."
+
+2. **Loading and Progress UI**:
+   - Split process into two phases: transaction confirmation and research processing
+   - Use the ResearchCard's existing beautiful loading UI (lines 64-84 in the original component)
+   - Create two sets of cycling messages:
+     * Transaction-related messages for first phase (e.g., "Confirming transaction...", "Verifying payment...")
+     * Research-related messages from existing useResearchProcess for second phase
+   - Progress bar visualization:
+     * During transaction phase: Show progress bar at ~33% width
+     * During research phase: Animate progress from 33% to 100%
+
+3. **Component Integration**:
+   - Preserve multi-chain support (Base, Celo, Optimism, Arbitrum and their testnets)
+   - Integrate the SponsorshipButton with the ResearchCard loading UI
+   - Pass status information between components to coordinate UI states
+   - Use the existing polling mechanism in useResearchProcess for research status
+   - Add new polling for transaction confirmation
+
+4. **Error Handling and UX**:
+   - Create a consistent error handling pattern
+   - Improve the chain switching UX with better error messages
+   - Add more verbose logging for easier debugging
+   - Preserve the existing error recovery mechanisms
 
 ### 2. Backend API Refinement
 The current API structure is sound, but needs some refinements:
@@ -85,7 +109,10 @@ The current API structure is sound, but needs some refinements:
    - Simplify transaction monitoring while maintaining functionality
 
 3. Frontend refinements:
-   - Refine the SponsorshipButton component
+   - Refine the SponsorshipButton component with the two-phase UI approach
+   - Create transaction message cycling to complement existing research messages
+   - Integrate the component with ResearchCard's loading UI
+   - Implement the progress bar with transaction (33%) and research phases
    - Improve error messaging and status display
    - Add better handling of chain switching
    - Maintain support for all chains

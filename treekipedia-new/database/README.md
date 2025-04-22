@@ -13,6 +13,8 @@ The Treekipedia database consists of five main tables:
 4. **sponsorships** - Tracks payment transactions for species research funding
 5. **sponsorship_items** - Records individual species funded through sponsorships
 
+## Table Structure Details
+
 ### Species Table
 
 The species table uses a suffix-based field naming convention to differentiate data sources:
@@ -34,75 +36,112 @@ The species table uses a suffix-based field naming convention to differentiate d
 
 ### Users Table
 
+- `id` (SERIAL) - Primary key
 - `wallet_address` (TEXT) - Unique blockchain wallet address
 - `display_name` (TEXT) - Optional user-set display name
-- `total_points` (INTEGER) - Total points accumulated
-- `contribution_count` (INTEGER) - Number of contributions made
+- `total_points` (INTEGER DEFAULT 0) - Total points accumulated
+- `first_contribution_at` (TIMESTAMP WITH TIME ZONE) - When the user first contributed
+- `last_contribution_at` (TIMESTAMP WITH TIME ZONE) - When the user last contributed
+- `contribution_count` (INTEGER DEFAULT 0) - Number of contributions made
+- `created_at` (TIMESTAMP WITH TIME ZONE) - Record creation timestamp
+- `updated_at` (TIMESTAMP WITH TIME ZONE) - Record update timestamp
 
 ### Contreebution NFTs Table
 
+- `id` (SERIAL) - Primary key
 - `global_id` (BIGINT) - Unique sequential ID for NFTs
 - `taxon_id` (TEXT) - References species.taxon_id
 - `wallet_address` (TEXT) - Wallet address of the owner
+- `points` (INTEGER DEFAULT 2) - Points awarded for this contribution
 - `ipfs_cid` (TEXT) - IPFS content identifier for NFT metadata
 - `transaction_hash` (TEXT) - Blockchain transaction hash
 - `metadata` (JSONB) - Additional NFT metadata
+- `created_at` (TIMESTAMP WITH TIME ZONE) - Record creation timestamp
 
 ### Sponsorships Table
 
 - `id` (SERIAL) - Primary key
 - `wallet_address` (TEXT) - Wallet address of the sponsor
 - `chain` (TEXT) - Blockchain network used (e.g., base, celo, optimism, arbitrum)
-- `transaction_hash` (TEXT) - Unique blockchain transaction hash
-- `total_amount` (NUMERIC) - Total USDC amount paid (3 USDC per species)
-- `payment_timestamp` (TIMESTAMP WITH TIME ZONE) - When the payment was made
-- `status` (VARCHAR) - Payment status (pending, confirmed)
-- `created_at` (TIMESTAMP WITH TIME ZONE) - Record creation timestamp
-- `updated_at` (TIMESTAMP WITH TIME ZONE) - Record update timestamp
+- `transaction_hash` (TEXT UNIQUE) - Unique blockchain transaction hash
+- `total_amount` (NUMERIC) - Total USDC amount paid (currently 0.01 USDC for testing, normally 3 USDC per species)
+- `payment_timestamp` (TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP) - When the payment was made
+- `status` (VARCHAR(50) DEFAULT 'pending') - Payment status (pending, confirmed, failed)
+- `created_at` (TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP) - Record creation timestamp
+- `updated_at` (TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP) - Record update timestamp
 
 ### Sponsorship Items Table
 
 - `id` (SERIAL) - Primary key
-- `sponsorship_id` (INTEGER) - References sponsorships.id
+- `sponsorship_id` (INTEGER) - References sponsorships.id, with CASCADE deletion
 - `taxon_id` (TEXT) - References species.taxon_id
-- `amount` (NUMERIC) - Amount paid for this species (default 3 USDC)
-- `research_status` (VARCHAR) - Status of the research (pending, researching, completed, failed)
+- `amount` (NUMERIC DEFAULT 3) - Amount paid for this species (default 3 USDC, currently 0.01 USDC for testing)
+- `research_status` (VARCHAR(50) DEFAULT 'pending') - Status of the research (pending, researching, completed, failed)
 - `nft_token_id` (BIGINT) - References contreebution_nfts.global_id
 - `ipfs_cid` (TEXT) - IPFS content identifier for NFT metadata
-- `created_at` (TIMESTAMP WITH TIME ZONE) - Record creation timestamp
-- `updated_at` (TIMESTAMP WITH TIME ZONE) - Record update timestamp
+- `created_at` (TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP) - Record creation timestamp
+- `updated_at` (TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP) - Record update timestamp
+
+## Constraints and Relationships
+
+The database has several important constraints:
+
+- Primary keys on all table IDs
+- Foreign key between `sponsorship_items.sponsorship_id` and `sponsorships.id` (with CASCADE deletion)
+- Foreign key between `sponsorship_items.taxon_id` and `species.taxon_id`
+- Unique constraint on `sponsorships.transaction_hash`
+- Unique constraint on `(sponsorship_id, taxon_id)` pairs in `sponsorship_items`
 
 ## Database Functions and Views
 
 ### Functions
 
 #### update_user_points()
-- Updates users table when a new NFT is inserted
-- Adds points, increments contribution_count, and updates timestamps
+- **Purpose**: Updates users table when a new NFT is inserted
+- **Trigger**: Executes automatically after INSERT on contreebution_nfts
+- **Operation**: Adds points, increments contribution_count, and updates timestamps
+- **Behavior**: Creates new user record if wallet_address doesn't exist, otherwise updates existing record
 
 #### update_species_sponsorship_status()
-- Updates species sponsorship status when research is completed
-- Sets sponsored flag, sponsored_by, and sponsored_at fields
+- **Purpose**: Updates species table when research is completed for a sponsored species
+- **Trigger**: Executes automatically after UPDATE on sponsorship_items
+- **Condition**: Only triggers when research_status changes to 'completed'
+- **Operation**: Sets sponsored = TRUE, sponsored_by = wallet_address, sponsored_at = payment_timestamp
 
 #### get_sponsorship_status(tx_hash TEXT)
-- Returns detailed status information for a sponsorship by transaction hash
-- Includes counts of total species and completed species
+- **Purpose**: Returns detailed status information for a sponsorship by transaction hash
+- **Return Type**: TABLE with columns matching sponsorships table + count fields
+- **Column Types**: Uses character varying(50) for status field (fixed from previous TEXT type)
+- **Operation**: Joins sponsorships with sponsorship_items to get counts
 
 ### Views
 
 #### sponsorship_summary
-- Provides a summary view of all sponsorships with species counts
-- Includes wallet_address, chain, transaction_hash, total_amount, etc.
-- Aggregates counts of species and completed research for each sponsorship
+- **Purpose**: Provides a summary view of all sponsorships with species counts
+- **Columns**: sponsorship_id, wallet_address, chain, transaction_hash, total_amount, payment_timestamp, payment_status, species_count, completed_count, taxon_ids
+- **Calculation**: Counts total species and completed research for each sponsorship
+- **Grouping**: Groups by sponsorship fields to provide aggregation
 
-## Recent Schema Changes
+## Status Values Documentation
 
-1. **Migrated to _ai and _human fields**: All content fields now use _ai and _human suffixes to differentiate between AI-generated and human-verified content
-2. **Removed legacy base fields**: Original fields without suffixes have been migrated to _ai fields and removed from the schema
-3. **Maintained researched flag**: The boolean `researched` flag is still used to track which species have been researched
-4. **Field size increases**: VARCHAR fields have been increased from 100 to 300 characters to accommodate longer data
-5. **Added payment system tables**: New sponsorships and sponsorship_items tables to track research funding
-6. **Added species sponsorship fields**: New sponsored, sponsored_by, and sponsored_at fields for the species table
+### Sponsorships Table Status Values
+- **pending**: Initial state when sponsorship is created but payment not confirmed
+- **confirmed**: Payment has been verified on the blockchain
+- **failed**: Payment transaction failed or was rejected
+
+### Sponsorship Items Research Status Values
+- **pending**: Research has not started yet
+- **researching**: AI research process is in progress
+- **completed**: Research completed successfully
+- **failed**: Research process failed
+
+## Recent Updates and Fixes
+
+1. **Fixed `get_sponsorship_status` function**: Updated the function signature to use VARCHAR(50) for status field instead of TEXT to match database schema
+2. **Added constraints documentation**: Clarified the constraints between tables
+3. **Standardized status values**: Documented the valid status values for both tables
+4. **Added trigger details**: Explained when and how triggers are executed
+5. **Updated USDC amount**: Noted the change to 0.01 USDC for testing (normally 3 USDC)
 
 ## Database Migration Scripts
 
@@ -112,6 +151,7 @@ The `/scripts/db/` directory contains migration scripts for schema updates:
 - `fix_varchar_fields.sql` - Increases VARCHAR field sizes from 100 to 300
 - `schema_update.sql` - Comprehensive schema update combining multiple changes
 - `payment_schema_update.sql` - Adds tables and fields for the payment system
+- `fix_sponsorship_status_function.sql` - Fixes the get_sponsorship_status function signature
 
 ## Connection Information
 
@@ -135,6 +175,12 @@ For example, to apply the payment system schema update:
 ```
 psql -U [username] -d treekipedia
 \i database/payment_schema_update.sql
+```
+
+To fix the get_sponsorship_status function:
+```
+psql -U [username] -d treekipedia
+\i database/fix_sponsorship_status_function.sql
 ```
 
 Or use the helper script to drop base fields (without migrating data) while preserving the researched flag:
