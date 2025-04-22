@@ -2,11 +2,11 @@
 
 ### Payment System Setup
 
-- [ ]  Payment contract created to accept exactly 3 USDC and require a taxon_id on Celo, Base, Arbitrum, and Optimism
+- [x]  Payment contract created to accept exactly 3 USDC and require a taxon_id on Celo, Base, Arbitrum, and Optimism
 - [ ]  Payment contract deployed on Celo, Base, Arbitrum, and Optimism with contract addresses recorded
 - [ ]  Frontend payment flow configured to detect the user’s connected chain and ensure it’s supported (Celo, Base, Arbitrum, or Optimism)
-- [ ]  User prompted to approve the payment contract to spend 3 USDC and send 3 USDC with the taxon_id in the frontend
-- [ ]  Transaction confirmation handled in the frontend, displaying "Processing started" and managing errors (e.g., insufficient balance, unsupported chain)
+- [x]  User prompted to approve the payment contract to spend 3 USDC and send 3 USDC with the taxon_id in the frontend
+- [x]  Transaction confirmation handled in the frontend, displaying "Processing started" and managing errors (e.g., insufficient balance, unsupported chain)
 - [ ]  Payment contract addresses stored in the frontend configuration for each chain
 - [ ]  Infura webhooks set up for each chain to monitor the SponsorshipReceived event from the payment contract
 - [ ]  Backend /webhook endpoint implemented to receive and process event data from Infura
@@ -19,25 +19,6 @@
 - [ ]  Sponsorship records updated to status "completed" and nft_token_id added after fund-research API completes
 - [ ]  End-to-end flow tested: user clicks "Sponsor this Species" → payment sent → event emitted → backend notified → research triggered → database updated → user can view status and NFT
 
-### Smart Contract and IPFS Updates
-
-- [ ]  New contract ContreebutionNFT_v2.sol created, combining features from ContreebutionNFT.sol and ResearchContreebution_v2.sol
-- [ ]  getFullTokenName() function implemented in ContreebutionNFT_v2.sol to return "Research Contreebution #[tokenId]"
-- [ ]  ID validation from the current contract maintained in ContreebutionNFT_v2.sol
-- [ ]  Backward compatibility ensured by keeping the same function signatures (e.g., safeMint(address, uint256, string))
-- [ ]  IPFS metadata updated to include token ID in the name field (e.g., "Research Contreebution #[tokenId]")
-- [ ]  Standard "description" field added to IPFS metadata
-- [ ]  "image" field included in IPFS metadata with proper IPFS URL format (ipfs://[CID])
-- [ ]  uploadToIPFS() function in backend services updated to create the proper metadata structure
-- [ ]  tokenURI in the contract formatted correctly with the "ipfs://" prefix
-- [ ]  mintNFT function updated to handle the new contract and include the URI prefix
-- [ ]  global_id properly used as tokenId in the minting process
-- [ ]  NFT metadata generation in the research controller updated to include the proper name format
-- [ ]  Token IDs ensured to be sequential across all chains
-- [ ]  Contract functions tested with new changes
-- [ ]  getFullTokenName verified to return the correct format
-- [ ]  NFT metadata verified to display properly on NFT platforms
-- [ ]  Contract interactions with backend services validated
 
 ### Frontend Polish
 

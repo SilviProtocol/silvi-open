@@ -1,5 +1,6 @@
 // Import required modules
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const { ethers } = require('ethers');
 const chains = require('../config/chains');
 
@@ -8,20 +9,38 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 /**
  * Creates an attestation on the Ethereum Attestation Service (EAS)
- * @param {string} chain - Chain to create attestation on ('base', 'celo', 'optimism', 'arbitrum')
+ * @param {string} chain - Chain for NFT minting ('base', 'celo', 'optimism', 'arbitrum')
  * @param {Object} data - Attestation data to be stored
  * @returns {Promise<string>} - UID of the created attestation
  */
 async function createAttestation(chain, data) {
   try {
-    // Get chain configuration
-    const chainConfig = chains[chain];
-    if (!chainConfig) {
-      throw new Error(`Unsupported chain: ${chain}`);
+    // IMPORTANT: Always use Celo for EAS attestations regardless of which chain user is connected to
+    const attestationChain = 'celo';
+    
+    console.log(`Creating attestation on Celo (fixed EAS chain) for ${data.species} - Original request chain: ${chain}`);
+    
+    // Get Celo chain configuration for attestation
+    const celoConfig = chains[attestationChain];
+    if (!celoConfig) {
+      throw new Error(`Missing configuration for Celo chain which is required for attestations`);
     }
     
-    // Set up provider and signer
-    const provider = new ethers.JsonRpcProvider(chainConfig.rpcUrl);
+    // Check for missing critical configuration
+    if (!celoConfig.rpcUrl) {
+      throw new Error(`Missing RPC URL for Celo. Please set CELO_RPC_URL in .env file.`);
+    }
+    
+    if (!celoConfig.easContractAddress) {
+      throw new Error(`Missing EAS contract address for Celo. Please set CELO_EAS_CONTRACT_ADDRESS in .env file.`);
+    }
+    
+    if (!celoConfig.easSchemaId) {
+      throw new Error(`Missing EAS schema ID for Celo. Please set CELO_EAS_SCHEMA_ID in .env file.`);
+    }
+    
+    // Set up provider and signer for Celo (not the user's connected chain)
+    const provider = new ethers.JsonRpcProvider(celoConfig.rpcUrl);
     const signer = new ethers.Wallet(PRIVATE_KEY, provider);
     
     // Initialize EAS contract
@@ -29,7 +48,7 @@ async function createAttestation(chain, data) {
     // Extract the actual ABI array from the file
     const easContractABI = easContractABIFile.abi;
     // Ensure the address is checksummed
-    const checksummedEasAddress = ethers.getAddress(chainConfig.easContractAddress);
+    const checksummedEasAddress = ethers.getAddress(celoConfig.easContractAddress);
     const easContract = new ethers.Contract(
       checksummedEasAddress,
       easContractABI,
@@ -38,8 +57,8 @@ async function createAttestation(chain, data) {
     
     // Prepare attestation data
     // The schema ID is a bytes32 value, not an address, so we don't need to checksum it
-    const schema = chainConfig.easSchemaId; // Schema ID for tree species research
-    console.log("Using schema ID:", schema);
+    const schema = celoConfig.easSchemaId; // Schema ID for tree species research
+    console.log("Using Celo EAS schema ID:", schema);
     
     // Current timestamp for the attestation
     const timestamp = Math.floor(Date.now() / 1000);
@@ -66,14 +85,14 @@ async function createAttestation(chain, data) {
     );
     
     // Create attestation
-    console.log(`Creating attestation on ${chain} for species ${data.species}`);
+    console.log(`Creating EAS attestation on CELO (fixed chain) for species ${data.species}`);
     
     // We already have the refUID defined above, using either data.refUID or ethers.ZeroHash
     
     // Add detailed logging for debugging
     console.log("Schema UID:", schema);
-    console.log("EAS Contract Address:", chainConfig.easContractAddress);
-    console.log("Recipient:", data.researcher);
+    console.log("Celo EAS Contract Address:", celoConfig.easContractAddress);
+    console.log("Recipient (wallet):", data.researcher);
     console.log("Encoded attestation data:", attestationData);
     
     // Skip schema registry check as it's not needed for attestation
@@ -120,8 +139,8 @@ async function createAttestation(chain, data) {
           console.log(`Checking log from address: ${log.address}`);
           
           // Check if this log is from the EAS contract
-          if (log.address.toLowerCase() === chainConfig.easContractAddress.toLowerCase()) {
-            console.log("Found log from EAS contract");
+          if (log.address.toLowerCase() === celoConfig.easContractAddress.toLowerCase()) {
+            console.log("Found log from Celo EAS contract");
             
             // Check if this is an Attested event based on the first topic (event signature)
             if (log.topics && log.topics.length > 0 && log.topics[0] === ATTESTED_EVENT_SIGNATURE) {
@@ -212,10 +231,32 @@ async function createAttestation(chain, data) {
  */
 async function mintNFT(chain, recipient, globalId, tokenURI) {
   try {
+    console.log(`DEBUG: mintNFT called with chain=${chain}, recipient=${recipient}, globalId=${globalId}`);
+
+    // Check if this is a testnet request
+    const isTestnet = chain.includes('sepolia') || chain.includes('alfajores');
+    console.log(`DEBUG: Chain ${chain} isTestnet=${isTestnet}`);
+    
     // Get chain configuration
     const chainConfig = chains[chain];
     if (!chainConfig) {
       throw new Error(`Unsupported chain: ${chain}`);
+    }
+    
+    // Debug log the chain configuration 
+    console.log(`DEBUG: Chain config for ${chain}:`, {
+      chainId: chainConfig.chainId,
+      rpcUrl: chainConfig.rpcUrl,
+      nftContractAddress: chainConfig.nftContractAddress
+    });
+    
+    // Check for missing critical configuration
+    if (!chainConfig.rpcUrl) {
+      throw new Error(`Missing RPC URL for chain: ${chain}. Please set ${chain.toUpperCase()}_RPC_URL in .env file.`);
+    }
+    
+    if (!chainConfig.nftContractAddress) {
+      throw new Error(`Missing NFT contract address for chain: ${chain}. Please set ${chain.toUpperCase()}_NFT_CONTRACT_ADDRESS in .env file.`);
     }
     
     // Set up provider and signer
@@ -226,6 +267,8 @@ async function mintNFT(chain, recipient, globalId, tokenURI) {
     const nftContractABI = require('../config/abis/contreebutionNFT.json');
     // Ensure the address is checksummed
     const checksummedNftAddress = ethers.getAddress(chainConfig.nftContractAddress);
+    console.log(`DEBUG: Using NFT Contract Address: ${checksummedNftAddress}`);
+    
     const nftContract = new ethers.Contract(
       checksummedNftAddress,
       nftContractABI,
@@ -239,8 +282,8 @@ async function mintNFT(chain, recipient, globalId, tokenURI) {
     }
     
     // Mint NFT
-    console.log(`Minting NFT on ${chain} for recipient ${recipient} with tokenId: ${tokenId}`);
-    const tx = await nftContract.safeMint(recipient, tokenId, tokenURI);
+    console.log(`blockchain.js Minting NFT on ${chain} for recipient ${recipient} with tokenId: ${tokenId}`);
+    const tx = await nftContract.safeMint(recipient, tokenId, `ipfs://${tokenURI}`);
     
     // Wait for transaction to be confirmed
     const receipt = await tx.wait();

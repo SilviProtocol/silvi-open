@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { TreeSpecies } from "@/lib/types";
 import { useResearchProcess } from "../hooks/useResearchProcess";
-import { SponsorshipButton } from "@/components/sponsorship-button";
+// Temporarily comment out SponsorshipButton until contracts are deployed
+// import { SponsorshipButton } from "@/components/sponsorship-button";
 
 interface ResearchCardProps {
   species: TreeSpecies;
@@ -116,12 +117,23 @@ export function ResearchCard({
             </div>
           )}
 
+          {/* Temporarily revert to the original button until payment contracts are deployed */}
+          <Button
+            onClick={startResearch}
+            disabled={!address || isResearching}
+            className="w-full bg-emerald-600 hover:bg-emerald-700"
+          >
+            {!address ? "Connect Wallet to Fund Research" : isResearching ? "Processing..." : "Fund This Tree's Research"}
+          </Button>
+
+          {/* Temporarily comment out SponsorshipButton until contracts are deployed
           <SponsorshipButton
             taxonId={taxonId}
             speciesName={species?.species_scientific_name || species?.species || ''}
             onSponsorshipComplete={refetchResearch}
             className="w-full bg-emerald-600 hover:bg-emerald-700"
           />
+          */}
         </div>
       )}
 
@@ -160,3 +172,8 @@ export function ResearchCard({
     </div>
   );
 }
+
+// TODO: Revert back to SponsorshipButton once payment contracts are deployed
+// This is a temporary fix until payment contracts are deployed to the supported chains
+// Once contracts are deployed and addresses in lib/chains.ts are updated, we can
+// uncomment the SponsorshipButton import and implementation, and remove the temporary button

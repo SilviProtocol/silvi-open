@@ -3,13 +3,15 @@
 This directory contains database schemas, migrations, and seed data for the Treekipedia project.
 
 ## Current Schema Structure
-The definitive current schema is in `current-schema.sql` (with `schema.sql` as a symlink to this file).
+The definitive current schema is in `current-schema.sql` (with `schema.sql` as a symlink to this file) and has been updated with payment system tables from `payment_schema_update.sql`.
 
-The Treekipedia database consists of three main tables:
+The Treekipedia database consists of five main tables:
 
 1. **species** - Contains all tree species data with separate fields for AI-generated and human-verified content
 2. **users** - Tracks user information and total points
 3. **contreebution_nfts** - Records of NFTs minted for research contributions
+4. **sponsorships** - Tracks payment transactions for species research funding
+5. **sponsorship_items** - Records individual species funded through sponsorships
 
 ### Species Table
 
@@ -25,6 +27,10 @@ The species table uses a suffix-based field naming convention to differentiate d
 - `common_name` (TEXT) - Common names for the species
 - Various ecological, morphological, and stewardship fields with `_ai` and `_human` suffixes
 - `ipfs_cid` (VARCHAR) - IPFS content identifier for species metadata
+- `researched` (BOOLEAN) - Flag indicating whether this species has been researched
+- `sponsored` (BOOLEAN) - Flag indicating whether this species has been sponsored
+- `sponsored_by` (TEXT) - Wallet address of the sponsor
+- `sponsored_at` (TIMESTAMP WITH TIME ZONE) - When the species was sponsored
 
 ### Users Table
 
@@ -42,12 +48,61 @@ The species table uses a suffix-based field naming convention to differentiate d
 - `transaction_hash` (TEXT) - Blockchain transaction hash
 - `metadata` (JSONB) - Additional NFT metadata
 
+### Sponsorships Table
+
+- `id` (SERIAL) - Primary key
+- `wallet_address` (TEXT) - Wallet address of the sponsor
+- `chain` (TEXT) - Blockchain network used (e.g., base, celo, optimism, arbitrum)
+- `transaction_hash` (TEXT) - Unique blockchain transaction hash
+- `total_amount` (NUMERIC) - Total USDC amount paid (3 USDC per species)
+- `payment_timestamp` (TIMESTAMP WITH TIME ZONE) - When the payment was made
+- `status` (VARCHAR) - Payment status (pending, confirmed)
+- `created_at` (TIMESTAMP WITH TIME ZONE) - Record creation timestamp
+- `updated_at` (TIMESTAMP WITH TIME ZONE) - Record update timestamp
+
+### Sponsorship Items Table
+
+- `id` (SERIAL) - Primary key
+- `sponsorship_id` (INTEGER) - References sponsorships.id
+- `taxon_id` (TEXT) - References species.taxon_id
+- `amount` (NUMERIC) - Amount paid for this species (default 3 USDC)
+- `research_status` (VARCHAR) - Status of the research (pending, researching, completed, failed)
+- `nft_token_id` (BIGINT) - References contreebution_nfts.global_id
+- `ipfs_cid` (TEXT) - IPFS content identifier for NFT metadata
+- `created_at` (TIMESTAMP WITH TIME ZONE) - Record creation timestamp
+- `updated_at` (TIMESTAMP WITH TIME ZONE) - Record update timestamp
+
+## Database Functions and Views
+
+### Functions
+
+#### update_user_points()
+- Updates users table when a new NFT is inserted
+- Adds points, increments contribution_count, and updates timestamps
+
+#### update_species_sponsorship_status()
+- Updates species sponsorship status when research is completed
+- Sets sponsored flag, sponsored_by, and sponsored_at fields
+
+#### get_sponsorship_status(tx_hash TEXT)
+- Returns detailed status information for a sponsorship by transaction hash
+- Includes counts of total species and completed species
+
+### Views
+
+#### sponsorship_summary
+- Provides a summary view of all sponsorships with species counts
+- Includes wallet_address, chain, transaction_hash, total_amount, etc.
+- Aggregates counts of species and completed research for each sponsorship
+
 ## Recent Schema Changes
 
 1. **Migrated to _ai and _human fields**: All content fields now use _ai and _human suffixes to differentiate between AI-generated and human-verified content
 2. **Removed legacy base fields**: Original fields without suffixes have been migrated to _ai fields and removed from the schema
 3. **Maintained researched flag**: The boolean `researched` flag is still used to track which species have been researched
 4. **Field size increases**: VARCHAR fields have been increased from 100 to 300 characters to accommodate longer data
+5. **Added payment system tables**: New sponsorships and sponsorship_items tables to track research funding
+6. **Added species sponsorship fields**: New sponsored, sponsored_by, and sponsored_at fields for the species table
 
 ## Database Migration Scripts
 
@@ -56,6 +111,7 @@ The `/scripts/db/` directory contains migration scripts for schema updates:
 - `remove_base_fields_only.sql` - Removes the base fields without migrating data, while keeping the researched flag
 - `fix_varchar_fields.sql` - Increases VARCHAR field sizes from 100 to 300
 - `schema_update.sql` - Comprehensive schema update combining multiple changes
+- `payment_schema_update.sql` - Adds tables and fields for the payment system
 
 ## Connection Information
 
@@ -72,8 +128,14 @@ To apply database schema updates:
 1. Connect to the database server
 2. Run the migration script:
    ```
-   psql -U [username] -d treekipedia -f scripts/db/[migration_script].sql
+   psql -U [username] -d treekipedia -f database/[migration_script].sql
    ```
+
+For example, to apply the payment system schema update:
+```
+psql -U [username] -d treekipedia
+\i database/payment_schema_update.sql
+```
 
 Or use the helper script to drop base fields (without migrating data) while preserving the researched flag:
 ```

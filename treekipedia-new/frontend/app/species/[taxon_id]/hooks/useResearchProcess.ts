@@ -1,7 +1,39 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { toast } from "sonner";
+import { useChainId } from "wagmi";
 import { fundResearch } from "@/lib/api";
 import { TreeSpecies } from "@/lib/types";
+import { base, baseSepolia, celo, celoAlfajores, optimism, optimismSepolia, arbitrum, arbitrumSepolia } from 'wagmi/chains';
+
+/**
+ * Helper function to convert chain ID to chain name for the backend API
+ */
+function getChainNameForBackend(chainId?: number): string {
+  // Default to celo if no chainId provided
+  if (!chainId) return "celo";
+  
+  // Map chain IDs to expected backend names
+  switch (chainId) {
+    case base.id:
+      return "base";
+    case baseSepolia.id:
+      return "base-sepolia";
+    case celo.id:
+      return "celo";
+    case celoAlfajores.id:
+      return "celo-alfajores";
+    case optimism.id:
+      return "optimism";
+    case optimismSepolia.id:
+      return "optimism-sepolia";
+    case arbitrum.id:
+      return "arbitrum";
+    case arbitrumSepolia.id:
+      return "arbitrum-sepolia";
+    default:
+      return "celo"; // Default fallback
+  }
+}
 
 /**
  * Custom hook for managing the research funding process
@@ -13,6 +45,7 @@ export function useResearchProcess(
   refetchSpecies: () => Promise<any>,
   refetchResearch: () => Promise<any>
 ) {
+  const chainId = useChainId(); // Get the current chain ID from wagmi
   const [isResearching, setIsResearching] = useState(false);
   const [researchStatus, setResearchStatus] = useState<
     "idle" | "starting" | "processing" | "complete" | "error" | "timeout"
@@ -47,6 +80,10 @@ export function useResearchProcess(
       // Future improvement: Use a real transaction from wallet connection
       const transactionHash = `0x${Math.random().toString(16).substring(2, 42)}`;
       const scientificName = species.species_scientific_name || species.species;
+      
+      // Get the chain name based on the current chain ID
+      const chainName = getChainNameForBackend(chainId);
+      console.log(`Using chain: ${chainName} (Chain ID: ${chainId})`);
 
       setResearchStatus("processing");
       // Start cycling through messages
@@ -56,12 +93,11 @@ export function useResearchProcess(
         messageIndex++;
       }, 3000);
 
-      // Call the fundResearch API - note that ipfs_cid is optional per API.md
-      // The backend will generate the IPFS CID, so we don't need to provide one
+      // Call the fundResearch API with the current chain name
       const response = await fundResearch(
         taxonId,
         address,
-        "celo", // Default to Celo for now
+        chainName, // Use the current chain instead of hardcoded "celo"
         transactionHash,
         "", // Empty ipfs_cid - backend will generate it
         scientificName
@@ -82,7 +118,7 @@ export function useResearchProcess(
       toast.error(error.message || "Failed to start research");
       setIsResearching(false);
     }
-  }, [taxonId, species, address, isResearching]);
+  }, [taxonId, species, address, isResearching, chainId]);
 
   // Polling implementation with exponential backoff
   const startPollingForResearch = useCallback(() => {

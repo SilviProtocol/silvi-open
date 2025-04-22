@@ -198,9 +198,11 @@ Updates a user's profile information, such as display name.
 
 ## Research Endpoints
 
-### Fund Research
+### Fund Research (Legacy Method - Deprecated)
 
 Initiates AI research for a tree species by funding through an NFT.
+
+**Note:** This endpoint is deprecated in favor of the new payment system. New applications should use the payment contract and sponsorship webhook instead.
 
 **Endpoint:** `POST /research/fund-research`
 
@@ -259,7 +261,7 @@ Initiates AI research for a tree species by funding through an NFT.
 }
 ```
 
-**Usage:** Called after a user completes the NFT funding process for a species that needs research.
+**Usage:** This endpoint is now called internally by the sponsorship webhook handler when a payment is confirmed. It is no longer recommended for direct use by frontend applications.
 
 ---
 
@@ -366,10 +368,159 @@ Returns information about available API endpoints.
   "endpoints": [
     "/species - Species search and details",
     "/treederboard - User contributions leaderboard",
-    "/research - AI research and NFT minting"
+    "/research - AI research and NFT minting",
+    "/sponsorships - Sponsorship payment tracking and webhooks"
   ]
 }
 ```
+
+---
+
+## Sponsorship Endpoints
+
+### Webhook for Payment Events
+
+Receives webhook events from Infura about sponsorship transactions.
+
+**Endpoint:** `POST /sponsorships/webhook`
+
+**Headers:**
+- `x-infura-signature`: HMAC SHA-256 signature to verify authenticity
+
+**Request Body:** (From Infura)
+```json
+{
+  "network": "string",
+  "chainId": "string",
+  "event": "SponsorshipReceived",
+  "transactionHash": "string",
+  "args": {
+    "sender": "string",
+    "taxon_id": "string",
+    "amount": "string",
+    "transaction_hash": "string"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true
+}
+```
+
+**Usage:** This endpoint is called by Infura when a payment is made through the payment contract. It is not meant to be called directly by frontend clients.
+
+---
+
+### Get Sponsorship by Transaction Hash
+
+Retrieve details about a sponsorship by its transaction hash.
+
+**Endpoint:** `GET /sponsorships/transaction/:transaction_hash`
+
+**URL Parameters:**
+- `transaction_hash` (required): Transaction hash from the blockchain
+
+**Response:**
+```json
+{
+  "transaction_hash": "string",
+  "status": "string",
+  "total_amount": "number",
+  "wallet_address": "string",
+  "chain": "string",
+  "payment_timestamp": "string",
+  "species_count": "number",
+  "completed_count": "number",
+  "species": [
+    {
+      "id": "number",
+      "sponsorship_id": "number",
+      "taxon_id": "string",
+      "amount": "number",
+      "research_status": "string",
+      "nft_token_id": "number",
+      "ipfs_cid": "string",
+      "common_name": "string",
+      "species_scientific_name": "string"
+    }
+  ]
+}
+```
+
+**Usage:** Used to check the status of a payment after submission, typically on the transaction confirmation page.
+
+---
+
+### Get User Sponsorships
+
+Retrieve all sponsorships made by a specific wallet address.
+
+**Endpoint:** `GET /sponsorships/user/:wallet_address`
+
+**URL Parameters:**
+- `wallet_address` (required): User's blockchain wallet address
+
+**Query Parameters:**
+- `limit` (optional): Maximum number of sponsorships to return (default: 20)
+- `offset` (optional): Number of sponsorships to skip (default: 0)
+
+**Response:**
+```json
+[
+  {
+    "sponsorship_id": "number",
+    "wallet_address": "string",
+    "chain": "string",
+    "transaction_hash": "string",
+    "total_amount": "number",
+    "payment_timestamp": "string",
+    "payment_status": "string",
+    "species_count": "number",
+    "completed_count": "number",
+    "taxon_ids": ["string"]
+  }
+]
+```
+
+**Usage:** Display a user's sponsorship history on their profile page.
+
+---
+
+### Get Species Sponsorships
+
+Retrieve all sponsorships for a specific species.
+
+**Endpoint:** `GET /sponsorships/species/:taxon_id`
+
+**URL Parameters:**
+- `taxon_id` (required): Unique identifier for the species
+
+**Query Parameters:**
+- `limit` (optional): Maximum number of sponsorships to return (default: 20)
+- `offset` (optional): Number of sponsorships to skip (default: 0)
+
+**Response:**
+```json
+[
+  {
+    "id": "number",
+    "wallet_address": "string",
+    "transaction_hash": "string",
+    "chain": "string",
+    "total_amount": "number",
+    "payment_timestamp": "string",
+    "status": "string",
+    "research_status": "string",
+    "nft_token_id": "number",
+    "ipfs_cid": "string"
+  }
+]
+```
+
+**Usage:** Show who has sponsored a particular species on the species details page.
 
 ---
 
