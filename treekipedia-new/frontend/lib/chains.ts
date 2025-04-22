@@ -16,7 +16,8 @@ export const supportedChains = [
 interface ContractAddresses {
   contreebutionNFT: string;
   eas: string;
-  paymentContract: string;
+  paymentContract: string; // Keeping for backward compatibility
+  treasuryAddress: string; // New field for direct transfer approach
   usdcAddress: string;
 }
 
@@ -27,6 +28,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0xF0D7BD87A38E4C1F14c7f95Bb3BD2A61ac8D1C3e', // EAS address on Base
     paymentContract: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
+    treasuryAddress: '0x520E09de9b21d5429b379c2BaEB70c7525C3FFDd', // Treasury address for receiving payments
     usdcAddress: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' // USDC on Base
   },
   // Base Sepolia Testnet
@@ -34,6 +36,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0x4200000000000000000000000000000000000021', // EAS address on Base Sepolia
     paymentContract: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
+    treasuryAddress: '0x9F3f9c7e1209d0BfB367E5b7AfdA6EC41A893Bda', // Testnet treasury address
     usdcAddress: '0x036CbD53842c5426634e7929541eC2318f3dCF7e' // USDC on Base Sepolia
   },
   // Celo Mainnet
@@ -41,6 +44,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     contreebutionNFT: '0x5Ed6240fCC0B2A231887024321Cc9481ba07f3c6', // From README
     eas: '0xA310a93BEF1B503984EDF8c854C9Eb5542f6e25A', // EAS address on Celo
     paymentContract: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
+    treasuryAddress: '0x520E09de9b21d5429b379c2BaEB70c7525C3FFDd', // Treasury address for receiving payments
     usdcAddress: '0xcebA9300f2b948710d2653dD7B07f33A8B32118C' // USDC on Celo
   },
   // Celo Alfajores Testnet
@@ -48,6 +52,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0xaaB7b95246c714F32fb1636Ae95A775d8951e057', // EAS address on Celo Alfajores
     paymentContract: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
+    treasuryAddress: '0x9F3f9c7e1209d0BfB367E5b7AfdA6EC41A893Bda', // Testnet treasury address
     usdcAddress: '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1' // USDC on Celo Alfajores
   },
   // Optimism Mainnet
@@ -55,6 +60,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0x4200000000000000000000000000000000000021', // EAS address on Optimism
     paymentContract: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
+    treasuryAddress: '0x520E09de9b21d5429b379c2BaEB70c7525C3FFDd', // Treasury address for receiving payments
     usdcAddress: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85' // USDC on Optimism
   },
   // Optimism Sepolia Testnet
@@ -62,6 +68,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0x4200000000000000000000000000000000000021', // EAS address on Optimism Sepolia
     paymentContract: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
+    treasuryAddress: '0x9F3f9c7e1209d0BfB367E5b7AfdA6EC41A893Bda', // Testnet treasury address
     usdcAddress: '0x5fd84259d66Cd46123540766Be93DFE6D43130D7' // USDC on Optimism Sepolia
   },
   // Arbitrum Mainnet
@@ -69,6 +76,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0xBD75f629A22Dc1ceD33dDA0b68c546A1c035c458', // EAS address on Arbitrum
     paymentContract: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
+    treasuryAddress: '0x520E09de9b21d5429b379c2BaEB70c7525C3FFDd', // Treasury address for receiving payments
     usdcAddress: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831' // USDC on Arbitrum
   },
   // Arbitrum Sepolia Testnet 
@@ -76,6 +84,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     contreebutionNFT: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
     eas: '0xaEF4103A04090071165F78D45D83A0C0782c2B2a', // EAS address on Arbitrum Sepolia
     paymentContract: '0x0000000000000000000000000000000000000000', // Replace with actual address when deployed
+    treasuryAddress: '0x9F3f9c7e1209d0BfB367E5b7AfdA6EC41A893Bda', // Testnet treasury address
     usdcAddress: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d' // USDC on Arbitrum Sepolia
   }
 };

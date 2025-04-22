@@ -144,15 +144,54 @@ export const updateUserProfile = async (wallet_address: string, display_name: st
  */
 export const getPaymentStatus = async (transaction_hash: string) => {
   try {
+    console.log(`Getting payment status for transaction: ${transaction_hash}`);
     const { data } = await apiClient.get(`/sponsorships/transaction/${transaction_hash}`);
+    console.log(`Payment status response:`, data);
     return data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
+      console.log(`Transaction ${transaction_hash} not found in database`);
       return { 
         status: 'not_found',
         transaction_hash 
       };
     }
+    console.error('Error getting payment status:', error);
+    throw error;
+  }
+};
+
+/**
+ * Report transaction hash to backend for monitoring
+ */
+export const reportTransaction = async (
+  sponsorship_id: string, 
+  transaction_hash: string,
+  taxon_id?: string,
+  wallet_address?: string,
+  chain?: string
+) => {
+  try {
+    console.log(`Reporting transaction ${transaction_hash} for sponsorship ${sponsorship_id}`);
+    
+    // Build the payload with all available data
+    const payload: any = {
+      sponsorship_id,
+      transaction_hash
+    };
+    
+    // Add optional fields if they exist
+    if (taxon_id) payload.taxon_id = taxon_id;
+    if (wallet_address) payload.wallet_address = wallet_address;
+    if (chain) payload.chain = chain;
+    
+    console.log('Sending report-transaction payload:', payload);
+    
+    const { data } = await apiClient.post('/sponsorships/report-transaction', payload);
+    console.log('Report transaction response:', data);
+    return data;
+  } catch (error) {
+    console.error('Error reporting transaction:', error);
     throw error;
   }
 };
@@ -217,4 +256,48 @@ export const getSpeciesSuggestions = async (
     return []; // Return empty array on error
   }
 };
+
+/**
+ * Initiate a sponsorship payment (direct USDC transfer)
+ */
+export async function initiateSponsorshipPayment(data: {
+  taxon_id: string;
+  wallet_address: string;
+  chain: string;
+}) {
+  try {
+    // Add detailed debugging to track API calls
+    console.log(`Initiating sponsorship payment to ${API_BASE_URL}/sponsorships/initiate with data:`, {
+      taxon_id: data.taxon_id,
+      wallet_address: data.wallet_address,
+      chain: data.chain
+    });
+    
+    const response = await apiClient.post('/sponsorships/initiate', data);
+    
+    // Log response for debugging
+    console.log('Sponsorship initiation response:', response.data);
+
+    if (!response.data?.success) {
+      throw new Error(response.data?.error || 'Failed to initiate sponsorship payment');
+    }
+
+    // Make sure we return the full response data
+    return response.data;
+  } catch (error: any) {
+    console.error('Error initiating sponsorship payment:', error);
+    
+    // Check for 404 errors (endpoint not found)
+    if (error.response?.status === 404) {
+      throw new Error('Sponsorship API endpoint not found. The system may be in maintenance.');
+    }
+    
+    // For network errors, provide a clearer message
+    if (error.message?.includes('Network Error')) {
+      throw new Error('Network error while connecting to the server. Please check your internet connection and try again.');
+    }
+    
+    throw error;
+  }
+}
 

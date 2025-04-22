@@ -90,7 +90,8 @@ app.get('/api', (req, res) => {
     endpoints: [
       '/species - Species search and details',
       '/treederboard - User contributions leaderboard',
-      '/research - AI research and NFT minting'
+      '/research - AI research and NFT minting',
+      '/sponsorships - Sponsorship payment tracking and webhooks'
     ]
   });
 });
@@ -104,6 +105,9 @@ app.use('/treederboard', treederboardRoutes);
 
 const researchRoutes = require('./controllers/research')(pool);
 app.use('/research', researchRoutes);
+
+const sponsorshipRoutes = require('./controllers/sponsorship')(pool);
+app.use('/sponsorships', sponsorshipRoutes);
 
 // Start server
 app.listen(PORT, () => {

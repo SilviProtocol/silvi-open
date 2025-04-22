@@ -13,6 +13,13 @@ console.log("BASE_SEPOLIA_NFT_CONTRACT_ADDRESS:", process.env.BASE_SEPOLIA_NFT_C
 console.log("CELO_ALFAJORES_NFT_CONTRACT_ADDRESS:", process.env.CELO_ALFAJORES_NFT_CONTRACT_ADDRESS);
 console.log("OPTIMISM_SEPOLIA_NFT_CONTRACT_ADDRESS:", process.env.OPTIMISM_SEPOLIA_NFT_CONTRACT_ADDRESS);
 console.log("ARBITRUM_SEPOLIA_NFT_CONTRACT_ADDRESS:", process.env.ARBITRUM_SEPOLIA_NFT_CONTRACT_ADDRESS);
+
+// Log treasury addresses
+console.log("==== TREASURY ADDRESSES FROM ENV VARIABLES ====");
+console.log("BASE_TREASURY_ADDRESS:", process.env.BASE_TREASURY_ADDRESS);
+console.log("CELO_TREASURY_ADDRESS:", process.env.CELO_TREASURY_ADDRESS);
+console.log("OPTIMISM_TREASURY_ADDRESS:", process.env.OPTIMISM_TREASURY_ADDRESS);
+console.log("ARBITRUM_TREASURY_ADDRESS:", process.env.ARBITRUM_TREASURY_ADDRESS);
 console.log("==============================================");
 
 module.exports = {
@@ -25,6 +32,8 @@ module.exports = {
     nftContractAddress: process.env.BASE_NFT_CONTRACT_ADDRESS,
     easContractAddress: process.env.BASE_EAS_CONTRACT_ADDRESS,
     easSchemaId: process.env.BASE_EAS_SCHEMA_ID,
+    treasuryAddress: process.env.BASE_TREASURY_ADDRESS,
+    usdcAddress: process.env.BASE_USDC_ADDRESS,
     isTestnet: false
   },
   
@@ -37,6 +46,8 @@ module.exports = {
     nftContractAddress: process.env.CELO_NFT_CONTRACT_ADDRESS,
     easContractAddress: process.env.CELO_EAS_CONTRACT_ADDRESS,
     easSchemaId: process.env.CELO_EAS_SCHEMA_ID,
+    treasuryAddress: process.env.CELO_TREASURY_ADDRESS,
+    usdcAddress: process.env.CELO_USDC_ADDRESS,
     isTestnet: false
   },
   
@@ -49,6 +60,8 @@ module.exports = {
     nftContractAddress: process.env.OPTIMISM_NFT_CONTRACT_ADDRESS,
     easContractAddress: process.env.OPTIMISM_EAS_CONTRACT_ADDRESS,
     easSchemaId: process.env.OPTIMISM_EAS_SCHEMA_ID,
+    treasuryAddress: process.env.OPTIMISM_TREASURY_ADDRESS,
+    usdcAddress: process.env.OPTIMISM_USDC_ADDRESS,
     isTestnet: false
   },
   
@@ -61,6 +74,8 @@ module.exports = {
     nftContractAddress: process.env.ARBITRUM_NFT_CONTRACT_ADDRESS,
     easContractAddress: process.env.ARBITRUM_EAS_CONTRACT_ADDRESS,
     easSchemaId: process.env.ARBITRUM_EAS_SCHEMA_ID,
+    treasuryAddress: process.env.ARBITRUM_TREASURY_ADDRESS,
+    usdcAddress: process.env.ARBITRUM_USDC_ADDRESS,
     isTestnet: false
   },
   
@@ -73,6 +88,8 @@ module.exports = {
     nftContractAddress: process.env.BASE_SEPOLIA_NFT_CONTRACT_ADDRESS,
     easContractAddress: process.env.BASE_SEPOLIA_EAS_CONTRACT_ADDRESS,
     easSchemaId: process.env.BASE_SEPOLIA_EAS_SCHEMA_ID,
+    treasuryAddress: process.env.BASE_SEPOLIA_TREASURY_ADDRESS,
+    usdcAddress: process.env.BASE_SEPOLIA_USDC_ADDRESS,
     isTestnet: true
   },
   
@@ -84,6 +101,8 @@ module.exports = {
     nftContractAddress: process.env.CELO_ALFAJORES_NFT_CONTRACT_ADDRESS,
     easContractAddress: process.env.CELO_ALFAJORES_EAS_CONTRACT_ADDRESS,
     easSchemaId: process.env.CELO_ALFAJORES_EAS_SCHEMA_ID,
+    treasuryAddress: process.env.CELO_ALFAJORES_TREASURY_ADDRESS,
+    usdcAddress: process.env.CELO_ALFAJORES_USDC_ADDRESS,
     isTestnet: true
   },
   
@@ -95,6 +114,8 @@ module.exports = {
     nftContractAddress: process.env.OPTIMISM_SEPOLIA_NFT_CONTRACT_ADDRESS,
     easContractAddress: process.env.OPTIMISM_SEPOLIA_EAS_CONTRACT_ADDRESS,
     easSchemaId: process.env.OPTIMISM_SEPOLIA_EAS_SCHEMA_ID,
+    treasuryAddress: process.env.OPTIMISM_SEPOLIA_TREASURY_ADDRESS,
+    usdcAddress: process.env.OPTIMISM_SEPOLIA_USDC_ADDRESS,
     isTestnet: true
   },
   
@@ -106,6 +127,8 @@ module.exports = {
     nftContractAddress: process.env.ARBITRUM_SEPOLIA_NFT_CONTRACT_ADDRESS,
     easContractAddress: process.env.ARBITRUM_SEPOLIA_EAS_CONTRACT_ADDRESS,
     easSchemaId: process.env.ARBITRUM_SEPOLIA_EAS_SCHEMA_ID,
+    treasuryAddress: process.env.ARBITRUM_SEPOLIA_TREASURY_ADDRESS,
+    usdcAddress: process.env.ARBITRUM_SEPOLIA_USDC_ADDRESS,
     isTestnet: true
   }
 };

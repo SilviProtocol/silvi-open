@@ -5,6 +5,8 @@ const nextConfig = {
   images: {
     domains: ['ipfs.io'], // Allow images from IPFS gateway
   },
+  // Add transpilation for wagmi v2
+  transpilePackages: ['wagmi', 'viem'],
   // Suppress specific warning messages
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {

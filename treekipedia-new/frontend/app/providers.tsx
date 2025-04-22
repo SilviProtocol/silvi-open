@@ -7,6 +7,7 @@ import { injected } from 'wagmi/connectors'
 import { base, baseSepolia, celo, celoAlfajores, optimism, optimismSepolia, arbitrum, arbitrumSepolia } from 'wagmi/chains'
 import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from 'next-themes'
+import { Toaster as SonnerToaster } from 'sonner'
 
 // Configure chains based on the spec (Base, Celo, Optimism, Arbitrum - mainnet and testnet)
 const chains = [
@@ -62,6 +63,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <QueryClientProvider client={queryClient}>
           {children}
           <Toaster position="top-right" />
+          <SonnerToaster position="top-right" />
         </QueryClientProvider>
       </WagmiProvider>
     </ThemeProvider>

@@ -3,9 +3,7 @@ import { Leaf, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { TreeSpecies } from "@/lib/types";
-import { useResearchProcess } from "../hooks/useResearchProcess";
-// Temporarily comment out SponsorshipButton until contracts are deployed
-// import { SponsorshipButton } from "@/components/sponsorship-button";
+import { SponsorshipButton } from "@/components/sponsorship-button";
 
 interface ResearchCardProps {
   species: TreeSpecies;
@@ -25,13 +23,14 @@ export function ResearchCard({
   refetchResearch,
 }: ResearchCardProps) {
   const router = useRouter();
-  const { isResearching, researchStatus, progressMessage, startResearch } = useResearchProcess(
-    taxonId,
-    species,
-    address,
-    refetchSpecies,
-    refetchResearch
-  );
+  const [isResearching, setIsResearching] = React.useState(false);
+  const [progressMessage, setProgressMessage] = React.useState("");
+  
+  // Handle sponsorship completion
+  const handleSponsorshipComplete = () => {
+    refetchResearch();
+    refetchSpecies();
+  };
 
   return (
     <div className="rounded-xl bg-black/30 backdrop-blur-md border border-white/20 p-6 text-white mb-6 sticky top-4">
@@ -86,7 +85,7 @@ export function ResearchCard({
             <div className="p-4 rounded-lg bg-black/30 backdrop-blur-md border border-white/20 mb-4">
               <div className="flex justify-between items-center mb-3">
                 <span className="text-white/90">Fund Research:</span>
-                <span className="font-bold text-emerald-300">$3.00</span>
+                <span className="font-bold text-emerald-300">$0.01</span>
               </div>
               <div className="space-y-2 text-sm text-white/70">
                 <p>
@@ -117,23 +116,13 @@ export function ResearchCard({
             </div>
           )}
 
-          {/* Temporarily revert to the original button until payment contracts are deployed */}
-          <Button
-            onClick={startResearch}
-            disabled={!address || isResearching}
-            className="w-full bg-emerald-600 hover:bg-emerald-700"
-          >
-            {!address ? "Connect Wallet to Fund Research" : isResearching ? "Processing..." : "Fund This Tree's Research"}
-          </Button>
-
-          {/* Temporarily comment out SponsorshipButton until contracts are deployed
+          {/* Use the new SponsorshipButton for direct USDC transfer */}
           <SponsorshipButton
             taxonId={taxonId}
             speciesName={species?.species_scientific_name || species?.species || ''}
-            onSponsorshipComplete={refetchResearch}
+            onSponsorshipComplete={handleSponsorshipComplete}
             className="w-full bg-emerald-600 hover:bg-emerald-700"
           />
-          */}
         </div>
       )}
 
@@ -173,7 +162,7 @@ export function ResearchCard({
   );
 }
 
-// TODO: Revert back to SponsorshipButton once payment contracts are deployed
-// This is a temporary fix until payment contracts are deployed to the supported chains
-// Once contracts are deployed and addresses in lib/chains.ts are updated, we can
-// uncomment the SponsorshipButton import and implementation, and remove the temporary button
+// Using direct USDC transfer approach instead of smart contract
+// This approach uses a direct USDC transfer to a treasury wallet
+// The backend monitors these transfers and triggers the research process
+// No smart contract is needed for payment processing
