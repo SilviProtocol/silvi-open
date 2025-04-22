@@ -73,3 +73,6 @@ yarn-error.log*
 /.mcp.json
 /FRONTEND_IMPROVEMENTS.md
 /LAUNCH.md
+
+database/Treekipedia_V6_countriesOK_bioregionsOK_wikimideaOK_ColumnsOK_April17d.csv
+
