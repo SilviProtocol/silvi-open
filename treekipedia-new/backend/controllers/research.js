@@ -32,8 +32,11 @@ module.exports = (pool) => {
         });
       }
 
-      // Validate chain choice
-      const validChains = ['base', 'celo', 'optimism', 'arbitrum'];
+      // Validate chain choice - include both mainnet and testnet chains
+      const validChains = [
+        'base', 'celo', 'optimism', 'arbitrum',  // Mainnet chains
+        'base-sepolia', 'celo-alfajores', 'optimism-sepolia', 'arbitrum-sepolia'  // Testnet chains
+      ];
       if (!validChains.includes(chain)) {
         return res.status(400).json({ 
           error: 'Invalid chain selection', 
@@ -534,7 +537,7 @@ module.exports = (pool) => {
         ]);
         
         // Step 7: Create EAS attestation with the properly formatted IPFS CID
-        console.log(`Creating EAS attestation on ${chain}`);
+        console.log(`research.js Creating EAS attestation on ${chain}`);
         
         const attestationData = {
           species: scientificName,
@@ -562,10 +565,10 @@ module.exports = (pool) => {
         ]);
         
         // Step 8: Mint NFT with proper URI format
-        console.log(`Minting NFT on ${chain} with tokenId: ${globalId}`);
-        const tokenURI = `ipfs://${ipfsCid}`;
+        console.log(`research.js Minting NFT on ${chain} with tokenId: ${globalId}`);
+        const tokenURI = `ipfs://${attestationData.ipfsCid}`;
         
-        const mintReceipt = await mintNFT(chain, wallet_address, globalId, tokenURI);
+        const mintReceipt = await mintNFT(chain, wallet_address, globalId, attestationData.ipfsCid);
         
         if (mintReceipt.status === 'failed') {
           console.error(`NFT minting failed: ${mintReceipt.error}`);
