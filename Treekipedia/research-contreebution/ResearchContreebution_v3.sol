@@ -1,0 +1,55 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts@5.0.0/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts@5.0.0/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts@5.0.0/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts@5.0.0/access/Ownable.sol";
+
+contract ResearchContreebution is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
+
+    address public MANAGER;
+
+    // Event emitted when a token is minted with global_id
+    event TokenMinted(address indexed to, uint256 indexed tokenId, string uri);
+
+    constructor(address initialOwner)
+        ERC721("Research Contreebution", "treekipediaRSRCH")
+        Ownable(initialOwner)
+    {}
+
+    function safeMint(address to, uint256 tokenId, string memory uri) public {
+        require(msg.sender == MANAGER || msg.sender == owner(), "Only owner or MANAGER can mint");
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+
+        // Emit event for easier tracking
+        emit TokenMinted(to, tokenId, uri);
+    }
+
+    function setManager(address newManager) public onlyOwner {
+        require(newManager != address(0), "Invalid manager address");
+        MANAGER = newManager;
+    }
+
+    
+    // The following functions are overrides required by Solidity.
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+}
