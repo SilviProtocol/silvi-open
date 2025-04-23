@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts@5.0.0/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts@5.0.0/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts@5.0.0/token/ERC721/extensions/ERC721Burnable.sol";
-import "@openzeppelin/contracts@5.0.0/access/Ownable.sol";
+import {ERC721} from "@openzeppelin/contracts@5.0.0/token/ERC721/ERC721.sol";
+import {ERC721URIStorage} from "@openzeppelin/contracts@5.0.0/token/ERC721/extensions/ERC721URIStorage.sol";
+import {ERC721Burnable} from "@openzeppelin/contracts@5.0.0/token/ERC721/extensions/ERC721Burnable.sol";
+import {Ownable} from "@openzeppelin/contracts@5.0.0/access/Ownable.sol";
 
 contract ResearchContreebution is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
 
@@ -31,7 +31,6 @@ contract ResearchContreebution is ERC721, ERC721URIStorage, ERC721Burnable, Owna
         require(newManager != address(0), "Invalid manager address");
         MANAGER = newManager;
     }
-
     
     // The following functions are overrides required by Solidity.
 
