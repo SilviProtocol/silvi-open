@@ -31,12 +31,12 @@ export function ResearchCard({
   const forceRefresh = React.useCallback(async () => {
     try {
       console.log("Forcing data refresh...");
-      // Perform both refetches and wait for them to complete
-      await Promise.all([
-        refetchSpecies(),
-        refetchResearch()
-      ]);
-      console.log("Data refreshed successfully");
+      // First fetch species to get the researched flag from the database
+      await refetchSpecies();
+      console.log("Species data refreshed successfully, checking researched flag");
+      // Then fetch research data (but only species.researched flag determines UI state)
+      await refetchResearch();
+      console.log("Research data refreshed - will rely on species.researched flag for UI state");
     } catch (error) {
       console.error("Error refreshing data:", error);
     }
@@ -53,9 +53,50 @@ export function ResearchCard({
     // make sure we update the UI and stop researching animation
     if (isResearching && isResearched) {
       console.log("Research completed, updating UI state");
-      setIsResearching(false);
+      // Set progress to 100% for visual completion
+      setProgressPercent(100);
+      setProgressMessage("Research complete!");
+      
+      // Short delay before switching view to show completion animation
+      setTimeout(() => {
+        setIsResearching(false);
+      }, 1500);
     }
-  }, [isResearched, isResearching]);
+  }, [isResearched, isResearching, setProgressPercent, setProgressMessage]);
+  
+  // Add additional refetch on mount and at intervals to ensure data is fresh
+  React.useEffect(() => {
+    // Initial fetch on mount
+    const fetchData = async () => {
+      try {
+        // First fetch species data to check the researched flag from DB
+        await refetchSpecies();
+        // Then fetch research data without modifying any flags
+        await refetchResearch();
+        console.log("Data refresh completed, will rely on researched flag from species data");
+      } catch (error) {
+        console.error("Error refreshing data:", error);
+      }
+    };
+    
+    // Do initial fetch
+    fetchData();
+    
+    // Set up a periodic refresh ONLY if we're actively researching
+    // This fetches fresh data but the UI state only changes when DB flag changes
+    let intervalId: NodeJS.Timeout | null = null;
+    
+    if (isResearching && !isResearched) {
+      console.log("Setting up periodic refresh to check for research completion");
+      intervalId = setInterval(fetchData, 5000); // Check every 5 seconds
+    }
+    
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isResearching, isResearched, refetchSpecies, refetchResearch]);
 
   return (
     <div className="rounded-xl bg-black/30 backdrop-blur-md border border-white/20 p-6 text-white mb-6 sticky top-4">

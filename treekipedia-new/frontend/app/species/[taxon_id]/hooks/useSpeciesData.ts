@@ -37,7 +37,7 @@ export function useSpeciesData(taxonId: string) {
     // legacy content as being researched
     const hasResearchedFlag = speciesQuery.data?.researched === true;
     
-    // Just log the checks for debugging without using them for the decision
+    // Log debugging info without using it for the decision
     console.log(`Research detection check for ${taxonId}:`, {
       hasResearchedFlag,
       researchQueryStatus: researchQuery.status

@@ -7,13 +7,22 @@ const { v4: uuidv4 } = require('uuid');
 
 /**
  * Helper function to map numeric chain IDs to chain keys
- * @param {string} chain - Chain ID (numeric) or chain key (string)
+ * @param {string|number} chain - Chain ID (numeric) or chain key (string)
  * @returns {string} - Mapped chain key or original value if not numeric
  */
 function mapChainIdToKey(chain) {
+  // If null or undefined, default to base-sepolia
+  if (chain === null || chain === undefined) {
+    console.log('Chain is null or undefined, defaulting to base-sepolia');
+    return 'base-sepolia';
+  }
+  
+  // Convert to string in case it's a number
+  const chainString = String(chain);
+  
   // If not numeric, return as is
-  if (!/^\d+$/.test(chain)) {
-    return chain;
+  if (!/^\d+$/.test(chainString)) {
+    return chainString;
   }
   
   // Mapping of numeric chain IDs to chain keys
@@ -28,8 +37,9 @@ function mapChainIdToKey(chain) {
     '421614': 'arbitrum-sepolia'
   };
   
-  const mappedChain = chainIdMapping[chain] || chain;
-  console.log(`Mapped numeric chain ID ${chain} to chain key: ${mappedChain}`);
+  // If not in mapping, default to base-sepolia for safety
+  const mappedChain = chainIdMapping[chainString] || 'base-sepolia';
+  console.log(`Mapped numeric chain ID ${chainString} to chain key: ${mappedChain}`);
   return mappedChain;
 }
 

@@ -305,8 +305,18 @@ export function SponsorshipButton({
         const status = await getPaymentStatus(txHash)
         console.log('Polled payment status:', status)
         
-        if (status.status === 'completed' || status.status === 'confirmed') {
-          console.log('Payment confirmed by backend')
+        // Check for any indication of success:
+        // 1. status is explicitly 'completed' or 'confirmed'
+        // 2. status is a valid object with research_status that indicates progress
+        const isSuccessfulStatus = 
+          status.status === 'completed' || 
+          status.status === 'confirmed' ||
+          (status.species && status.species.length > 0 && 
+           (status.species[0].research_status === 'completed' || 
+            status.species[0].research_status === 'researching'));
+        
+        if (isSuccessfulStatus) {
+          console.log('Payment confirmed by backend, transaction is valid');
           
           // Switch to research phase
           setStatus('researching')
@@ -316,22 +326,21 @@ export function SponsorshipButton({
           
           // Call the callback to trigger the actual research process
           if (onSponsorshipComplete) {
+            // Call immediately
             onSponsorshipComplete()
             
-            // Setup a periodic check for the next 60 seconds to ensure UI updates
-            // This addresses the case where backend processing completes but UI doesn't update
-            // Set up more modest polling - just 3 additional attempts over 15 seconds
-            // This should be enough to catch when the backend updates the status
-            const additionalChecks = [5000, 10000, 15000]; // 5s, 10s, 15s after completion
+            // Setup more frequent checks for the first 30 seconds
+            // UI updates are critical during this phase
+            const earlyChecks = [2000, 4000, 6000, 8000, 10000]; // Every 2 seconds for first 10s
+            const lateChecks = [15000, 20000, 25000, 30000];    // Every 5 seconds for next 20s
             
-            additionalChecks.forEach((delay, index) => {
+            // Combine early and late checks for comprehensive polling
+            [...earlyChecks, ...lateChecks].forEach((delay, index) => {
               setTimeout(() => {
                 console.log(`Additional data refresh #${index + 1} after ${delay/1000}s`);
                 onSponsorshipComplete();
               }, delay);
             });
-            
-            // No need for cleanup since we're using setTimeout instead of setInterval
           }
           
           return

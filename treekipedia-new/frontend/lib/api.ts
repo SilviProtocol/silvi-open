@@ -94,19 +94,22 @@ export const getResearchData = async (taxon_id: string): Promise<ResearchData> =
     // Use the correct research data endpoint with cache busting
     const { data } = await apiClient.get(`/research/${taxon_id}?_=${Date.now()}`);
     console.log("Research data retrieved successfully");
+    
+    // Do NOT modify the researched flag here - rely on what the server returns
+    
     return data;
   } catch (error) {
     // If we get a 404, it means research hasn't been done yet
     if (axios.isAxiosError(error) && error.response?.status === 404) {
       console.log(`No research data available for taxon_id: ${taxon_id}`);
-      // Include more fields to make detection easier
+      // Include more fields to make detection easier but don't set researched flag
       return { 
         taxon_id,
         // No researched flag,
         general_description_ai: null,
         ecological_function_ai: null,
         habitat_ai: null,
-      } as ResearchData; // Return basic stub with researched = false
+      } as ResearchData; // Return basic stub
     }
     // Re-throw other errors
     throw error;
