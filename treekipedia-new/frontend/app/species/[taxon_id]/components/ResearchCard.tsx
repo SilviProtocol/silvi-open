@@ -151,7 +151,7 @@ export function ResearchCard({
             <div className="p-4 rounded-lg bg-black/30 backdrop-blur-md border border-white/20 mb-4">
               <div className="flex justify-between items-center mb-3">
                 <span className="text-white text-lg">Fund Research:</span>
-                <span className="font-bold text-emerald-300">$0.01</span>
+                <span className="font-bold text-emerald-300">$3</span>
               </div>
               <div className="space-y-2 text-base text-white/80">
                 <p>

@@ -283,15 +283,31 @@ async function mintNFT(chain, recipient, globalId, tokenURI) {
     
     // Mint NFT
     console.log(`blockchain.js Minting NFT on ${chain} for recipient ${recipient} with tokenId: ${tokenId}`);
-    const tx = await nftContract.safeMint(recipient, tokenId, `ipfs://${tokenURI}`);
+    
+    // Add detailed logging of the URI format to diagnose issues
+    const uri = `ipfs://${tokenURI}`;
+    console.log(`DEBUG: IPFS CID being used: ${tokenURI}`);
+    console.log(`DEBUG: Full URI being passed to contract: "${uri}"`);
+    console.log(`DEBUG: URI length: ${uri.length} characters`);
+    
+    const tx = await nftContract.safeMint(recipient, tokenId, uri);
     
     // Wait for transaction to be confirmed
     const receipt = await tx.wait();
     console.log(`NFT minted with tokenId: ${tokenId}, transaction hash: ${receipt.hash}`);
     
+    try {
+        // Verify the tokenURI after minting to confirm it's stored correctly
+        const storedURI = await nftContract.tokenURI(tokenId);
+        console.log(`DEBUG: Token URI stored in contract: "${storedURI}"`);
+        console.log(`DEBUG: URI matches what we sent: ${storedURI === uri}`);
+    } catch (uriError) {
+        console.error(`WARNING: Error fetching tokenURI after minting: ${uriError.message}`);
+    }
+    
     return {
       tokenId,
-      tokenURI,
+      tokenURI: `ipfs://${tokenURI}`, // Return the full URI with prefix for consistency
       transactionHash: receipt.hash,
       chain,
       blockNumber: receipt.blockNumber,

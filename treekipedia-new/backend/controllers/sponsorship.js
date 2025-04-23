@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const chains = require('../config/chains');
 const { performAIResearch } = require('../services/aiResearch');
 
-const SPONSORSHIP_AMOUNT = 0.01; // 0.01 USDC per species (reduced from 3 USDC for testing)
+const SPONSORSHIP_AMOUNT = 3; // 3 USDC per species
 
 // Webhook functionality removed - using direct transaction monitoring
 
@@ -543,7 +543,7 @@ module.exports = (pool) => {
     try {
       await client.query('BEGIN');
       
-      // Verify the amount is correct (0.01 USDC per species)
+      // Verify the amount is correct (3 USDC per species)
       const amountInUSDC = Number(ethers.formatUnits(amount, 6)); // USDC has 6 decimals - formatUnits works the same in v6
       if (amountInUSDC !== SPONSORSHIP_AMOUNT) {
         throw new Error(`Invalid amount: expected ${SPONSORSHIP_AMOUNT} USDC, got ${amountInUSDC} USDC`);
@@ -654,7 +654,7 @@ module.exports = (pool) => {
     try {
       await client.query('BEGIN');
       
-      // Verify the total amount is correct (0.01 USDC per species)
+      // Verify the total amount is correct (3 USDC per species)
       const totalAmountInUSDC = Number(ethers.formatUnits(totalAmount, 6)); // USDC has 6 decimals - formatUnits works the same in v6
       const expectedAmount = SPONSORSHIP_AMOUNT * taxon_ids.length;
       if (totalAmountInUSDC !== expectedAmount) {
@@ -912,7 +912,7 @@ module.exports = (pool) => {
                 const amount = Number(ethers.formatUnits(decodedData.args[1], 6));
                 console.log(`Transaction amount: ${amount} USDC`);
                 
-                if (Math.abs(amount - SPONSORSHIP_AMOUNT) < 0.005) { // Small tolerance for rounding errors (0.005 is 50% of 0.01)
+                if (Math.abs(amount - SPONSORSHIP_AMOUNT) < 0.15) { // Small tolerance for rounding errors (0.15 is 5% of 3)
                   console.log(`Payment verified: ${amount} USDC to ${treasuryAddress}`);
                   
                   // Confirm the sponsorship in the database

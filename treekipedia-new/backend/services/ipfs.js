@@ -41,37 +41,37 @@ async function uploadToIPFS(data) {
       taxon_id: data.taxon_id,
       scientific_name: data.scientific_name,
       
-      // Regular fields
-      conservation_status: data.conservation_status,
-      general_description: data.general_description,
-      habitat: data.habitat,
-      elevation_ranges: data.elevation_ranges,
-      compatible_soil_types: data.compatible_soil_types,
-      ecological_function: data.ecological_function,
-      native_adapted_habitats: data.native_adapted_habitats,
-      agroforestry_use_cases: data.agroforestry_use_cases,
+      // Regular fields with defaults for empty/null values
+      conservation_status: data.conservation_status || "No conservation status information available",
+      general_description: data.general_description || "General description not available for this species",
+      habitat: data.habitat || "Habitat information not available",
+      elevation_ranges: data.elevation_ranges || "Elevation range information not available",
+      compatible_soil_types: data.compatible_soil_types || "Soil type information not available",
+      ecological_function: data.ecological_function || "Ecological function information not available",
+      native_adapted_habitats: data.native_adapted_habitats || "Native habitat information not available",
+      agroforestry_use_cases: data.agroforestry_use_cases || "Agroforestry use case information not available",
       
-      // Morphological fields
-      growth_form: data.growth_form,
-      leaf_type: data.leaf_type,
-      deciduous_evergreen: data.deciduous_evergreen,
-      flower_color: data.flower_color,
-      fruit_type: data.fruit_type,
-      bark_characteristics: data.bark_characteristics,
+      // Morphological fields with defaults
+      growth_form: data.growth_form || "Growth form information not available",
+      leaf_type: data.leaf_type || "Leaf type information not available",
+      deciduous_evergreen: data.deciduous_evergreen || "Deciduous/evergreen status not available",
+      flower_color: data.flower_color || "Flower color information not available",
+      fruit_type: data.fruit_type || "Fruit type information not available",
+      bark_characteristics: data.bark_characteristics || "Bark characteristics information not available",
       
-      // Numeric fields
-      maximum_height: data.maximum_height,
-      maximum_diameter: data.maximum_diameter,
-      maximum_tree_age: data.maximum_tree_age,
-      lifespan: data.lifespan,
+      // Numeric fields with defaults (using strings for consistency)
+      maximum_height: data.maximum_height || "0",
+      maximum_diameter: data.maximum_diameter || "0",
+      maximum_tree_age: data.maximum_tree_age || 0,
+      lifespan: data.lifespan || "Lifespan information not available",
       
-      // CRITICAL: Explicitly include stewardship fields
-      stewardship_best_practices: data.stewardship_best_practices,
-      planting_recipes: data.planting_recipes,
-      pruning_maintenance: data.pruning_maintenance,
-      disease_pest_management: data.disease_pest_management,
-      fire_management: data.fire_management,
-      cultural_significance: data.cultural_significance,
+      // CRITICAL: Explicitly include stewardship fields with defaults
+      stewardship_best_practices: data.stewardship_best_practices || "Best practices information not available",
+      planting_recipes: data.planting_recipes || "Planting information not available",
+      pruning_maintenance: data.pruning_maintenance || "Pruning and maintenance information not available",
+      disease_pest_management: data.disease_pest_management || "Disease and pest management information not available",
+      fire_management: data.fire_management || "Fire management information not available",
+      cultural_significance: data.cultural_significance || "Cultural significance information not available",
     };
     
     // Add research_metadata at the end if present
@@ -85,6 +85,29 @@ async function uploadToIPFS(data) {
     // Verify stewardship fields in serialized JSON
     console.log('JSON contains stewardship fields:', 
                 jsonData.includes('stewardship_best_practices'));
+                
+    // Verify no null values exist in the final data
+    const containsNull = jsonData.includes('null');
+    console.log(`DEBUG: Final JSON contains null values: ${containsNull}`);
+    
+    // Check for empty string values
+    const emptyStringFields = [];
+    for (const [key, value] of Object.entries(orderedData)) {
+      if (value === '') {
+        emptyStringFields.push(key);
+      }
+    }
+    
+    if (emptyStringFields.length > 0) {
+      console.log(`DEBUG: Fields with empty strings: ${emptyStringFields.join(', ')}`);
+    } else {
+      console.log('DEBUG: No empty string values found in metadata');
+    }
+    
+    // Validate numeric fields
+    console.log(`DEBUG: maximum_height = ${orderedData.maximum_height}`);
+    console.log(`DEBUG: maximum_diameter = ${orderedData.maximum_diameter}`);
+    console.log(`DEBUG: maximum_tree_age = ${orderedData.maximum_tree_age}`);
     
     // Create FormData object
     const formData = new FormData();
@@ -112,6 +135,21 @@ async function uploadToIPFS(data) {
     // Extract CID from response
     const cid = response.data.Hash;
     console.log(`Data uploaded to IPFS with CID: ${cid}`);
+    
+    // Add detailed logging to help diagnose issues
+    console.log(`DEBUG: IPFS CID format check: starts with 'bafk'=${cid.startsWith('bafk')}`);
+    console.log(`DEBUG: IPFS CID length: ${cid.length} characters`);
+    
+    // Verify the CID is valid by attempting to construct a gateway URL
+    const gatewayUrl = `https://gateway.lighthouse.storage/ipfs/${cid}`;
+    console.log(`DEBUG: IPFS gateway URL: ${gatewayUrl}`);
+    
+    // Check if data includes critical fields (random sampling)
+    const hasName = jsonData.includes('"name":');
+    const hasDescription = jsonData.includes('"description":');
+    const hasTaxonId = jsonData.includes('"taxon_id":');
+    const hasScientificName = jsonData.includes('"scientific_name":');
+    console.log(`DEBUG: Metadata validation - has name=${hasName}, description=${hasDescription}, taxon_id=${hasTaxonId}, scientific_name=${hasScientificName}`);
     
     return cid;
   } catch (error) {

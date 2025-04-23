@@ -233,7 +233,8 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
         // NFT standard metadata (always first per standards)
         name: `Research Contreebution #${globalId}`,
         description: "Thank you for sponsoring tree research!",
-        image: "ipfs://bafkreibkta2e54ddqjlrmxmacjvqcpj7w6o3a4oww6ea7hldjazio22c3e",
+        // Use ipfs.io gateway URL directly since it's confirmed to work with this image
+        image: "https://ipfs.io/ipfs/bafkreibkta2e54ddqjlrmxmacjvqcpj7w6o3a4oww6ea7hldjazio22c3e",
         
         // Core identification
         taxon_id: researchData.taxon_id,
@@ -348,6 +349,25 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
       // Map numeric chain ID to chain key if needed
       const nftChainKey = mapChainIdToKey(chain);
       console.log(`Minting NFT on ${nftChainKey} with tokenId: ${globalId}`);
+      
+      // Add additional debugging for IPFS CID
+      console.log(`DEBUG: Using IPFS CID for NFT metadata: ${attestationData.ipfsCid}`);
+      console.log(`DEBUG: IPFS CID length: ${attestationData.ipfsCid.length}`);
+      console.log(`DEBUG: IPFS gateway URL for verification: https://gateway.lighthouse.storage/ipfs/${attestationData.ipfsCid}`);
+      
+      // Try to verify the metadata before minting
+      try {
+        console.log(`DEBUG: Attempting to fetch metadata before minting to verify accessibility`);
+        const testUrl = `https://gateway.lighthouse.storage/ipfs/${attestationData.ipfsCid}`;
+        const axios = require('axios');
+        const metadataResponse = await axios.get(testUrl, { timeout: 5000 });
+        console.log(`DEBUG: Pre-mint metadata verification successful. Status: ${metadataResponse.status}`);
+        console.log(`DEBUG: Response contains name field: ${metadataResponse.data.name ? 'yes' : 'no'}`);
+      } catch (verifyError) {
+        console.warn(`DEBUG: Pre-mint metadata verification failed: ${verifyError.message}`);
+        // Continue with minting despite the error - this is just diagnostic
+      }
+      
       const mintReceipt = await mintNFT(nftChainKey, walletAddress, globalId, attestationData.ipfsCid);
       
       if (mintReceipt.status === 'failed') {

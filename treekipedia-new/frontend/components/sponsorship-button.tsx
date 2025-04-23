@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { initiateSponsorshipPayment, getPaymentStatus, reportTransaction } from '@/lib/api'
 import { Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
 
-const SPONSORSHIP_AMOUNT = 0.01 // 0.01 USDC (reduced from 3 USDC for testing)
+const SPONSORSHIP_AMOUNT = 3 // 3 USDC
 const POLLING_INTERVAL = 5000 // 5 seconds
 
 interface SponsorshipButtonProps {
