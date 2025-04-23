@@ -6,136 +6,142 @@ A Solidity smart contract for minting and managing NFTs that represent research 
 
 ## Deployed Contracts
 
-### Research Contreebution v2
-**Ethereum Sepolia:** https://sepolia.etherscan.io/nft/0x5efe80d2679e7a23b90623d7de45efadd242a86f/1
+### Research Contreebution v3
+**CELO Mainnet:** 0x4FafD4af06622545E4BD9bf38B479Ead9dEc2C50 [see the deployed contract on blockscout](https://celo.blockscout.com/tx/0x080059254da38670e725e1eae39985cdeea331be8bbc19b3398a7f53a622597a)
 
+**Arbitrum Mainnet:** 0x96E8B3A2908Fe626E163c3408D599938986A37af [see the deployed contract on blockscout](https://arbitrum.blockscout.com/address/0x96E8B3A2908Fe626E163c3408D599938986A37af?tab=contract)
 
-### Research Contreebution v1
-**CELO Mainnet:** 0x5Ed6240fCC0B2A231887024321Cc9481ba07f3c6
+**Optimism Minnet:** 0x98644a33b239A181389583a4AabD11c57E5585aF [see the deployed contract on blockscout](https://optimism.blockscout.com/tx/0x0875d2bffdbdb174484d75306e396c4436a672a08d23b3cbfb5191ba78306383)
 
-[see the deployed contract on celoscan...](https://celoscan.io/address/0x5ed6240fcc0b2a231887024321cc9481ba07f3c6)
+**Base Mainnet:** 0x93A51eE764612F84CB6bA154Cffc6F3014e68e51 [see the deployed contract on blockscout](https://base.blockscout.com/tx/0x0aa0473895f008aed45e419fa30dc96b116423da2b21494709c08a8d0342cb82)
 
-**Ethereum Sepolia:** 0x1Ad2317DEBD2ac4730641A1E317B204bd2fEeFA8
 
 ## Overview
+ResearchContreebution is an ERC721-compliant NFT (Non-Fungible Token) smart contract designed to tokenize research contributions. The contract allows authorized users to mint unique tokens that represent research contributions, each with its own metadata stored as a URI.
 
-The Research Contreebution NFT contract allows for the creation, transfer, and management of unique tokens that represent research contributions on Treekipedia. Each token can store metadata via a URI, making it perfect for linking to research content stored on IPFS or other decentralized storage solutions.
+## Inheritance
+The contract inherits from several OpenZeppelin contracts:
+- `ERC721`: The base implementation of the ERC721 standard
+- `ERC721URIStorage`: Extension for storing token metadata
+- `ERC721Burnable`: Extension allowing token owners to burn their tokens
+- `Ownable`: Access control mechanism that provides owner-specific privileges
 
-## Features
-
-- **ERC721 Compliance**: Fully compatible with the ERC721 standard for non-fungible tokens
-- **Metadata Storage**: Each token can store custom metadata through URIs
-- **Burning Capability**: Tokens can be permanently destroyed if needed
-- **Access Control**: Only the contract owner can mint new tokens
+## License
+MIT License
 
 ## Contract Details
 
+### Name and Symbol
 - **Name**: Research Contreebution
 - **Symbol**: treekipediaRSRCH
-- **Solidity Version**: ^0.8.20
-- **OpenZeppelin Version**: 5.0.0
 
-## Instructions to deploy on CELO
+### Roles
+- **Owner**: The address that deployed the contract, with administrative privileges
+- **Manager**: A secondary role that can also mint tokens
 
-For Celo L1 Remix does not support Solidity compiler version 0.8.20 and above for EVM versions above Paris.
+### State Variables
+| Variable | Type | Description |
+|----------|------|-------------|
+| MANAGER | address | The address authorized to mint tokens alongside the owner |
 
-A workaround is to go into the advanced settings for the compiler in Remix and choose Paris as the EVM version.
+### Events
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| TokenMinted | address indexed to, uint256 indexed tokenId, string uri | Emitted when a token is minted |
 
-[see more at CELO documentation](https://docs.celo.org/developer/deploy/remix)
-
-## Functions
-
-### `constructor(address initialOwner)`
-Initializes the contract with the specified initial owner.
-
-### `safeMint(address to, uint256 tokenId, string memory uri)`
-Mints a new token and assigns it to the specified address with the given metadata URI.
-- Only callable by the contract owner
-- Parameters:
-  - `to`: The address that will receive the minted token
-  - `tokenId`: The ID to assign to the new token
-  - `uri`: The metadata URI for the token
-
-### `tokenURI(uint256 tokenId)`
-Returns the metadata URI for a specific token.
-- Parameters:
-  - `tokenId`: The ID of the token to query
-
-### `supportsInterface(bytes4 interfaceId)`
-Determines if the contract supports a specific interface.
-- Parameters:
-  - `interfaceId`: The interface identifier to check
-
-## Inherited Functions
-
-This contract inherits from several OpenZeppelin contracts, providing additional functionality:
-
-- From **ERC721**:
-  - `balanceOf(address)`: Returns the number of tokens owned by an address
-  - `ownerOf(uint256)`: Returns the owner of a specific token
-  - `safeTransferFrom(address, address, uint256)`: Safely transfers a token
-  - `safeTransferFrom(address, address, uint256, bytes)`: Safely transfers a token with additional data
-  - `transferFrom(address, address, uint256)`: Transfers a token
-  - `approve(address, uint256)`: Approves an address to transfer a specific token
-  - `setApprovalForAll(address, bool)`: Approves an address to transfer all tokens
-  - `getApproved(uint256)`: Gets the approved address for a token
-  - `isApprovedForAll(address, address)`: Checks if an operator is approved for all tokens
-
-- From **ERC721Burnable**:
-  - `burn(uint256)`: Burns (destroys) a specific token
-
-- From **Ownable**:
-  - `owner()`: Returns the address of the current owner
-  - `renounceOwnership()`: Leaves the contract without an owner
-  - `transferOwnership(address)`: Transfers ownership to a new address
-
-## Requirements
-
-- [Node.js](https://nodejs.org/)
-- [Hardhat](https://hardhat.org/) or [Truffle](https://www.trufflesuite.com/truffle)
-- [OpenZeppelin Contracts v5.0.0](https://github.com/OpenZeppelin/openzeppelin-contracts)
-
-## Deployment
-
-1. Install dependencies:
-   ```bash
-   npm install @openzeppelin/contracts@5.0.0
-   ```
-
-2. Compile the contract:
-   ```bash
-   npx hardhat compile
-   ```
-
-3. Deploy to your chosen network:
-   ```bash
-   npx hardhat run scripts/deploy.js --network <your-network>
-   ```
-
-## Example Deployment Script
-
-```javascript
-const { ethers } = require("hardhat");
-
-async function main() {
-  const [deployer] = await ethers.getSigners();
-  console.log("Deploying contracts with the account:", deployer.address);
-
-  const ResearchContreebution = await ethers.getContractFactory("ResearchContreebution");
-  const contract = await ResearchContreebution.deploy(deployer.address);
-
-  await contract.waitForDeployment();
-  console.log("ResearchContreebution deployed to:", await contract.getAddress());
-}
-
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+### Constructor
+```solidity
+constructor(address initialOwner)
+    ERC721("Research Contreebution", "treekipediaRSRCH")
+    Ownable(initialOwner)
+{}
 ```
+Initializes the contract with the specified initial owner address.
 
-## License
+### Functions
 
-This project is licensed under the MIT License.
+#### safeMint
+```solidity
+function safeMint(address to, uint256 tokenId, string memory uri) public
+```
+Mints a new token with the specified ID and metadata URI to the provided address.
+
+**Parameters:**
+- `to`: The address that will own the minted token
+- `tokenId`: The unique ID for the new token
+- `uri`: The metadata URI for the token
+
+**Requirements:**
+- The caller must be either the owner or the manager
+
+**Effects:**
+- Mints a new token to the specified address
+- Sets the token's URI
+- Emits a `TokenMinted` event
+
+#### setManager
+```solidity
+function setManager(address newManager) public onlyOwner
+```
+Updates the manager address.
+
+**Parameters:**
+- `newManager`: The address to set as the new manager
+
+**Requirements:**
+- The caller must be the contract owner
+- The new manager address cannot be the zero address
+
+**Effects:**
+- Updates the MANAGER state variable
+
+#### tokenURI (Override)
+```solidity
+function tokenURI(uint256 tokenId) public view override returns (string memory)
+```
+Returns the metadata URI for a given token ID.
+
+**Parameters:**
+- `tokenId`: The ID of the token to query
+
+**Returns:**
+- The metadata URI string
+
+#### supportsInterface (Override)
+```solidity
+function supportsInterface(bytes4 interfaceId) public view override returns (bool)
+```
+Determines if the contract implements a specific interface.
+
+**Parameters:**
+- `interfaceId`: The interface identifier to check
+
+**Returns:**
+- Boolean indicating whether the interface is supported
+
+## Security Considerations
+- Only the owner can set a new manager address
+- Minting is restricted to the owner and the manager
+- The contract inherits OpenZeppelin's battle-tested implementations
+- Zero-address validation is implemented for the manager role
+
+## Usage Scenarios
+1. **Research Publication**: Mint tokens to represent published research papers
+2. **Research Certification**: Use tokens as proof of contribution to research projects
+3. **Research Attribution**: Tokenize and track research contributions
+
+## Integration Guide
+1. Deploy the contract with the desired owner address
+2. Set a manager address if needed
+3. Start minting tokens to research contributors
+
+## Extended Functionality
+The contract can be extended with additional features:
+- Automated royalty distribution
+- Time-locked transfers
+- Metadata standards for research contributions
+- Integration with academic reputation systems
+
+## Related Resources
+- [ERC721 Standard](https://eips.ethereum.org/EIPS/eip-721)
+- [OpenZeppelin Documentation](https://docs.openzeppelin.com/contracts/)
