@@ -22,7 +22,7 @@ interface SearchFormProps {
   placeholder?: string;
 }
 
-export function SearchForm({ placeholder = "Search for trees..." }: SearchFormProps) {
+export function SearchForm({ placeholder = "Search over 50,000 tree species..." }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
@@ -256,13 +256,13 @@ export function SearchForm({ placeholder = "Search for trees..." }: SearchFormPr
                   }
                 }, 200);
               }}
-              className="w-full flex-grow px-6 py-4 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-silvi-mint placeholder-silvi-mint/70 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
+              className="w-full flex-grow px-6 py-4 rounded-xl bg-black/30 backdrop-blur-md border-2 border-emerald-500/30 text-silvi-mint placeholder-silvi-mint/70 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400/50 outline-none shadow-[0_0_15px_rgba(52,211,153,0.15)] transition-all duration-300 hover:border-emerald-400/40 hover:shadow-[0_0_20px_rgba(52,211,153,0.25)]"
             />
             <button 
               type="submit"
-              className="absolute right-4 top-1/2 -translate-y-1/2"
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-emerald-500/20 transition-colors"
             >
-              <Search className={`w-6 h-6 ${isLoading ? 'text-emerald-300' : 'text-white/70'}`} />
+              <Search className={`w-6 h-6 ${isLoading ? 'text-emerald-300' : 'text-emerald-400/80 hover:text-emerald-300'}`} />
             </button>
           </div>
 

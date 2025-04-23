@@ -22,7 +22,7 @@ export function Footer() {
                 <span className="sr-only">Twitter</span>
               </a>
               <a 
-                href="https://github.com/silviearth" 
+                href="https://github.com/SilviProtocol/silvi-open/tree/master" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-white transition-colors"

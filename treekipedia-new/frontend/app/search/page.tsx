@@ -10,64 +10,71 @@ export default function SearchPage() {
       <main className="flex-1">
         <div className="min-h-screen flex flex-col">
           {/* Hero Section with Search */}
-          <section className="relative w-full py-16 md:py-24 lg:py-32">
+          <section className="relative w-full py-16 md:py-20 lg:py-24">
             <div className="container relative z-10 px-4 md:px-6 mx-auto">
-              <div className="flex flex-col items-center justify-center space-y-10 text-center">
-                {/* Logo and tagline group */}
-                <div className="space-y-2 max-w-4xl">
-                  <div className="flex justify-center">
-                    <img 
-                      src="/treekipedialogo.svg" 
-                      alt="Treekipedia" 
-                      className="h-20 text-silvi-mint filter brightness-100 saturate-0"
-                      style={{ filter: 'brightness(0) saturate(100%) invert(98%) sepia(5%) saturate(401%) hue-rotate(53deg) brightness(103%) contrast(94%)' }}
-                    />
-                  </div>
-                  <h1 className="text-3xl font-bold tracking-tighter">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 via-green-200 to-teal-300 animate-gradient-x">
-                      A Public Database For Every Species On Earth
-                    </span>
-                  </h1>
-                </div>
+              <div className="flex flex-col items-center justify-center space-y-8 text-center">
+                {/* Logo and Subtitle Group */}
+                <div className="flex flex-col items-center">
+                  <img 
+                    src="/treekipedialogo.svg" 
+                    alt="Treekipedia" 
+                    className="h-[90px] text-silvi-mint filter brightness-100 saturate-0 mb-2"
+                    style={{ filter: 'brightness(0) saturate(100%) invert(98%) sepia(5%) saturate(401%) hue-rotate(53deg) brightness(103%) contrast(94%)' }}
+                  />
 
-                {/* Search bar and explanation group */}
-                <div className="space-y-3 w-full max-w-2xl">
+                  {/* Subtitle directly below logo with minimal spacing */}
+                  <div className="max-w-3xl">
+                    <h1 className="text-4xl font-bold tracking-tighter">
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 via-green-200 to-teal-300 animate-gradient-x">
+                        The Tree Intelligence Commons
+                      </span>
+                    </h1>
+                  </div>
+                </div>
+                
+                {/* Search bar with more separation */}
+                <div className="w-full max-w-2xl mt-6">
                   <SearchForm />
-                  <p className="mx-auto max-w-[800px] text-silvi-mint text-lg md:text-xl font-semibold">
-                    Explore over 50,000 species, support new research, and help grow open access to global tree intelligence.
-                  </p>
                 </div>
               </div>
             </div>
           </section>
-
-          {/* Features Section */}
-          <section className="w-full py-16 md:py-24 bg-black/30 backdrop-blur-md">
+          
+          {/* Features Section - Moved higher */}
+          <section className="w-full py-8 md:py-12">
             <div className="container px-4 md:px-6 mx-auto">
-              <div className="grid gap-10 lg:grid-cols-3 lg:gap-12">
-                <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                  <div className="text-6xl mb-4">🌳</div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-silvi-mint">Discover Tree Species</h3>
-                    <p className="text-silvi-mint/80">
+              <div className="grid gap-4 lg:grid-cols-3 lg:gap-5">
+                <div className="p-5 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
+                  <div className="flex flex-col">
+                    <div className="flex items-center mb-3">
+                      <div className="text-5xl mr-3">🌳</div>
+                      <h3 className="text-xl font-bold text-emerald-300">Discover Tree Species</h3>
+                    </div>
+                    <p className="text-white text-lg leading-relaxed">
                       Browse over 50,000 species with structured data on taxonomy, ecology, and habitat. Get the facts without digging through dense PDFs or scattered datasets.
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                  <div className="text-6xl mb-4">🧪</div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-silvi-mint">Fund Research</h3>
-                    <p className="text-silvi-mint/80">
+                
+                <div className="p-5 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
+                  <div className="flex flex-col">
+                    <div className="flex items-center mb-3">
+                      <div className="text-5xl mr-3">🧪</div>
+                      <h3 className="text-xl font-bold text-emerald-300">Fund Research</h3>
+                    </div>
+                    <p className="text-white text-lg leading-relaxed">
                       Help fill the gaps. When a species is missing key info, you can fund AI-powered research with a Contreebution NFT. One click. New data. Real impact.
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                  <div className="text-6xl mb-4">🥇</div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-silvi-mint">Climb the Treederboard</h3>
-                    <p className="text-silvi-mint/80">
+                
+                <div className="p-5 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
+                  <div className="flex flex-col">
+                    <div className="flex items-center mb-3">
+                      <div className="text-5xl mr-3">🥇</div>
+                      <h3 className="text-xl font-bold text-emerald-300">Climb the Treederboard</h3>
+                    </div>
+                    <p className="text-white text-lg leading-relaxed">
                       Every species you help research earns you points. Track your contributions and celebrate your place in the forest.
                     </p>
                   </div>
@@ -77,39 +84,48 @@ export default function SearchPage() {
           </section>
 
           {/* Intro Paragraph */}
-          <section className="w-full py-16 md:py-20">
+          <section className="w-full py-8 md:py-10">
             <div className="container px-4 md:px-6 mx-auto">
-              <div className="mx-auto max-w-3xl text-center">
-                <p className="text-silvi-mint text-lg md:text-xl leading-relaxed">
-                  Treekipedia is an open-source, AI-powered database of tree knowledge. It's built for land stewards, restoration practitioners, and anyone trying to understand which trees grow where, and why that matters.
-                </p>
-                <p className="text-silvi-mint text-lg md:text-xl leading-relaxed mt-4">
-                  No paywalls. No gatekeeping. Just real data for real-world work.
-                </p>
+              <div className="mx-auto max-w-3xl">
+                <div className="p-5 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
+                  <div className="flex flex-col">
+                    <div className="flex items-center mb-3">
+                      <div className="text-5xl mr-3">📚</div>
+                      <h3 className="text-xl font-bold text-emerald-300">No paywalls. No gatekeeping.</h3>
+                    </div>
+                    <p className="text-white text-lg leading-relaxed">
+                      Treekipedia is an open-source, AI-powered database of tree knowledge. It's built for land stewards, restoration practitioners, and anyone trying to understand which trees grow where, and why that matters.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
 
 
           {/* What's Coming Section */}
-          <section className="w-full py-16 md:py-20 bg-gradient-to-b from-black/10 to-black/30 backdrop-blur-md">
+          <section className="w-full py-10 md:py-12">
             <div className="container px-4 md:px-6 mx-auto">
-              <div className="mx-auto max-w-3xl text-center">
-                <h2 className="text-3xl font-bold mb-6 text-silvi-mint">
-                  📍 What's Coming
-                </h2>
-                <p className="text-silvi-mint text-xl mb-4">
-                  This is just the beginning.
-                </p>
-                <p className="text-silvi-mint/80 text-lg mb-8">
-                  Future versions will unlock collaborative editing, decentralized validation, open APIs, and integrations with climate and biodiversity platforms. We're building the infrastructure to make tree data usable, composable, and truly open.
-                </p>
-                <Link 
-                  href="/about"
-                  className="inline-flex px-8 py-3 bg-emerald-600/80 hover:bg-emerald-600 backdrop-blur-md rounded-xl text-silvi-mint font-semibold transition-colors"
-                >
-                  Learn About Our Mission
-                </Link>
+              <div className="mx-auto max-w-3xl">
+                <div className="p-5 rounded-xl bg-black/30 backdrop-blur-md border border-white/20 text-white">
+                  <div className="flex flex-col">
+                    <div className="flex items-center mb-3">
+                      <div className="text-5xl mr-3">📍</div>
+                      <h3 className="text-xl font-bold text-emerald-300">This is just the beginning.</h3>
+                    </div>
+                    <p className="text-white text-lg leading-relaxed mb-6">
+                      Future versions will unlock collaborative editing, decentralized validation, open APIs, and integrations with climate and biodiversity platforms. We're building the infrastructure to make tree data usable, composable, and truly open.
+                    </p>
+                    <div className="flex justify-start">
+                      <Link 
+                        href="/about"
+                        className="inline-flex px-6 py-3 bg-emerald-600/80 hover:bg-emerald-600 backdrop-blur-md rounded-xl text-white font-semibold transition-colors"
+                      >
+                        Learn About Our Mission
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

@@ -500,10 +500,10 @@ export function SponsorshipButton({
       <Button
         onClick={handleSponsor}
         disabled={isButtonDisabled}
-        className={`${className} relative overflow-hidden ${
-          status === 'completed' ? 'bg-green-600 hover:bg-green-700' : 
-          status === 'error' ? 'bg-red-600 hover:bg-red-700' : 
-          status === 'needs_verification' ? 'bg-yellow-600 hover:bg-yellow-700' : 
+        className={`${className} relative overflow-hidden px-6 py-3 backdrop-blur-md rounded-xl text-white font-semibold transition-colors ${
+          status === 'completed' ? 'bg-green-600/80 hover:bg-green-600' : 
+          status === 'error' ? 'bg-red-600/80 hover:bg-red-600' : 
+          status === 'needs_verification' ? 'bg-yellow-600/80 hover:bg-yellow-600' : 
           ''
         }`}
       >
@@ -524,7 +524,7 @@ export function SponsorshipButton({
       
       {/* Display errors */}
       {error && !isResearching && (
-        <div className="text-red-500 text-sm mt-1">
+        <div className="text-red-500 text-base mt-2">
           {error}
         </div>
       )}

@@ -65,7 +65,7 @@ export function Navbar() {
                   key={route.href}
                   href={route.href}
                   className={cn(
-                    "text-silvi-mint hover:text-emerald-300 font-medium transition-colors",
+                    "text-white hover:text-emerald-300 font-medium transition-colors",
                     route.active && "text-emerald-300"
                   )}
                 >
@@ -79,17 +79,16 @@ export function Navbar() {
           <div className="flex items-center space-x-4">
             {/* Profile Icon (only when connected) */}
             {isConnected && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-white hover:bg-white/10 border border-transparent hover:border-white/20"
-                asChild
-              >
-                <Link href="/profile">
+              <Link href="/profile" className="inline-block">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-white hover:bg-white/10 border border-transparent hover:border-white/20"
+                >
                   <User className="h-5 w-5" />
                   <span className="sr-only">Profile</span>
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             )}
             
             {/* Wallet Connection */}
@@ -126,8 +125,8 @@ export function Navbar() {
               key={route.href}
               href={route.href} 
               className={cn(
-                "text-silvi-mint py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-lg flex items-center",
-                route.active && "bg-white/5 border-l-2 border-emerald-300 pl-3"
+                "text-white py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-lg flex items-center",
+                route.active && "bg-white/5 border-l-2 border-emerald-300 pl-3 text-emerald-300"
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
@@ -139,8 +138,8 @@ export function Navbar() {
             <Link 
               href="/profile" 
               className={cn(
-                "text-silvi-mint py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-lg flex items-center",
-                pathname === "/profile" && "bg-white/5 border-l-2 border-emerald-300 pl-3"
+                "text-white py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-lg flex items-center",
+                pathname === "/profile" && "bg-white/5 border-l-2 border-emerald-300 pl-3 text-emerald-300"
               )}
               onClick={() => setMobileMenuOpen(false)}
             >

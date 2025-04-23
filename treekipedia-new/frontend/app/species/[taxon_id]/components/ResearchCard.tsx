@@ -100,16 +100,16 @@ export function ResearchCard({
 
   return (
     <div className="rounded-xl bg-black/30 backdrop-blur-md border border-white/20 p-6 text-white mb-6 sticky top-4">
-      <h2 className="text-xl font-semibold mb-4 flex items-center">
-        <Leaf className="w-5 h-5 mr-2 text-emerald-400" />
+      <h2 className="text-xl font-bold mb-4 flex items-center text-emerald-300">
+        <Leaf className="w-5 h-5 mr-2" />
         Tree Intelligence Commons
       </h2>
 
       {isResearched ? (
         <div>
           <div className="p-4 rounded-lg bg-black/30 backdrop-blur-md border border-white/20 mb-4">
-            <div className="mb-2 text-emerald-300 font-semibold">AI Research Complete</div>
-            <p className="text-white/90 mb-2">
+            <div className="mb-3 text-xl font-bold text-emerald-300">AI Research Complete</div>
+            <p className="text-white text-lg leading-relaxed mb-2">
               This species has been researched with AI. Thank you to all contributors who have
               funded tree intelligence!
             </p>
@@ -118,7 +118,7 @@ export function ResearchCard({
           </div>
           <Button
             onClick={() => router.push("/profile")}
-            className="w-full bg-emerald-600 hover:bg-emerald-700"
+            className="w-full bg-emerald-600/80 hover:bg-emerald-600 backdrop-blur-md rounded-xl text-white font-semibold transition-colors"
           >
             View My Contreebutions
           </Button>
@@ -128,7 +128,7 @@ export function ResearchCard({
           {isResearching ? (
             <div className="p-4 rounded-lg bg-black/30 backdrop-blur-md border border-emerald-500/40 mb-4">
               <div className="flex justify-between items-center mb-3">
-                <span className="text-white/90">Research Status:</span>
+                <span className="text-white text-lg">Research Status:</span>
                 <span className="font-bold text-emerald-300">Processing</span>
               </div>
               <div className="flex items-center justify-center gap-3 mb-3">
@@ -150,30 +150,30 @@ export function ResearchCard({
           ) : (
             <div className="p-4 rounded-lg bg-black/30 backdrop-blur-md border border-white/20 mb-4">
               <div className="flex justify-between items-center mb-3">
-                <span className="text-white/90">Fund Research:</span>
+                <span className="text-white text-lg">Fund Research:</span>
                 <span className="font-bold text-emerald-300">$0.01</span>
               </div>
-              <div className="space-y-2 text-sm text-white/70">
+              <div className="space-y-2 text-base text-white/80">
                 <p>
-                  <span className="inline-block w-5 h-5 text-center mr-1 rounded-full bg-white/10">
+                  <span className="inline-block w-5 h-5 text-center mr-2 rounded-full bg-white/10">
                     ✓
                   </span>
                   Unlock AI research for this species
                 </p>
                 <p>
-                  <span className="inline-block w-5 h-5 text-center mr-1 rounded-full bg-white/10">
+                  <span className="inline-block w-5 h-5 text-center mr-2 rounded-full bg-white/10">
                     ✓
                   </span>
                   Receive a Contreebution NFT
                 </p>
                 <p>
-                  <span className="inline-block w-5 h-5 text-center mr-1 rounded-full bg-white/10">
+                  <span className="inline-block w-5 h-5 text-center mr-2 rounded-full bg-white/10">
                     ✓
                   </span>
                   Earn points on the Treederboard
                 </p>
                 <p>
-                  <span className="inline-block w-5 h-5 text-center mr-1 rounded-full bg-white/10">
+                  <span className="inline-block w-5 h-5 text-center mr-2 rounded-full bg-white/10">
                     ✓
                   </span>
                   Help build the tree knowledge commons
@@ -187,7 +187,7 @@ export function ResearchCard({
             taxonId={taxonId}
             speciesName={species?.species_scientific_name || species?.species || ''}
             onSponsorshipComplete={handleSponsorshipComplete}
-            className="w-full bg-emerald-600 hover:bg-emerald-700"
+            className="w-full bg-emerald-600/80 hover:bg-emerald-600 backdrop-blur-md rounded-xl text-white font-semibold transition-colors"
             setIsResearching={setIsResearching}
             setProgressMessage={setProgressMessage}
             setProgressPercent={setProgressPercent}
@@ -197,8 +197,8 @@ export function ResearchCard({
 
       {/* Research Process Info */}
       <div className="mt-6 pt-6 border-t border-white/10">
-        <h3 className="text-lg font-semibold mb-3">How It Works</h3>
-        <div className="space-y-3 text-sm">
+        <h3 className="text-xl font-bold mb-3 text-emerald-300">How It Works</h3>
+        <div className="space-y-3 text-base">
           <div className="flex items-start gap-2">
             <div className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-900/50 text-emerald-400 flex items-center justify-center text-xs">
               1
