@@ -1,0 +1,21 @@
+property_id,property_name,domain,range,is_transitive,is_functional,inverse_property,description
+OP001,hasParentClass,Order,Class,TRUE,TRUE,isParentClassOf,Links an Order to its parent Class in taxonomy
+OP002,hasParentOrder,Family,Order,TRUE,TRUE,isParentOrderOf,Links a Family to its parent Order in taxonomy
+OP003,hasParentFamily,Genus,Family,TRUE,TRUE,isParentFamilyOf,Links a Genus to its parent Family in taxonomy
+OP004,hasParentGenus,Species,Genus,FALSE,TRUE,isParentGenusOf,Links a Species to its parent Genus in taxonomy
+OP005,isParentClassOf,Class,Order,TRUE,FALSE,hasParentClass,Inverse of hasParentClass
+OP006,isParentOrderOf,Order,Family,TRUE,FALSE,hasParentOrder,Inverse of hasParentOrder
+OP007,isParentFamilyOf,Family,Genus,TRUE,FALSE,hasParentFamily,Inverse of hasParentFamily
+OP008,isParentGenusOf,Genus,Species,TRUE,FALSE,hasParentGenus,Inverse of hasParentGenus
+OP009,hasBiome,Species_Individual,Biome,FALSE,FALSE,isBiomeOf,Links a species to a biome where it is found
+OP010,isBiomeOf,Biome,Species_Individual,FALSE,FALSE,hasBiome,Inverse of hasBiome
+OP011,hasEcoregion,Species_Individual,Ecoregion,FALSE,FALSE,isEcoregionOf,Links a species to an ecoregion where it is found
+OP012,isEcoregionOf,Ecoregion,Species_Individual,FALSE,FALSE,hasEcoregion,Inverse of hasEcoregion
+OP013,inBiome,Ecoregion,Biome,FALSE,TRUE,hasBiomeEcoregion,Links an ecoregion to its parent biome
+OP014,hasBiomeEcoregion,Biome,Ecoregion,FALSE,FALSE,inBiome,Inverse of inBiome
+OP015,nativeToCountry,Species_Individual,Country,FALSE,FALSE,hasNativeSpecies,Indicates a species is native to a country
+OP016,hasNativeSpecies,Country,Species_Individual,FALSE,FALSE,nativeToCountry,Inverse of nativeToCountry
+OP017,introducedToCountry,Species_Individual,Country,FALSE,FALSE,hasIntroducedSpecies,Indicates a species is introduced to a country
+OP018,hasIntroducedSpecies,Country,Species_Individual,FALSE,FALSE,introducedToCountry,Inverse of introducedToCountry
+OP019,invasiveInCountry,Species_Individual,Country,FALSE,FALSE,hasInvasiveSpecies,Indicates a species is invasive in a country
+OP020,hasInvasiveSpecies,Country,Species_Individual,FALSE,FALSE,invasiveInCountry,Inverse of invasiveInCountry

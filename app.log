@@ -1,0 +1,27 @@
+2025-04-30 19:27:12,407 - werkzeug - WARNING -  * Debugger is active!
+2025-04-30 19:27:12,418 - werkzeug - INFO -  * Debugger PIN: 112-619-842
+2025-04-30 19:27:19,589 - __main__ - INFO - Saving file: biomes.csv to Uploads/abe38b50-f345-4b60-96b6-3fed58185463
+2025-04-30 19:27:19,590 - __main__ - INFO - Saving file: countries.csv to Uploads/abe38b50-f345-4b60-96b6-3fed58185463
+2025-04-30 19:27:19,590 - __main__ - INFO - Saving file: data_properties.csv to Uploads/abe38b50-f345-4b60-96b6-3fed58185463
+2025-04-30 19:27:19,591 - __main__ - INFO - Saving file: taxonomic_hierarchy.csv to Uploads/abe38b50-f345-4b60-96b6-3fed58185463
+2025-04-30 19:27:19,591 - __main__ - INFO - Saving file: object_properties.csv to Uploads/abe38b50-f345-4b60-96b6-3fed58185463
+2025-04-30 19:27:19,591 - __main__ - INFO - Saving file: ecoregions.csv to Uploads/abe38b50-f345-4b60-96b6-3fed58185463
+2025-04-30 19:27:19,592 - __main__ - INFO - Generating ontology biodiversity-ontology for session abe38b50-f345-4b60-96b6-3fed58185463
+2025-04-30 19:27:20,950 - __main__ - INFO - Saved metadata for session abe38b50-f345-4b60-96b6-3fed58185463
+2025-04-30 19:27:20,950 - __main__ - INFO - Ontology generated successfully: biodiversity-ontology.owl (111610 bytes)
+2025-04-30 19:27:20,958 - werkzeug - INFO - 127.0.0.1 - - [30/Apr/2025 19:27:20] "POST /upload HTTP/1.1" 200 -
+2025-04-30 19:27:38,767 - werkzeug - INFO - 127.0.0.1 - - [30/Apr/2025 19:27:38] "GET / HTTP/1.1" 200 -
+2025-04-30 19:28:15,365 - werkzeug - INFO - 127.0.0.1 - - [30/Apr/2025 19:28:15] "GET / HTTP/1.1" 200 -
+2025-04-30 19:30:59,720 - werkzeug - INFO - 127.0.0.1 - - [30/Apr/2025 19:30:59] "GET / HTTP/1.1" 200 -
+2025-04-30 19:31:29,807 - werkzeug - INFO - 127.0.0.1 - - [30/Apr/2025 19:31:29] "GET / HTTP/1.1" 200 -
+2025-04-30 19:31:36,685 - werkzeug - INFO - 127.0.0.1 - - [30/Apr/2025 19:31:36] "GET / HTTP/1.1" 200 -
+2025-04-30 19:33:26,551 - __main__ - INFO - Saving file: biomes.csv to Uploads/f3b7ce90-5900-48e2-ba45-8da39c7a6148
+2025-04-30 19:33:26,551 - __main__ - INFO - Saving file: countries.csv to Uploads/f3b7ce90-5900-48e2-ba45-8da39c7a6148
+2025-04-30 19:33:26,552 - __main__ - INFO - Saving file: data_properties.csv to Uploads/f3b7ce90-5900-48e2-ba45-8da39c7a6148
+2025-04-30 19:33:26,552 - __main__ - INFO - Saving file: taxonomic_hierarchy.csv to Uploads/f3b7ce90-5900-48e2-ba45-8da39c7a6148
+2025-04-30 19:33:26,553 - __main__ - INFO - Saving file: object_properties.csv to Uploads/f3b7ce90-5900-48e2-ba45-8da39c7a6148
+2025-04-30 19:33:26,553 - __main__ - INFO - Saving file: ecoregions.csv to Uploads/f3b7ce90-5900-48e2-ba45-8da39c7a6148
+2025-04-30 19:33:26,553 - __main__ - INFO - Generating ontology biodiversity-ontology for session f3b7ce90-5900-48e2-ba45-8da39c7a6148
+2025-04-30 19:33:27,793 - __main__ - INFO - Saved metadata for session f3b7ce90-5900-48e2-ba45-8da39c7a6148
+2025-04-30 19:33:27,793 - __main__ - INFO - Ontology generated successfully: biodiversity-ontology.owl (111610 bytes)
+2025-04-30 19:33:27,794 - werkzeug - INFO - 127.0.0.1 - - [30/Apr/2025 19:33:27] "POST /upload HTTP/1.1" 200 -

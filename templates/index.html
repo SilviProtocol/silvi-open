@@ -3,115 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biodiversity Ontology Generator</title>
+    <title> Ontology Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #336699;
+            --primary-dark: #264d73;
+            --accent-color: #66cc99;
+            --light-bg: #f8f9fa;
+            --border-radius: 8px;
+            --box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+        }
+        
         body {
             padding-top: 2rem;
-            padding-bottom: 2rem;
-            background-color: #f8f9fa;
+            padding-bottom: 4rem;
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
         }
+        
         .header {
-            padding: 2rem 1rem;
-            margin-bottom: 2rem;
-            background-color: #e9ecef;
-            border-radius: 0.3rem;
+            padding: 3rem 1rem;
+            margin-bottom: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
-        .file-upload {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background-color: white;
-            border-radius: 0.3rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        }
-        .file-upload h3 {
-            margin-bottom: 1rem;
-        }
-        .file-section {
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            border: 1px solid #dee2e6;
-            border-radius: 0.25rem;
-        }
-        .file-section h4 {
+        
+        .header h1 {
+            font-weight: 600;
             margin-bottom: 0.75rem;
         }
+        
+        .header .lead {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+        
+        .file-upload {
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .file-upload h3 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
         .alert {
+            margin-bottom: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-control {
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #ced4da;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(51, 102, 153, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        .info-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-card h4 {
+            color: var(--primary-color);
+            font-weight: 600;
             margin-bottom: 1rem;
+        }
+        
+        .info-card i {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+        }
+        
+        .info-card ul {
+            padding-left: 1.5rem;
+        }
+        
+        .info-card ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 4rem;
+            height: 4rem;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            color: var(--primary-color);
+            background-color: rgba(51, 102, 153, 0.1);
+            border-radius: 50%;
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #dee2e6;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-input-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-input-text {
+            margin-left: 1rem;
+            color: #6c757d;
+        }
+        
+        .selected-files {
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header text-center">
-            <h1>Biodiversity Ontology Generator</h1>
-            <p class="lead">Upload CSV files to generate your biodiversity ontology</p>
+            <h1><i class="fas fa-dna"></i></h1>
+            <p class="lead">Generate OWL ontologies from structured CSV data for biodiversity research</p>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show">
+                        <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'info-circle' }}"></i>
                         {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
 
-        <div class="file-upload">
-            <form action="{{ url_for('upload_files') }}" method="post" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="ontology_name" class="form-label">Ontology Name</label>
-                    <input type="text" class="form-control" id="ontology_name" name="ontology_name" value="biodiversity-ontology">
-                    <div class="form-text">The name of your ontology file (without .owl extension)</div>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="file-upload">
+                    <h3><i class="fas fa-upload"></i> Create Ontology</h3>
+                    <form action="{{ url_for('upload_files') }}" method="post" enctype="multipart/form-data" id="uploadForm">
+                        <div class="mb-4">
+                            <label for="ontology_name" class="form-label">Ontology Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                <input type="text" class="form-control" id="ontology_name" name="ontology_name" value="biodiversity-ontology" placeholder="Enter ontology name">
+                            </div>
+                            <div class="form-text">The name of your ontology file (without .owl extension)</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label"><i class="fas fa-table"></i> Upload CSV Files</label>
+                            <div class="file-input-wrapper">
+                                <div class="file-input-button">
+                                    <i class="fas fa-file-csv"></i> Choose Files
+                                </div>
+                                <span class="file-input-text">No files selected</span>
+                                <input type="file" class="form-control" id="files" name="files" accept=".csv" multiple>
+                            </div>
+                            <div class="selected-files" id="selectedFiles"></div>
+                            <div class="form-text">Upload one or more CSV files that match the structure in the configuration</div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-cogs"></i> Generate Ontology
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                
-                <div class="file-section">
-                    <h4>Taxonomic Hierarchy</h4>
-                    <p>Upload a CSV file with columns: class_name, order_name, family_name</p>
-                    <input type="file" class="form-control" name="taxonomic_hierarchy" accept=".csv">
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="info-card">
+                    <h4><i class="fas fa-info-circle"></i> About This Tool</h4>
+                    <p>This tool generates an OWL ontology based on the CSV files you provide, following the structure defined in the configuration.</p>
+                    <p>Use it to create structured biodiversity knowledge representations for research and analysis.</p>
                 </div>
-                
-                <div class="file-section">
-                    <h4>Biomes</h4>
-                    <p>Upload a CSV file with columns: biome_id, biome_name</p>
-                    <input type="file" class="form-control" name="biomes" accept=".csv">
-                </div>
-                
-                <div class="file-section">
-                    <h4>Ecoregions</h4>
-                    <p>Upload a CSV file with columns: ecoregion_id, ecoregion_name, biome_id</p>
-                    <input type="file" class="form-control" name="ecoregions" accept=".csv">
-                </div>
-                
-                <div class="file-section">
-                    <h4>Countries</h4>
-                    <p>Upload a CSV file with columns: country_name, country_code, continent</p>
-                    <input type="file" class="form-control" name="countries" accept=".csv">
-                </div>
-                
-                <div class="file-section">
-                    <h4>Object Properties</h4>
-                    <p>Upload a CSV file with columns: property_id, property_name, domain, range, is_transitive, is_functional, inverse_property, description</p>
-                    <input type="file" class="form-control" name="object_properties" accept=".csv">
-                </div>
-                
-                <div class="file-section">
-                    <h4>Data Properties</h4>
-                    <p>Upload a CSV file with columns: property_id, property_name, domain, range, is_functional, description</p>
-                    <input type="file" class="form-control" name="data_properties" accept=".csv">
-                </div>
-                
-                <button type="submit" class="btn btn-primary">Generate Ontology</button>
-            </form>
+    
+            </div>
         </div>
         
-        <div class="text-center mt-4">
-            <p>This tool generates an OWL ontology based on the CSV files you provide.</p>
-            <p>At least one CSV file is required to generate an ontology.</p>
+        
+        
+        <div class="footer">
+            <p>Biodiversity Ontology Generator </p>
         </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Update file input text when files are selected
+        document.getElementById('files').addEventListener('change', function(e) {
+            const fileText = document.querySelector('.file-input-text');
+            const selectedFiles = document.getElementById('selectedFiles');
+            
+            if (this.files.length > 0) {
+                fileText.textContent = this.files.length + ' files selected';
+                
+                // Display selected file names
+                let fileListHTML = '<ul class="list-unstyled">';
+                for (let i = 0; i < this.files.length; i++) {
+                    fileListHTML += `<li><i class="fas fa-file-csv text-primary"></i> ${this.files[i].name}</li>`;
+                }
+                fileListHTML += '</ul>';
+                selectedFiles.innerHTML = fileListHTML;
+            } else {
+                fileText.textContent = 'No files selected';
+                selectedFiles.innerHTML = '';
+            }
+        });
+    </script>
 </body>
 </html>

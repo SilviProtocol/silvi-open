@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: biodiversity-ontology-generator
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0

@@ -62,7 +62,6 @@
 <owl:ObjectProperty rdf:about="#hasParentGenus">
   <rdfs:domain rdf:resource="#Species"/>
   <rdfs:range rdf:resource="#Genus"/>
-  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
   <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
   <owl:inverseOf rdf:resource="#isParentGenusOf"/>
   <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Links a Species to its parent Genus in taxonomy</rdfs:comment>
@@ -302,6 +301,10 @@
 
 <owl:AnnotationProperty rdf:about="#inContinent"/>
 
+<owl:AnnotationProperty rdf:about="#hasBiomeID"/>
+
+<owl:AnnotationProperty rdf:about="#hasEcoregionID"/>
+
 <owl:Class rdf:about="#Organism">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 </owl:Class>
@@ -358,309 +361,15 @@
   <rdfs:subClassOf rdf:resource="#GeographicRegion"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Tropical_&amp;_Subtropical_Coniferous_Forests">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM01</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Montane_Grasslands_&amp;_Shrublands">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM02</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Boreal_Forests/Taiga">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM03</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Temperate_Broadleaf_&amp;_Mixed_Forests">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM04</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Temperate_Conifer_Forests">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM05</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Mediterranean_Forests">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM06</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Woodlands_&amp;_Scrub">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM07</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Tundra">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM08</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Temperate_Grasslands">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM09</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Savannas_&amp;_Shrublands">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM10</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Deserts_&amp;_Xeric_Shrublands">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM11</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Tropical_&amp;_Subtropical_Grasslands">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM12</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM13</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Mangroves">
-  <rdfs:subClassOf rdf:resource="#Biome"/>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biome ID: BM14</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Madeira-Tapajós_moist_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER001</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Sierra_Madre_del_Sur_pine-oak_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Coniferous_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER002</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Veracruz_montane_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Coniferous_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER003</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Trans-Mexican_Volcanic_Belt_pine-oak_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Coniferous_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER004</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Oaxacan_montane_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER005</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Magdalena_Valley_montane_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER006</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Cauca_Valley_montane_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER007</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Iquitos_várzea">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER008</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Eastern_Cordillera_Real_montane_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER009</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Northwest_Andean_montane_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER010</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Peruvian_Yungas">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER011</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Northern_Andean_páramo">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Montane_Grasslands_&amp;_Shrublands"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER012</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Napo_moist_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER013</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Talamancan_montane_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER014</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Chocó-Darién_moist_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER015</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Cordillera_Oriental_montane_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER016</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Ucayali_moist_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER017</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Scandinavian_and_Russian_taiga">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Boreal_Forests/Taiga"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER018</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Western_European_broadleaf_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Temperate_Broadleaf_&amp;_Mixed_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER019</rdfs:comment>
-</owl:Class>
-
-<owl:Class rdf:about="#Alps_conifer_and_mixed_forests">
-  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#inBiome"/>
-      <owl:someValuesFrom rdf:resource="#Temperate_Conifer_Forests"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ecoregion ID: ER020</rdfs:comment>
-</owl:Class>
-
 <owl:Class rdf:about="#Liliopsida">
   <rdfs:subClassOf rdf:resource="#Class"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Poales">
+<owl:Class rdf:about="#Fagales">
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Caryophyllales">
-  <rdfs:subClassOf rdf:resource="#Order"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Ginkgoales">
+<owl:Class rdf:about="#Malvales">
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
@@ -668,15 +377,11 @@
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Araucariales">
+<owl:Class rdf:about="#Arecales">
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Malpighiales">
-  <rdfs:subClassOf rdf:resource="#Order"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Malvales">
+<owl:Class rdf:about="#Cycadales">
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
@@ -690,31 +395,11 @@
   </rdfs:subClassOf>
 </owl:Class>
 
+<owl:Class rdf:about="#Araucariales">
+  <rdfs:subClassOf rdf:resource="#Order"/>
+</owl:Class>
+
 <owl:Class rdf:about="#Lamiales">
-  <rdfs:subClassOf rdf:resource="#Order"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cupressales">
-  <rdfs:subClassOf rdf:resource="#Order"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cycadales">
-  <rdfs:subClassOf rdf:resource="#Order"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Rosales">
-  <rdfs:subClassOf rdf:resource="#Order"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Laurales">
-  <rdfs:subClassOf rdf:resource="#Order"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Gentianales">
-  <rdfs:subClassOf rdf:resource="#Order"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Sapindales">
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
@@ -722,15 +407,19 @@
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Fagales">
+<owl:Class rdf:about="#Gentianales">
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Pinales">
+<owl:Class rdf:about="#Caryophyllales">
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Arecales">
+<owl:Class rdf:about="#Sapindales">
+  <rdfs:subClassOf rdf:resource="#Order"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Rosales">
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
@@ -738,148 +427,28 @@
   <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Cabombaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
+<owl:Class rdf:about="#Cupressales">
+  <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Burmanniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
+<owl:Class rdf:about="#Ginkgoales">
+  <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Idiospermaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
+<owl:Class rdf:about="#Pinales">
+  <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Fouquieriaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
+<owl:Class rdf:about="#Poales">
+  <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Chrysobalanaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
+<owl:Class rdf:about="#Laurales">
+  <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Eriocaulaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Fabaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cyperaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Paeoniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Pentadiplandraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Leguminosae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Chloranthaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Connaraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Gisekiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Gnetaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Hydatellaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Oxalidaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Grubbiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Menyanthaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Butomaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Moraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Pandaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Burseraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Convolvulaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Escalloniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Huaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Marantaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Melianthaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Monimiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Commelinaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Verbenaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Diapensiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Hydnoraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Icacinaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Gerrardinaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Campanulaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
+<owl:Class rdf:about="#Malpighiales">
+  <rdfs:subClassOf rdf:resource="#Order"/>
 </owl:Class>
 
 <owl:Class rdf:about="#Adoxaceae">
@@ -892,197 +461,7 @@
   </rdfs:subClassOf>
 </owl:Class>
 
-<owl:Class rdf:about="#Balsaminaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Acanthaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Myrtales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Clethraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Balanophoraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Ochnaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Caryocaraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Loranthaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Bonnetiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
 <owl:Class rdf:about="#Halophytaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Fagaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Buxaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Centroplacaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Achariaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Fagales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Actinidiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Malpighiales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Barbeuiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Elaeagnaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Daphniphyllaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Hernandiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Brassicaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cactaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Achatocarpaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Sapindales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Circaeasteraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Ebenaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Vochysiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Gentianaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Orobanchaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Ginkgoaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Gunneraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Hydrangeaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Biebersteiniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Basellaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cyclanthaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Berberidopsidaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Humiriaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Peridiscaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Eupomatiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Aceraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Rosales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Cannaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Dioncophyllaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Calophyllaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Didiereaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
@@ -1090,487 +469,19 @@
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Eucryphiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cephalotaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cardiopteridaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Columelliaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Crossosomataceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cunoniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Gyrostemonaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Haloragaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Celastraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Neuradaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Emblingiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Betulaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cynomoriaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Viburnaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Euphorbiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Flagellariaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Ephedraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Pentaphragmataceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Marcgraviaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Aptandraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Cycadales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Melastomataceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Bixaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Crassulaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Nymphaeaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Barbeyaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Carlemanniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Juncaginaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Ixonanthaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Atherospermataceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Bataceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Corsiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Nothofagaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cupressaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Opiliaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Dipentodontaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Passifloraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Curtisiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Araliaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Lycopodiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Oleaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Amaranthaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Proteales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Brunoniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Coriariaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Akaniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Ericales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Cercidiphyllaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Centrolepidaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Pedaliaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Nepenthaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Lardizabalaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cuscutaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Zygophyllaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Anisophylleaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Poales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Corynocarpaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Datiscaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Lentibulariaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Linnaeaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Apocynaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Ginkgoales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Boraginaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Krameriaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Canellaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Hanguanaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Linaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Diegodendraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Argophyllaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Liliaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Molluginaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Crypteroniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Dichapetalaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cucurbitaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Calyceraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Bruniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Anacardiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Zingiberales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Meliaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Alzateaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Lamiales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Euphroniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Hamamelidaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Balanopaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Musaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Caryophyllaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Helwingiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Irvingiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Martyniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Olacaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Nelumbonaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Apiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Araucariales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Cyrillaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
 <owl:Class rdf:about="#Cannabaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Caricaceae">
+<owl:Class rdf:about="#Cyatheaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Erythroxylaceae">
+<owl:Class rdf:about="#Hydrangeaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Araucariaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Hydrostachyaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Lactoridaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Paulowniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Droseraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Calceolariaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Nitrariaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Vitaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Koeberliniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Aquifoliaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cornaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Aristolochiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Equisetaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Ixioliriaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Iteaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Lowiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Casuarinaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Degeneriaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Melanthiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Lauraceae">
+<owl:Class rdf:about="#Cynomoriaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
@@ -1584,97 +495,19 @@
   </rdfs:subClassOf>
 </owl:Class>
 
-<owl:Class rdf:about="#Berberidaceae">
+<owl:Class rdf:about="#Argophyllaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Ctenolophonaceae">
+<owl:Class rdf:about="#Lythraceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Lacistemataceae">
+<owl:Class rdf:about="#Icacinaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Aralidiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Montiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Orchidaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Goodeniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Penthoraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Hypericaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Begoniaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Altingiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Gentianales"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-</owl:Class>
-
-<owl:Class rdf:about="#Campynemataceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Pandanaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Davalliaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Violaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Asparagaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Onagraceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Hydroleaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Capparaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Drosophyllaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Arecaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cleomaceae">
+<owl:Class rdf:about="#Ixonanthaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
@@ -1682,26 +515,418 @@
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Ecdeiocoleaceae">
+<owl:Class rdf:about="#Eriocaulaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Haemodoraceae">
+<owl:Class rdf:about="#Viburnaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Himantandraceae">
+<owl:Class rdf:about="#Cyrillaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Amborellaceae">
+<owl:Class rdf:about="#Euphroniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Illiciaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Capparaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Malpighiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Nepenthaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Winteraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Acanthaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="#hasParentOrder"/>
-      <owl:someValuesFrom rdf:resource="#Arecales"/>
+      <owl:someValuesFrom rdf:resource="#Myrtales"/>
     </owl:Restriction>
   </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Corsiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Hypoxidaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Zygophyllaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Bignoniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Marantaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Ecdeiocoleaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Paeoniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Erythroxylaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Dirachmaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lamiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Nitrariaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Papaveraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Caryocaraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Columelliaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Canellaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Balsaminaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cleomaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Krameriaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Musaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Pentadiplandraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Dilleniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Dryopteridaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Diapensiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Grubbiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Monimiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Onagraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Austrobaileyaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Hanguanaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Nartheciaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Alzateaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Lamiales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Barbeyaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Boraginaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cunoniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Gunneraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Magnoliaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Datiscaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Centrolepidaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Amaranthaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Proteales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Clethraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lardizabalaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cucurbitaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Diegodendraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Hydnoraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Commelinaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lycopodiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Apiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Araucariales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Ximeniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Dipterocarpaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cycadaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Iteaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Aristolochiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Crossosomataceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Melianthaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Idiospermaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Vitaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Colchicaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Dioncophyllaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Frankeniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Eupomatiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Verbenaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Pandanaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lanariaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Apocynaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Ginkgoales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Betulaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Eupteleaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Calophyllaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cupressaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Aptandraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Cycadales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Didiereaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cytinaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Goupiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Malvaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Actinidiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Malpighiales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Fabaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Centroplacaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Loasaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Araucariaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Melanthiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Gentianaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Dipentodontaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Chrysobalanaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Linaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Campanulaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
 <owl:Class rdf:about="#Aextoxicaceae">
@@ -1714,51 +939,23 @@
   </rdfs:subClassOf>
 </owl:Class>
 
-<owl:Class rdf:about="#Bignoniaceae">
+<owl:Class rdf:about="#Nothofagaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Cistaceae">
+<owl:Class rdf:about="#Balanophoraceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Costaceae">
+<owl:Class rdf:about="#Passifloraceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Illiciaceae">
+<owl:Class rdf:about="#Pedaliaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Juglandaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Hydrocharitaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Lepidobotryaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Myricaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Dryopteridaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Compositae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cytinaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Ericaceae">
+<owl:Class rdf:about="#Aquifoliaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
@@ -1766,35 +963,65 @@
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Hypoxidaceae">
+<owl:Class rdf:about="#Ixioliriaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Dirachmaceae">
+<owl:Class rdf:about="#Nymphaeaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Menispermaceae">
+<owl:Class rdf:about="#Ochnaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Winteraceae">
+<owl:Class rdf:about="#Gerrardinaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Cichoriaceae">
+<owl:Class rdf:about="#Anisophylleaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Poales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Marsileaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Lecythidaceae">
+<owl:Class rdf:about="#Myristicaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Ximeniaceae">
+<owl:Class rdf:about="#Gnetaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Lythraceae">
+<owl:Class rdf:about="#Calyceraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Muntingiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lauraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Casuarinaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Emblingiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Fouquieriaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
@@ -1802,27 +1029,81 @@
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Lamiaceae">
+<owl:Class rdf:about="#Escalloniaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Dipterocarpaceae">
+<owl:Class rdf:about="#Calceolariaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Moringaceae">
+<owl:Class rdf:about="#Arecaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Myrothamnaceae">
+<owl:Class rdf:about="#Balanopaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Dasypogonaceae">
+<owl:Class rdf:about="#Asparagaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Myrtaceae">
+<owl:Class rdf:about="#Ephedraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Penthoraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Violaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cephalotaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Moraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Goodeniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Droseraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Costaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Anacardiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Zingiberales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Oxalidaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Nelumbonaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Brunoniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Convolvulaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
@@ -1836,55 +1117,7 @@
   </rdfs:subClassOf>
 </owl:Class>
 
-<owl:Class rdf:about="#Limnanthaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Elaeocarpaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Juncaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Loasaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Kirkiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Dioscoreaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#ZAMIACEAE">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Heliconiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Magnoliaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Marsileaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Loganiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Gesneriaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Asteraceae">
+<owl:Class rdf:about="#Cyperaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
@@ -1892,51 +1125,59 @@
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Colchicaceae">
+<owl:Class rdf:about="#Wightiaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Brexiaceae">
+<owl:Class rdf:about="#Chloranthaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Austrobaileyaceae">
+<owl:Class rdf:about="#Melastomataceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Ceratophyllaceae">
+<owl:Class rdf:about="#Humiriaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Frankeniaceae">
+<owl:Class rdf:about="#Celastraceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Malpighiaceae">
+<owl:Class rdf:about="#Pentaphragmataceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Combretaceae">
+<owl:Class rdf:about="#Montiaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Eupteleaceae">
+<owl:Class rdf:about="#ZAMIACEAE">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Goupiaceae">
+<owl:Class rdf:about="#Linnaeaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Asteropeiaceae">
+<owl:Class rdf:about="#Loganiaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Dilleniaceae">
+<owl:Class rdf:about="#Menispermaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Lanariaceae">
+<owl:Class rdf:about="#Hernandiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Koeberliniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Leguminosae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
@@ -1944,35 +1185,23 @@
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Cyatheaceae">
+<owl:Class rdf:about="#Elaeocarpaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Nyctaginaceae">
+<owl:Class rdf:about="#Biebersteiniaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Papaveraceae">
+<owl:Class rdf:about="#Ginkgoaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Cycadaceae">
+<owl:Class rdf:about="#Cabombaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Malvaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Myristicaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Muntingiaceae">
-  <rdfs:subClassOf rdf:resource="#Family"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Wightiaceae">
+<owl:Class rdf:about="#Atherospermataceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
@@ -1980,12 +1209,432 @@
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Geraniaceae">
+<owl:Class rdf:about="#Ctenolophonaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Nartheciaceae">
+<owl:Class rdf:about="#Hamamelidaceae">
   <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Helwingiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Equisetaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Begoniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Bonnetiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Carlemanniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cornaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Davalliaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Huaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Myrtaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Paulowniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cistaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Curtisiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Drosophyllaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Juncaginaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lepidobotryaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Ericaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Gesneriaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Fagaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Altingiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Gentianales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Kirkiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Barbeuiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Brassicaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Hydrostachyaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Hypericaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Burmanniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Meliaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Aceraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Rosales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Caryophyllaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Eucryphiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Euphorbiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Olacaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lacistemataceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Marcgraviaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Bataceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Gisekiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Juncaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Elaeagnaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Crassulaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Peridiscaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Butomaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cardiopteridaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Circaeasteraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Compositae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Achatocarpaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Sapindales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Hydatellaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lecythidaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Hydroleaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cercidiphyllaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cuscutaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Coriariaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Moringaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Limnanthaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Himantandraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Berberidopsidaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Dioscoreaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Haemodoraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Martyniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cactaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Irvingiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Akaniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Ericales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Burseraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lactoridaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Bixaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Nyctaginaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Loranthaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Liliaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Myricaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Asteropeiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Brexiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Araliaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Amborellaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Arecales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Dichapetalaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Neuradaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Orchidaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Oleaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Caricaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Daphniphyllaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cyclanthaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Juglandaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Opiliaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cichoriaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Crypteroniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cannaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Berberidaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Corynocarpaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Bruniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Ceratophyllaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Hydrocharitaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Connaraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Combretaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lentibulariaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Degeneriaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Gyrostemonaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Pandaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Buxaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Achariaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasParentOrder"/>
+      <owl:someValuesFrom rdf:resource="#Fagales"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
 </owl:Class>
 
 <owl:Class rdf:about="#Alseuosmiaceae">
@@ -1998,14 +1647,280 @@
   </rdfs:subClassOf>
 </owl:Class>
 
-<owl:Class rdf:about="#Afghanistan">
-  <rdfs:subClassOf rdf:resource="#Country"/>
-  <hasCountryCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AF</hasCountryCode>
-  <inContinent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asia</inContinent>
+<owl:Class rdf:about="#Basellaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Asteraceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Ebenaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Haloragaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Heliconiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Menyanthaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Aralidiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Campynemataceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Dasypogonaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Flagellariaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Myrothamnaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Geraniaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Orobanchaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Lowiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Molluginaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Vochysiaceae">
+  <rdfs:subClassOf rdf:resource="#Family"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Tropical_&amp;_Subtropical_Coniferous_Forests">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM01</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Montane_Grasslands_&amp;_Shrublands">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM02</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Boreal_Forests/Taiga">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM03</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Temperate_Broadleaf_&amp;_Mixed_Forests">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM04</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Temperate_Conifer_Forests">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM05</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Mediterranean_Forests">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM06</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Woodlands_&amp;_Scrub">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM07</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Tundra">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM08</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Temperate_Grasslands">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM09</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Savannas_&amp;_Shrublands">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM10</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Deserts_&amp;_Xeric_Shrublands">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM11</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Tropical_&amp;_Subtropical_Grasslands">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM12</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Tropical_&amp;_Subtropical_Dry_Broadleaf_Forests">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM13</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Mangroves">
+  <rdfs:subClassOf rdf:resource="#Biome"/>
+  <hasBiomeID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BM14</hasBiomeID>
+</owl:Class>
+
+<owl:Class rdf:about="#Madeira-Tapajós_moist_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER001</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Sierra_Madre_del_Sur_pine-oak_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER002</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Veracruz_montane_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER003</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Trans-Mexican_Volcanic_Belt_pine-oak_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER004</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Oaxacan_montane_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER005</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Magdalena_Valley_montane_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER006</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Cauca_Valley_montane_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER007</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Iquitos_várzea">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER008</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Eastern_Cordillera_Real_montane_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER009</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Northwest_Andean_montane_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER010</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Peruvian_Yungas">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER011</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Northern_Andean_páramo">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER012</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Napo_moist_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER013</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Talamancan_montane_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER014</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Chocó-Darién_moist_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER015</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Cordillera_Oriental_montane_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER016</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Ucayali_moist_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER017</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Scandinavian_and_Russian_taiga">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER018</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Western_European_broadleaf_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER019</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Alps_conifer_and_mixed_forests">
+  <rdfs:subClassOf rdf:resource="#Ecoregion"/>
+  <hasEcoregionID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ER020</hasEcoregionID>
+</owl:Class>
+
+<owl:Class rdf:about="#Europe">
+  <rdfs:subClassOf rdf:resource="#Continent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Africa">
+  <rdfs:subClassOf rdf:resource="#Continent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#North_America">
+  <rdfs:subClassOf rdf:resource="#Continent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#South_America">
+  <rdfs:subClassOf rdf:resource="#Continent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Democratic_Republic">
+  <rdfs:subClassOf rdf:resource="#Continent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#South">
+  <rdfs:subClassOf rdf:resource="#Continent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Oceania">
+  <rdfs:subClassOf rdf:resource="#Continent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#North">
+  <rdfs:subClassOf rdf:resource="#Continent"/>
 </owl:Class>
 
 <owl:Class rdf:about="#Asia">
   <rdfs:subClassOf rdf:resource="#Continent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Afghanistan">
+  <rdfs:subClassOf rdf:resource="#Country"/>
+  <hasCountryCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AF</hasCountryCode>
+  <inContinent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asia</inContinent>
 </owl:Class>
 
 <owl:Class rdf:about="#Albania">
@@ -2014,18 +1929,10 @@
   <inContinent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Europe</inContinent>
 </owl:Class>
 
-<owl:Class rdf:about="#Europe">
-  <rdfs:subClassOf rdf:resource="#Continent"/>
-</owl:Class>
-
 <owl:Class rdf:about="#Algeria">
   <rdfs:subClassOf rdf:resource="#Country"/>
   <hasCountryCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DZ</hasCountryCode>
   <inContinent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Africa</inContinent>
-</owl:Class>
-
-<owl:Class rdf:about="#Africa">
-  <rdfs:subClassOf rdf:resource="#Continent"/>
 </owl:Class>
 
 <owl:Class rdf:about="#Andorra">
@@ -2046,18 +1953,10 @@
   <inContinent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">North America</inContinent>
 </owl:Class>
 
-<owl:Class rdf:about="#North_America">
-  <rdfs:subClassOf rdf:resource="#Continent"/>
-</owl:Class>
-
 <owl:Class rdf:about="#Argentina">
   <rdfs:subClassOf rdf:resource="#Country"/>
   <hasCountryCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AR</hasCountryCode>
   <inContinent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">South America</inContinent>
-</owl:Class>
-
-<owl:Class rdf:about="#South_America">
-  <rdfs:subClassOf rdf:resource="#Continent"/>
 </owl:Class>
 
 <owl:Class rdf:about="#Armenia">
@@ -2070,10 +1969,6 @@
   <rdfs:subClassOf rdf:resource="#Country"/>
   <hasCountryCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AU</hasCountryCode>
   <inContinent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Oceania</inContinent>
-</owl:Class>
-
-<owl:Class rdf:about="#Oceania">
-  <rdfs:subClassOf rdf:resource="#Continent"/>
 </owl:Class>
 
 <owl:Class rdf:about="#Austria">
@@ -2254,10 +2149,6 @@
   <rdfs:subClassOf rdf:resource="#Country"/>
   <hasCountryCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CD</hasCountryCode>
   <inContinent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Democratic Republic</inContinent>
-</owl:Class>
-
-<owl:Class rdf:about="#Democratic_Republic">
-  <rdfs:subClassOf rdf:resource="#Continent"/>
 </owl:Class>
 
 <owl:Class rdf:about="#Costa_Rica">
@@ -2546,14 +2437,6 @@
   <rdfs:subClassOf rdf:resource="#Country"/>
   <hasCountryCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">KR</hasCountryCode>
   <inContinent rdf:datatype="http://www.w3.org/2001/XMLSchema#string">South</inContinent>
-</owl:Class>
-
-<owl:Class rdf:about="#North">
-  <rdfs:subClassOf rdf:resource="#Continent"/>
-</owl:Class>
-
-<owl:Class rdf:about="#South">
-  <rdfs:subClassOf rdf:resource="#Continent"/>
 </owl:Class>
 
 <owl:Class rdf:about="#Kuwait">
