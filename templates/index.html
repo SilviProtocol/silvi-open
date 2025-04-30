@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biodiversity Ontology Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: #f8f9fa;
+        }
+        .header {
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+            background-color: #e9ecef;
+            border-radius: 0.3rem;
+        }
+        .file-upload {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 0.3rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .file-upload h3 {
+            margin-bottom: 1rem;
+        }
+        .file-section {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
+        .file-section h4 {
+            margin-bottom: 0.75rem;
+        }
+        .alert {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <h1>Biodiversity Ontology Generator</h1>
+            <p class="lead">Upload CSV files to generate your biodiversity ontology</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="file-upload">
+            <form action="{{ url_for('upload_files') }}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="ontology_name" class="form-label">Ontology Name</label>
+                    <input type="text" class="form-control" id="ontology_name" name="ontology_name" value="biodiversity-ontology">
+                    <div class="form-text">The name of your ontology file (without .owl extension)</div>
+                </div>
+                
+                <div class="file-section">
+                    <h4>Taxonomic Hierarchy</h4>
+                    <p>Upload a CSV file with columns: class_name, order_name, family_name</p>
+                    <input type="file" class="form-control" name="taxonomic_hierarchy" accept=".csv">
+                </div>
+                
+                <div class="file-section">
+                    <h4>Biomes</h4>
+                    <p>Upload a CSV file with columns: biome_id, biome_name</p>
+                    <input type="file" class="form-control" name="biomes" accept=".csv">
+                </div>
+                
+                <div class="file-section">
+                    <h4>Ecoregions</h4>
+                    <p>Upload a CSV file with columns: ecoregion_id, ecoregion_name, biome_id</p>
+                    <input type="file" class="form-control" name="ecoregions" accept=".csv">
+                </div>
+                
+                <div class="file-section">
+                    <h4>Countries</h4>
+                    <p>Upload a CSV file with columns: country_name, country_code, continent</p>
+                    <input type="file" class="form-control" name="countries" accept=".csv">
+                </div>
+                
+                <div class="file-section">
+                    <h4>Object Properties</h4>
+                    <p>Upload a CSV file with columns: property_id, property_name, domain, range, is_transitive, is_functional, inverse_property, description</p>
+                    <input type="file" class="form-control" name="object_properties" accept=".csv">
+                </div>
+                
+                <div class="file-section">
+                    <h4>Data Properties</h4>
+                    <p>Upload a CSV file with columns: property_id, property_name, domain, range, is_functional, description</p>
+                    <input type="file" class="form-control" name="data_properties" accept=".csv">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Generate Ontology</button>
+            </form>
+        </div>
+        
+        <div class="text-center mt-4">
+            <p>This tool generates an OWL ontology based on the CSV files you provide.</p>
+            <p>At least one CSV file is required to generate an ontology.</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
