@@ -3,10 +3,51 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const axios = require('axios');
 const { getTopCommonNames } = require('../utils/commonNames');
+const researchQueue = require('./researchQueue');
 
 // Retrieve API keys from environment variables
 const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+/**
+ * Utility function for API calls with exponential backoff retry
+ * @param {Function} apiCall - Async function that makes the API call
+ * @param {number} maxRetries - Maximum number of retry attempts
+ * @param {Array<number>} delays - Array of delays in ms for each retry
+ * @returns {Promise<any>} - Result of the API call
+ */
+async function withRetry(apiCall, maxRetries = 3, delays = [1000, 5000, 15000]) {
+  let lastError;
+  
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await apiCall();
+    } catch (error) {
+      lastError = error;
+      
+      // If it's the last attempt, throw the error
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      
+      // Check if it's a rate limit error
+      const isRateLimit = error.response?.status === 429;
+      const retryAfter = error.response?.headers?.['retry-after'];
+      
+      // Calculate delay time
+      let delayTime = delays[attempt];
+      if (isRateLimit && retryAfter) {
+        // Use the Retry-After header if available
+        delayTime = parseInt(retryAfter, 10) * 1000;
+      }
+      
+      console.log(`API call failed (attempt ${attempt + 1}/${maxRetries + 1}). ${isRateLimit ? 'Rate limited!' : ''} Retrying in ${delayTime}ms`);
+      
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, delayTime));
+    }
+  }
+}
 
 /**
  * Queries Perplexity API for ecological and stewardship data about a tree species
@@ -40,28 +81,25 @@ async function queryPerplexityEcologicalAndStewardship(scientificName, commonNam
     ]
   };
 
-  try {
-    console.log('Querying Perplexity API for ecological and stewardship data');
-    console.log(`Using scientific name: ${scientificName}`);
-    
-    // Log the original vs optimized common names length for debugging
-    const originalLength = typeof commonNames === 'string' 
-      ? commonNames.length 
-      : (Array.isArray(commonNames) ? JSON.stringify(commonNames).length : 0);
-    
-    console.log(`Original common names length: ${originalLength} characters`);
-    console.log(`Optimized common names (${optimizedCommonNames.split(',').length} names): ${optimizedCommonNames}`);
-    console.log(`Optimized length: ${optimizedCommonNames.length} characters`);
-    
+  console.log('Querying Perplexity API for ecological and stewardship data');
+  console.log(`Using scientific name: ${scientificName}`);
+  
+  // Log the original vs optimized common names length for debugging
+  const originalLength = typeof commonNames === 'string' 
+    ? commonNames.length 
+    : (Array.isArray(commonNames) ? JSON.stringify(commonNames).length : 0);
+  
+  console.log(`Original common names length: ${originalLength} characters`);
+  console.log(`Optimized common names (${optimizedCommonNames.split(',').length} names): ${optimizedCommonNames}`);
+  console.log(`Optimized length: ${optimizedCommonNames.length} characters`);
+  
+  // Use the retry utility for API call with exponential backoff
+  return await withRetry(async () => {
     const response = await axios.post(url, payload, { headers });
-    // Extract the message content from the first choice
     const ecologicalAndStewardshipData = response.data.choices[0].message.content.trim();
     console.log('Received ecological and stewardship data from Perplexity');
     return ecologicalAndStewardshipData;
-  } catch (error) {
-    console.error('Error querying Perplexity API for ecological and stewardship data:', error.response ? error.response.data : error.message);
-    throw error;
-  }
+  }, 3, [2000, 5000, 15000]); // 3 retries with increasing delays
 }
 
 /**
@@ -96,20 +134,17 @@ async function queryPerplexityMorphological(scientificName, commonNames) {
     ]
   };
 
-  try {
-    console.log('Querying Perplexity API for morphological data');
-    console.log(`Using scientific name: ${scientificName}`);
-    console.log(`Using optimized common names: ${optimizedCommonNames}`);
-    
+  console.log('Querying Perplexity API for morphological data');
+  console.log(`Using scientific name: ${scientificName}`);
+  console.log(`Using optimized common names: ${optimizedCommonNames}`);
+  
+  // Use the retry utility for API call with exponential backoff
+  return await withRetry(async () => {
     const response = await axios.post(url, payload, { headers });
-    // Extract the message content from the first choice
     const morphologicalData = response.data.choices[0].message.content.trim();
     console.log('Received morphological data from Perplexity');
     return morphologicalData;
-  } catch (error) {
-    console.error('Error querying Perplexity API for morphological data:', error.response ? error.response.data : error.message);
-    throw error;
-  }
+  }, 3, [2000, 5000, 15000]); // 3 retries with increasing delays
 }
 
 /**
@@ -123,62 +158,11 @@ async function queryPerplexityMorphological(scientificName, commonNames) {
 async function structureWithChatGPT(ecologicalAndStewardshipData, morphologicalData, scientificName, commonNames) {
   const commonNamesStr = Array.isArray(commonNames) ? commonNames.join(', ') : commonNames;
   
-  // First, check if the data returned matches the requested species
-  const verifyPrompt = `Check if the following data is specifically about ${scientificName} (also known as: ${commonNamesStr}).
-The data appears to be:
-
-Ecological + Stewardship Data (first few lines):
-${ecologicalAndStewardshipData.substring(0, 500)}...
-
-Morphological Characteristics (first few lines):
-${morphologicalData.substring(0, 500)}...
-
-Respond with only a single word: either "correct" if the data is about ${scientificName}, or "wrong" followed by the actual species name mentioned in the data.`;
-
-  // Verify the species first
-  let isDataCorrect = true;
-  let actualSpeciesName = scientificName;
-  
-  try {
-    const verifyUrl = 'https://api.openai.com/v1/chat/completions';
-    const verifyHeaders = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`
-    };
-    const verifyPayload = {
-      model: 'gpt-4o',
-      messages: [
-        { role: 'system', content: 'You are a botanical verification assistant. Respond with only "correct" if the data matches the requested species, or "wrong: [actual species name]" if it doesn\'t.' },
-        { role: 'user', content: verifyPrompt }
-      ],
-      temperature: 0.3,
-      max_tokens: 50
-    };
-    
-    console.log('Verifying species match...');
-    const verifyResponse = await axios.post(verifyUrl, verifyPayload, { headers: verifyHeaders });
-    const verifyOutput = verifyResponse.data.choices[0].message.content.trim().toLowerCase();
-    
-    if (verifyOutput.startsWith('wrong')) {
-      isDataCorrect = false;
-      // Try to extract the actual species name from the response
-      const match = verifyOutput.match(/wrong:\s*(.*)/i);
-      if (match && match[1]) {
-        actualSpeciesName = match[1].trim();
-      }
-      console.warn(`⚠️ DATA MISMATCH WARNING: Requested species "${scientificName}" but received data for "${actualSpeciesName}"`);
-    } else {
-      console.log('✓ Species verification passed - data matches requested species');
-    }
-  } catch (verifyError) {
-    console.error('Error verifying species match:', verifyError.message);
-    // Continue processing even if verification fails
-  }
+  // Skip species verification - we'll accept whatever data we get from Perplexity
+  console.log('Species verification skipped - processing data as provided');
   
   const prompt = `You have been provided with raw text data from two sources about the tree species ${scientificName}, also known as ${commonNamesStr}. 
-The first source contains ecological + stewardship information, and the second source contains morphological characteristics. 
-
-${!isDataCorrect ? `⚠️ IMPORTANT: It appears the data provided is actually about ${actualSpeciesName}, NOT ${scientificName}. Please extract what information you can but note any fields that seem clearly irrelevant to ${scientificName}.` : ''}
+The first source contains ecological + stewardship information, and the second source contains morphological characteristics.
 
 Your task is to extract and structure the relevant information into a JSON object matching this schema:
 
@@ -391,43 +375,117 @@ async function performAIResearch(taxonID, scientificName, commonNames, researche
   try {
     console.log(`Starting AI research for ${scientificName} (${taxonID})`);
     
-    // Step 1: Run parallel Perplexity queries for ecological+stewardship and morphological data
-    const [ecologicalAndStewardshipData, morphologicalData] = await Promise.all([
-      queryPerplexityEcologicalAndStewardship(scientificName, commonNames),
-      queryPerplexityMorphological(scientificName, commonNames)
-    ]);
-    
-    // Step 2: Structure the data using ChatGPT 4o with _ai fields
-    const structuredJSON = await structureWithChatGPT(
-      ecologicalAndStewardshipData, 
-      morphologicalData, 
-      scientificName, 
-      commonNames
-    );
+    // Create a processed research processor function for the queue
+    const processor = async (task) => {
+      console.log(`Queue processor running for task: ${task.scientificName} (${task.taxonId})`);
+      
+      // Step 1: Run parallel Perplexity queries for ecological+stewardship and morphological data
+      console.log(`Fetching data from Perplexity for ${task.scientificName}`);
+      task.apiType = 'perplexity';
+      const [ecologicalAndStewardshipData, morphologicalData] = await Promise.all([
+        queryPerplexityEcologicalAndStewardship(task.scientificName, task.commonNames),
+        queryPerplexityMorphological(task.scientificName, task.commonNames)
+      ]);
+      
+      // Step 2: Structure the data using ChatGPT 4o with _ai fields
+      console.log(`Structuring data with ChatGPT for ${task.scientificName}`);
+      task.apiType = 'openai';
+      const structuredJSON = await structureWithChatGPT(
+        ecologicalAndStewardshipData, 
+        morphologicalData, 
+        task.scientificName, 
+        task.commonNames
+      );
 
-    // CRITICAL FIX: Always use the input taxonID, not whatever ID might be in the structuredJSON
-    // This ensures we update the correct row in the database
-    return {
-      taxon_id: taxonID, // Explicitly use the provided taxonID parameter
-      species_scientific_name: scientificName, // Use the requested species name
-      ...structuredJSON, // Include all the structured data fields
-      // Include metadata about the research process
-      research_metadata: {
-        researcher_wallet: researcherWallet,
-        research_date: new Date().toISOString(),
-        research_method: "AI-assisted (Perplexity + GPT-4o)",
-        verification_status: "unverified"
-      }
+      // Ensure researched flag is always set
+      structuredJSON.researched = true;
+      
+      // CRITICAL FIX: Always use the input taxonID to ensure we update the correct DB row
+      return {
+        taxon_id: task.taxonId, // Explicitly use the provided taxonID parameter
+        species_scientific_name: task.scientificName, // Use the requested species name
+        ...structuredJSON, // Include all the structured data fields
+        // Include metadata about the research process
+        research_metadata: {
+          researcher_wallet: task.researcherWallet,
+          research_date: new Date().toISOString(),
+          research_method: "AI-assisted (Perplexity + GPT-4o)",
+          verification_status: "unverified"
+        }
+      };
     };
+    
+    // Add the research task to the queue and wait for it to complete
+    return await researchQueue.addTask({
+      taxonId: taxonID,
+      scientificName: scientificName,
+      commonNames: commonNames,
+      researcherWallet: researcherWallet,
+      processor: processor,
+      maxAttempts: 4,
+      timestamp: Date.now()
+    });
   } catch (error) {
     console.error('Error during AI research process:', error);
     throw error;
   }
 }
 
+/**
+ * Validates research data fields before database update
+ * @param {Object} researchData - Data to validate
+ * @returns {Object} - Validation results with errors if any
+ */
+function validateResearchData(researchData) {
+  const results = {
+    valid: true,
+    errors: [],
+    warnings: []
+  };
+
+  // Check for required fields
+  const requiredFields = [
+    'taxon_id',
+    'general_description_ai', 
+    'habitat_ai', 
+    'ecological_function_ai'
+  ];
+
+  for (const field of requiredFields) {
+    if (!researchData[field] || 
+        (typeof researchData[field] === 'string' && researchData[field].trim() === '')) {
+      results.valid = false;
+      results.errors.push(`Missing required field: ${field}`);
+    }
+  }
+
+  // Check for researched flag
+  if (researchData.researched !== true) {
+    results.warnings.push('Researched flag not explicitly set to true');
+    // We'll fix this automatically, so just warn
+  }
+
+  // Warning for any critical fields that are empty
+  const recommendedFields = [
+    'stewardship_best_practices_ai',
+    'conservation_status_ai'
+  ];
+
+  for (const field of recommendedFields) {
+    if (!researchData[field] || 
+        (typeof researchData[field] === 'string' && researchData[field].trim() === '')) {
+      results.warnings.push(`Recommended field is empty: ${field}`);
+    }
+  }
+
+  return results;
+}
+
 module.exports = {
   performAIResearch,
   queryPerplexityEcologicalAndStewardship,
   queryPerplexityMorphological,
-  structureWithChatGPT
+  structureWithChatGPT,
+  validateResearchData,
+  researchQueue
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const { ethers } = require('ethers');
-const { performAIResearch } = require('../services/aiResearch');
+const { performAIResearch, validateResearchData, researchQueue } = require('../services/aiResearch');
 const { uploadToIPFS, getFromIPFS } = require('../services/ipfs');
 const { createAttestation, mintNFT } = require('../services/blockchain');
 const { v4: uuidv4 } = require('uuid');
@@ -57,7 +57,13 @@ function mapChainIdToKey(chain) {
 async function performResearch(pool, taxonId, walletAddress, chain, transactionHash, scientificName, commonNames) {
   console.log(`Starting performResearch for ${scientificName} (${taxonId})`);
   
+  // Begin transaction to allow rollback if needed
+  const client = await pool.connect();
+  
   try {
+    // Start transaction
+    await client.query('BEGIN');
+    
     // Validate inputs
     if (!taxonId || !walletAddress || !chain || !transactionHash) {
       throw new Error('Missing required fields: taxon_id, wallet_address, chain, transaction_hash');
@@ -71,7 +77,7 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
       WHERE taxon_id = $1
     `;
     
-    const speciesResult = await pool.query(speciesQuery, [taxonId]);
+    const speciesResult = await client.query(speciesQuery, [taxonId]);
     
     if (speciesResult.rows.length === 0) {
       throw new Error(`Species not found for taxon_id: ${taxonId}`);
@@ -83,8 +89,53 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
     const finalScientificName = scientificName || speciesData.species_scientific_name || speciesData.species;
     const finalCommonNames = commonNames || speciesData.common_name;
     
-    // Step 1: Perform AI research
+    // Check if this species is already being researched
+    const researchStatus = await client.query(
+      `SELECT research_status FROM species_research_queue WHERE taxon_id = $1`,
+      [taxonId]
+    );
+    
+    // If it's already in the queue or being processed, return existing status
+    if (researchStatus.rows.length > 0 && 
+        ['queued', 'processing'].includes(researchStatus.rows[0].research_status)) {
+      console.log(`Research for ${finalScientificName} (${taxonId}) is already ${researchStatus.rows[0].research_status}`);
+      return {
+        taxon_id: taxonId,
+        status: 'already_in_progress',
+        message: `Research for this species is already ${researchStatus.rows[0].research_status}`,
+        research_status: researchStatus.rows[0].research_status
+      };
+    }
+    
+    // Add to research queue table for tracking
+    await client.query(
+      `INSERT INTO species_research_queue (
+        taxon_id, species_scientific_name, wallet_address, transaction_hash, 
+        research_status, added_at, chain
+      ) VALUES ($1, $2, $3, $4, $5, NOW(), $6)
+      ON CONFLICT (taxon_id) DO UPDATE SET
+        research_status = $5,
+        wallet_address = $3,
+        transaction_hash = $4,
+        updated_at = NOW(),
+        chain = $6
+      `,
+      [taxonId, finalScientificName, walletAddress, transactionHash, 'queued', chain]
+    );
+    
+    // Commit transaction
+    await client.query('COMMIT');
+    client.release();
+    
+    // Step 1: Perform AI research (this uses the queue system internally)
     console.log(`Starting AI research for ${finalScientificName} (${taxonId})`);
+    
+    // Update status to processing
+    await pool.query(
+      `UPDATE species_research_queue SET research_status = 'processing', updated_at = NOW() WHERE taxon_id = $1`,
+      [taxonId]
+    );
+    
     const researchData = await performAIResearch(
       taxonId,
       finalScientificName,
@@ -92,11 +143,19 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
       walletAddress
     );
     
-    // Force the researched flag to be true
-    if (!researchData.researched) {
-      console.log('WARNING: researched flag not set in researchData, explicitly setting it to TRUE');
-      researchData.researched = true;
+    // Validate research data
+    const validation = validateResearchData(researchData);
+    if (!validation.valid) {
+      console.error(`Validation errors for ${taxonId}:`, validation.errors);
+      throw new Error(`Research data validation failed: ${validation.errors.join(', ')}`);
     }
+    
+    if (validation.warnings.length > 0) {
+      console.warn(`Validation warnings for ${taxonId}:`, validation.warnings);
+    }
+    
+    // Centralized location for ensuring the researched flag is true
+    researchData.researched = true;
     
     // Step 2: Update species table with research data
     console.log('Updating species table with research data');
@@ -177,17 +236,34 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
       throw new Error(`Species update failed: No matching record found with taxon_id=${taxonId}`);
     }
     
-    // Begin transaction to allow rollback if needed
-    const client = await pool.connect();
+    // Begin a new transaction for NFT minting
+    const nftClient = await pool.connect();
     let nftRecord = null;
     let ipfsCid = null;
     let attestationUID = null;
     
     try {
-      await client.query('BEGIN');
+      await nftClient.query('BEGIN');
+      
+      // Update research queue status to 'completed'
+      await nftClient.query(
+        `UPDATE species_research_queue SET research_status = 'completed', updated_at = NOW() WHERE taxon_id = $1`,
+        [taxonId]
+      );
       
       // Step 3: First insert record to get a global_id from the sequence
       console.log('Storing preliminary NFT data in database to get global_id');
+      
+      // Start with initial data
+      const prelimMetadata = {
+        species_scientific_name: finalScientificName,
+        common_name: finalCommonNames && finalCommonNames.split(';')[0], // Use first common name
+        taxon_id: taxonId,
+        chain,
+        minting_status: 'pending',
+        research_date: new Date().toISOString()
+      };
+      
       const insertQuery = `
         INSERT INTO contreebution_nfts (
           taxon_id, 
@@ -201,14 +277,6 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
         RETURNING *
       `;
       
-      // Use empty string as placeholder for ipfs_cid - will update later
-      const prelimMetadata = {
-        species: finalScientificName,
-        chain: chain,
-        research_date: new Date().toISOString(),
-        minting_status: 'pending'
-      };
-      
       const initialValues = [
         taxonId,
         walletAddress,
@@ -219,7 +287,7 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
       ];
       
       // Insert record to get global_id
-      const insertResult = await client.query(insertQuery, initialValues);
+      const insertResult = await nftClient.query(insertQuery, initialValues);
       nftRecord = insertResult.rows[0];
       const globalId = nftRecord.global_id;
       
@@ -259,39 +327,32 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
         flower_color: researchData.flower_color_ai || '',
         fruit_type: researchData.fruit_type_ai || '',
         bark_characteristics: researchData.bark_characteristics_ai || '',
-        
-        // Numeric fields  
-        maximum_height: researchData.maximum_height_ai || null,
-        maximum_diameter: researchData.maximum_diameter_ai || null,
-        maximum_tree_age: researchData.maximum_tree_age_ai || null,
+        maximum_height: researchData.maximum_height_ai || '',
+        maximum_diameter: researchData.maximum_diameter_ai || '',
         lifespan: researchData.lifespan_ai || '',
-      };
-
-      // Add stewardship fields
-      formattedData.stewardship_best_practices = researchData.stewardship_best_practices_ai || 
-        'Best practices for care and maintenance.';
-      formattedData.planting_recipes = researchData.planting_recipes_ai || 
-        'Recommendations for planting.';
-      formattedData.pruning_maintenance = researchData.pruning_maintenance_ai || 
-        'Guidelines for pruning and maintenance.';
-      formattedData.disease_pest_management = researchData.disease_pest_management_ai || 
-        'Management of pests and diseases.';
-      formattedData.fire_management = researchData.fire_management_ai || 
-        'Fire management considerations.';
-      formattedData.cultural_significance = researchData.cultural_significance_ai || 
-        'Cultural and historical importance.';
-      
-      // Add metadata
-      formattedData.research_metadata = {
-        researcher_wallet: walletAddress,
-        research_date: new Date().toISOString(),
-        research_method: "AI-assisted (Perplexity + GPT-4o)",
-        verification_status: "unverified"
+        maximum_tree_age: researchData.maximum_tree_age_ai || '',
+        
+        // Stewardship fields
+        stewardship_best_practices: researchData.stewardship_best_practices_ai || '',
+        planting_recipes: researchData.planting_recipes_ai || '',
+        pruning_maintenance: researchData.pruning_maintenance_ai || '',
+        disease_pest_management: researchData.disease_pest_management_ai || '',
+        fire_management: researchData.fire_management_ai || '',
+        cultural_significance: researchData.cultural_significance_ai || '',
+        
+        // NFT attributes for marketplaces
+        attributes: [
+          { trait_type: "Species", value: finalScientificName },
+          { trait_type: "Researcher", value: walletAddress },
+          { trait_type: "Taxon ID", value: taxonId },
+          { trait_type: "Chain", value: chain },
+          { trait_type: "Research Date", value: new Date().toISOString().split('T')[0] }
+        ]
       };
       
-      console.log('Uploading formatted metadata to IPFS');
-      ipfsCid = await uploadToIPFS(formattedData);
-      console.log(`Metadata uploaded to IPFS with CID: ${ipfsCid}`);
+      console.log(`Uploading metadata to IPFS...`);
+      ipfsCid = await uploadToIPFS(JSON.stringify(formattedData));
+      console.log(`Uploaded metadata to IPFS with CID: ${ipfsCid}`);
       
       // Step 5: Update species table with ipfs_cid
       const updateSpeciesQuery = `
@@ -299,7 +360,7 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
         SET ipfs_cid = $1
         WHERE taxon_id = $2
       `;
-      await client.query(updateSpeciesQuery, [ipfsCid, taxonId]);
+      await nftClient.query(updateSpeciesQuery, [ipfsCid, taxonId]);
       
       // Step 6: Update the NFT record with the IPFS CID
       const updateNftQuery = `
@@ -310,7 +371,7 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
         RETURNING *
       `;
       
-      await client.query(updateNftQuery, [
+      await nftClient.query(updateNftQuery, [
         ipfsCid, 
         JSON.stringify(ipfsCid),
         globalId
@@ -340,7 +401,7 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
         WHERE global_id = $2
       `;
       
-      await client.query(updateAttestationQuery, [
+      await nftClient.query(updateAttestationQuery, [
         JSON.stringify(attestationUID),
         globalId
       ]);
@@ -372,7 +433,7 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
       
       if (mintReceipt.status === 'failed') {
         console.error(`NFT minting failed: ${mintReceipt.error}`);
-        await client.query('ROLLBACK');
+        await nftClient.query('ROLLBACK');
         throw new Error(`NFT minting failed: ${mintReceipt.error}`);
       }
       
@@ -389,7 +450,7 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
         RETURNING *
       `;
       
-      const nftResult = await client.query(updateQuery, [
+      const nftResult = await nftClient.query(updateQuery, [
         mintReceipt.transactionHash,
         JSON.stringify(mintReceipt),
         globalId
@@ -399,15 +460,15 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
       nftRecord = nftResult.rows[0];
       
       // Commit the transaction
-      await client.query('COMMIT');
+      await nftClient.query('COMMIT');
     } catch (txError) {
       // Release the client back to the pool on error
-      if (client) {
-        await client.query('ROLLBACK');
+      if (nftClient) {
+        await nftClient.query('ROLLBACK');
       }
       throw txError;
     } finally {
-      client.release();
+      nftClient.release();
     }
     
     // Verify database state after research completion
@@ -449,290 +510,195 @@ async function performResearch(pool, taxonId, walletAddress, chain, transactionH
 
 module.exports = (pool) => {
   const router = express.Router();
-
+  
   /**
-   * POST /fund-research
-   * Initiates AI research for a tree species
-   * Body: {
-   *   taxon_id: String - Unique identifier of the species to research
-   *   wallet_address: String - User's wallet address
-   *   chain: String - User's chosen chain for NFT minting
-   *   transaction_hash: String - Blockchain transaction hash for funding
-   *   ipfs_cid: String - IPFS CID for the NFT metadata
-   *   scientific_name: String - Scientific name (species field value)
-   * }
-   */
-  router.post('/fund-research', async (req, res) => {
-    try {
-      const { taxon_id, wallet_address, chain, transaction_hash, ipfs_cid, scientific_name } = req.body;
-      
-      // Validate required fields
-      if (!taxon_id || !wallet_address || !chain || !transaction_hash) {
-        return res.status(400).json({ 
-          error: 'Missing required fields', 
-          required: ['taxon_id', 'wallet_address', 'chain', 'transaction_hash'] 
-        });
-      }
-
-      // Handle numeric chain IDs by mapping them to chain keys
-      const mappedChain = mapChainIdToKey(chain);
-      
-      // Validate chain choice - include both mainnet and testnet chains
-      const validChains = [
-        'base', 'celo', 'optimism', 'arbitrum',  // Mainnet chains
-        'base-sepolia', 'celo-alfajores', 'optimism-sepolia', 'arbitrum-sepolia'  // Testnet chains
-      ];
-      if (!validChains.includes(mappedChain)) {
-        return res.status(400).json({ 
-          error: 'Invalid chain selection', 
-          valid_chains: validChains,
-          provided_chain: chain,
-          mapped_chain: mappedChain
-        });
-      }
-      
-      // Get species data for common_name
-      const speciesQuery = `
-        SELECT common_name FROM species WHERE taxon_id = $1
-      `;
-      const speciesResult = await pool.query(speciesQuery, [taxon_id]);
-      const commonName = speciesResult.rows.length > 0 ? speciesResult.rows[0].common_name : '';
-      
-      // Call the core research function
-      console.log(`Calling performResearch function for ${taxon_id}`);
-      try {
-        // Use the mapped chain for performResearch
-        const result = await performResearch(
-          pool,
-          taxon_id, 
-          wallet_address, 
-          mappedChain, // Use the mapped chain value
-          transaction_hash, 
-          scientific_name,
-          commonName
-        );
-        
-        // Return the result to the client
-        res.status(201).json(result);
-      } catch (researchError) {
-        console.error('Error in performResearch function:', researchError);
-        throw researchError;
-      }
-    } catch (error) {
-      console.error('Error in /fund-research endpoint:', error);
-      
-      // Handle specific error types with custom messages
-      if (error.code === '22001') {
-        // PostgreSQL error: value too long for type
-        return res.status(500).json({
-          error: 'Database constraint error',
-          message: 'One or more values exceed database column size limits',
-          details: error.message,
-          hint: 'Database columns have been updated to handle longer values. Try again.'
-        });
-      } else if (error.code === '23505') {
-        // PostgreSQL error: unique violation
-        return res.status(409).json({
-          error: 'Duplicate entry',
-          message: 'This research has already been funded',
-          details: error.message
-        });
-      } else if (error.message && error.message.includes('Cannot find module')) {
-        // Missing module dependency
-        return res.status(500).json({
-          error: 'Server configuration error',
-          message: 'Missing required dependency',
-          details: error.message,
-          hint: 'Server administrator needs to install required npm packages'
-        });
-      } else if (error.message && (
-          error.message.includes('API key') || 
-          error.message.includes('PERPLEXITY_API_KEY') || 
-          error.message.includes('OPENAI_API_KEY') ||
-          error.message.includes('LIGHTHOUSE_API_KEY'))) {
-        // API key related errors
-        return res.status(500).json({
-          error: 'API configuration error',
-          message: 'Missing or invalid API key',
-          details: error.message,
-          hint: 'Check environment variables for API keys'
-        });
-      } else if (error.message && error.message.includes('Invalid chain')) {
-        // Chain-related errors
-        return res.status(400).json({
-          error: 'Blockchain error',
-          message: 'Invalid chain selection or configuration',
-          details: error.message,
-          hint: 'Check chain configuration and contract addresses'
-        });
-      }
-      
-      // Default fallback for other errors
-      res.status(500).json({ 
-        error: 'Internal server error',
-        message: error.message,
-        timestamp: new Date().toISOString()
-      });
-    }
-  });
-
-  /**
-   * GET /:taxon_id
+   * GET /research/:taxon_id
    * Get research data for a specific species
    */
   router.get('/:taxon_id', async (req, res) => {
     try {
       const { taxon_id } = req.params;
       
-      console.log(`[ENDPOINT DEBUG] GET /research/${taxon_id} - Fetching research data at ${new Date().toISOString()}`);
-      
+      // Query species table for only AI fields for given taxon_id
       const query = `
         SELECT 
           taxon_id,
           species_scientific_name,
-          researched,
           conservation_status_ai,
-          conservation_status_human,
           general_description_ai,
-          general_description_human,
           habitat_ai,
-          habitat_human,
           elevation_ranges_ai,
-          elevation_ranges_human,
           compatible_soil_types_ai,
-          compatible_soil_types_human,
           ecological_function_ai,
-          ecological_function_human,
           native_adapted_habitats_ai,
-          native_adapted_habitats_human,
           agroforestry_use_cases_ai,
-          agroforestry_use_cases_human,
           growth_form_ai,
-          growth_form_human,
           leaf_type_ai,
-          leaf_type_human,
           deciduous_evergreen_ai,
-          deciduous_evergreen_human,
           flower_color_ai,
-          flower_color_human,
           fruit_type_ai,
-          fruit_type_human,
           bark_characteristics_ai,
-          bark_characteristics_human,
           maximum_height_ai,
-          maximum_height_human,
           maximum_diameter_ai,
-          maximum_diameter_human,
           lifespan_ai,
-          lifespan_human,
           maximum_tree_age_ai,
-          maximum_tree_age_human,
           stewardship_best_practices_ai,
-          stewardship_best_practices_human,
           planting_recipes_ai,
-          planting_recipes_human,
           pruning_maintenance_ai,
-          pruning_maintenance_human,
           disease_pest_management_ai,
-          disease_pest_management_human,
           fire_management_ai,
-          fire_management_human,
-          cultural_significance_ai,
-          cultural_significance_human,
-          verification_status,
-          ipfs_cid
-        FROM species 
+          cultural_significance_ai
+        FROM species
         WHERE taxon_id = $1
       `;
       
       const result = await pool.query(query, [taxon_id]);
       
       if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'Species not found' });
-      }
-      
-      // Check if the species has research data
-      const species = result.rows[0];
-      
-      // Check if ANY AI research field is populated
-      const hasAnyResearchData = Object.keys(species).some(key => 
-        key.endsWith('_ai') && 
-        species[key] !== null && 
-        species[key] !== undefined && 
-        species[key] !== ''
-      );
-      
-      // Log the total number of populated AI fields for debugging
-      const aiFields = Object.keys(species).filter(key => 
-        key.endsWith('_ai') && 
-        species[key] !== null && 
-        species[key] !== undefined && 
-        species[key] !== ''
-      );
-      
-      console.log(`GET /research/${taxon_id} - Found ${aiFields.length} populated AI fields`);
-      
-      if (!hasAnyResearchData) {
-        console.log(`GET /research/${taxon_id} - No AI fields found, returning 404`);
-        // Also update the database to ensure researched=false
-        try {
-          await pool.query(
-            'UPDATE species SET researched = FALSE WHERE taxon_id = $1',
-            [taxon_id]
-          );
-        } catch (updateError) {
-          console.error(`Error updating researched flag: ${updateError.message}`);
-        }
-        
         return res.status(404).json({ 
-          error: 'No research data available for this species',
-          species_exists: true,
-          taxon_id: taxon_id
+          error: 'Species not found', 
+          taxon_id 
         });
       }
       
-      // Ensure researched is explicitly true
-      species.researched = true;
-      console.log(`[ENDPOINT DEBUG] GET /research/${req.params.taxon_id} - Returning research data with researched=true`);
+      const speciesData = result.rows[0];
       
-      // Log the AI fields we found to help with debugging
-      console.log(`[ENDPOINT DEBUG] AI fields for ${req.params.taxon_id}:`, aiFields);
+      // Check for research status in the queue
+      const queueQuery = `
+        SELECT research_status, error_message, updated_at
+        FROM species_research_queue 
+        WHERE taxon_id = $1
+      `;
       
-      // Also update the database to ensure the researched flag is set properly
-      try {
-        await pool.query(
-          'UPDATE species SET researched = TRUE WHERE taxon_id = $1 AND (researched IS NULL OR researched = FALSE)',
-          [taxon_id]
-        );
-      } catch (updateError) {
-        console.error(`Error updating researched flag: ${updateError.message}`);
+      const queueResult = await pool.query(queueQuery, [taxon_id]);
+      
+      // If in queue, include the status
+      if (queueResult.rows.length > 0) {
+        speciesData.research_queue_status = queueResult.rows[0].research_status;
+        speciesData.research_updated_at = queueResult.rows[0].updated_at;
+        
+        // If still being researched, return that info
+        if (['queued', 'processing'].includes(queueResult.rows[0].research_status)) {
+          return res.json({
+            ...speciesData,
+            researching: true,
+            message: `Research is ${queueResult.rows[0].research_status}. Check back soon!`,
+          });
+        }
       }
       
-      res.json(species);
+      // Check if species has been researched
+      // In the updated API, a species is considered researched if it has data in the AI fields
+      // We check the presence of critical fields
+      const criticalFields = [
+        'general_description_ai',
+        'ecological_function_ai',
+        'habitat_ai'
+      ];
+      
+      let hasResearch = true;
+      for (const field of criticalFields) {
+        if (!speciesData[field] || speciesData[field].trim() === '') {
+          hasResearch = false;
+          break;
+        }
+      }
+      
+      if (!hasResearch) {
+        return res.status(404).json({ 
+          error: 'Research not found', 
+          message: 'This species has not been researched yet',
+          taxon_id 
+        });
+      }
+      
+      // Return the data
+      res.json(speciesData);
     } catch (error) {
-      console.error(`Error fetching research data for taxon_id "${req.params.taxon_id}":`, error);
+      console.error('Error getting research data:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  /**
+   * POST /research/fund-research
+   * Fund research for a species by wallet address
+   */
+  router.post('/fund-research', async (req, res) => {
+    try {
+      const { taxon_id, wallet_address, chain, transaction_hash, scientific_name, common_name } = req.body;
       
-      if (error.code && error.code.startsWith('22')) {
-        // PostgreSQL data exception error
-        return res.status(500).json({
-          error: 'Database data error',
-          message: 'Error processing data in the database',
-          details: error.message
-        });
-      } else if (error.code && error.code.startsWith('23')) {
-        // PostgreSQL integrity constraint violation
-        return res.status(500).json({
-          error: 'Database integrity error',
-          message: 'Database constraint violation',
-          details: error.message
+      console.log(`Received fund-research request for taxon_id=${taxon_id}, wallet=${wallet_address}, chain=${chain}`);
+      
+      if (!taxon_id || !wallet_address || !chain) {
+        return res.status(400).json({ 
+          error: 'Missing required fields', 
+          required: ['taxon_id', 'wallet_address', 'chain', 'transaction_hash'] 
         });
       }
       
-      res.status(500).json({ 
-        error: 'Internal server error', 
-        message: error.message,
-        timestamp: new Date().toISOString() 
+      // Get the species data if transaction hash is provided
+      // This can be a background process initiated by frontend or by monitoring
+      const processResult = await performResearch(
+        pool, 
+        taxon_id,
+        wallet_address,
+        chain,
+        transaction_hash || '0x0',  // Allow empty tx hash for testing
+        scientific_name,
+        common_name
+      );
+      
+      res.json({
+        success: true,
+        message: 'Research process completed successfully',
+        ...processResult
       });
+    } catch (error) {
+      console.error('Error funding research:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  /**
+   * GET /research/queue/status
+   * Get status of the research queue
+   */
+  router.get('/queue/status', async (req, res) => {
+    try {
+      // Get queue statistics
+      const stats = await pool.query(`
+        SELECT 
+          research_status, 
+          COUNT(*) as count
+        FROM species_research_queue
+        GROUP BY research_status
+      `);
+      
+      // Get in-progress items
+      const inProgress = await pool.query(`
+        SELECT 
+          taxon_id, 
+          species_scientific_name, 
+          research_status, 
+          added_at, 
+          updated_at
+        FROM species_research_queue
+        WHERE research_status IN ('queued', 'processing')
+        ORDER BY added_at ASC
+      `);
+      
+      // Get memory queue status
+      const memoryQueueStatus = researchQueue.getStatus();
+      
+      res.json({
+        stats: stats.rows,
+        in_progress: inProgress.rows,
+        memory_queue: memoryQueueStatus
+      });
+    } catch (error) {
+      console.error('Error getting queue status:', error);
+      res.status(500).json({ error: error.message });
     }
   });
 

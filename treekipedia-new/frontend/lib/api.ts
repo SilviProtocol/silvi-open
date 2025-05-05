@@ -305,3 +305,40 @@ export async function initiateSponsorshipPayment(data: {
   }
 }
 
+/**
+ * Admin dashboard API endpoints
+ */
+
+// Get server statistics
+export async function getServerStats() {
+  try {
+    const response = await apiClient.get('/admin-api/stats');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching server stats:', error);
+    throw error;
+  }
+}
+
+// Get API call statistics
+export async function getApiCallStats() {
+  try {
+    const response = await apiClient.get('/admin-api/call-stats');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching API call stats:', error);
+    throw error;
+  }
+}
+
+// Get error logs
+export async function getErrorLogs() {
+  try {
+    const response = await apiClient.get('/admin-api/errors');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching error logs:', error);
+    throw error;
+  }
+}
+

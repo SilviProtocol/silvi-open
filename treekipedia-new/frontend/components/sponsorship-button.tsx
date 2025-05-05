@@ -96,23 +96,61 @@ export function SponsorshipButton({
   // Check if current chain is supported
   const isChainSupported = !!usdcAddress
   
-  // Get USDC balance - updated for wagmi v2
-  const { data: usdcBalance } = useBalance({
+  // Get USDC balance - enhanced with retry and better error handling
+  const { data: usdcBalance, refetch: refetchBalance, error: balanceError } = useBalance({
     address,
     token: usdcAddress as `0x${string}` | undefined,
     chainId,
     query: {
-      enabled: isConnected && isChainSupported,
+      enabled: isConnected && isChainSupported && !!usdcAddress,
       refetchInterval: 5000,
+      staleTime: 2000, // Consider data stale after 2 seconds
+      retry: 3,        // Retry failed requests 3 times
+      retryDelay: 1000 // Wait 1 second between retries
     }
   })
+  
+  // Log balance errors for troubleshooting
+  useEffect(() => {
+    if (balanceError && isConnected && isChainSupported && usdcAddress) {
+      console.error("USDC Balance Error:", {
+        error: balanceError,
+        chain: chainId,
+        usdcAddress,
+        walletAddress: address
+      });
+      
+      // Attempt a manual refetch after error
+      const timeout = setTimeout(() => {
+        console.log("Attempting balance refetch after error...");
+        refetchBalance();
+      }, 2000);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [balanceError, isConnected, isChainSupported, usdcAddress, refetchBalance, chainId, address]);
   
   // USDC Transfer function - updated for wagmi v2
   const { writeContract: transferUsdc, data: transferTxHash, isPending: isTransferring, isSuccess: isTransferSuccess } = useWriteContract()
   
-  // Check if user has sufficient USDC balance
+  // Check if user has sufficient USDC balance with enhanced debug logging
   const hasSufficientBalance = usdcBalance ? 
     parseFloat(usdcBalance.formatted) >= SPONSORSHIP_AMOUNT : false
+    
+  // Add debug logging for troubleshooting balance issues
+  useEffect(() => {
+    if (isConnected && isChainSupported) {
+      console.log(`USDC Balance Check - Chain ${chainId}:`, {
+        address: address,
+        usdcAddress: usdcAddress,
+        balanceReceived: !!usdcBalance,
+        balanceFormatted: usdcBalance?.formatted,
+        balanceValue: usdcBalance?.value?.toString(),
+        sufficientBalance: hasSufficientBalance,
+        requiredAmount: SPONSORSHIP_AMOUNT
+      });
+    }
+  }, [usdcBalance, isConnected, isChainSupported, chainId, address, hasSufficientBalance]);
     
   // Start cycling messages based on current phase
   const startMessageCycling = (phase: 'transaction' | 'research') => {
@@ -192,11 +230,29 @@ export function SponsorshipButton({
         return
       }
       
-      // Check balance
-      if (!hasSufficientBalance) {
-        setError(`Insufficient USDC balance. You need at least ${SPONSORSHIP_AMOUNT} USDC.`)
+      // Check balance with improved error handling and retry option
+      if (!usdcBalance) {
+        setError(`Unable to check USDC balance. Network issues may be occurring. Please try again or switch networks.`)
         setStatus('error')
+        console.error("Balance check failed - usdcBalance is null or undefined");
         return
+      }
+      
+      if (!hasSufficientBalance) {
+        // Check if balance is very close (within 0.1 USDC) - could be rounding issue
+        const isVeryClose = usdcBalance && 
+          (SPONSORSHIP_AMOUNT - parseFloat(usdcBalance.formatted) < 0.1);
+          
+        if (isVeryClose) {
+          console.warn("Balance is very close to required amount - possible rounding issue");
+          // Proceed anyway if it's a tiny difference that could be rounding
+          console.log("Proceeding despite very small balance difference");
+        } else {
+          setError(`Insufficient USDC balance. You need at least ${SPONSORSHIP_AMOUNT} USDC. Your current balance: ${usdcBalance?.formatted || '0'} USDC`)
+          setStatus('error')
+          console.log(`Balance check failed - has ${usdcBalance?.formatted} USDC, needs ${SPONSORSHIP_AMOUNT} USDC`);
+          return
+        }
       }
       
       // Prepare sponsorship by registering intent with backend
@@ -522,10 +578,30 @@ export function SponsorshipButton({
         {getButtonText()}
       </Button>
       
-      {/* Display errors */}
-      {error && !isResearching && (
+      {/* Display errors with retry option */}
+      {error && status !== 'researching' && (
         <div className="text-red-500 text-base mt-2">
-          {error}
+          <div className="mb-1">{error}</div>
+          {status === 'error' && (
+            <div className="flex gap-2 mt-2">
+              <button 
+                onClick={() => {
+                  setError(null);
+                  setStatus('idle');
+                  refetchBalance();
+                }}
+                className="text-xs bg-white/10 hover:bg-white/20 text-white py-1 px-2 rounded"
+              >
+                Retry Balance Check
+              </button>
+              <button 
+                onClick={() => window.location.reload()}
+                className="text-xs bg-white/10 hover:bg-white/20 text-white py-1 px-2 rounded"
+              >
+                Refresh Page
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

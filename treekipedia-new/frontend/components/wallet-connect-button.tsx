@@ -109,7 +109,7 @@ export function WalletConnectButton() {
       {dropdownOpen && (
         <div 
           ref={dropdownRef}
-          className="absolute right-0 mt-2 w-72 bg-black/30 backdrop-blur-md rounded-lg shadow-lg py-2 z-20 border border-white/20 text-white overflow-hidden"
+          className="absolute right-0 mt-2 w-72 bg-black/70 backdrop-blur-md rounded-lg shadow-lg py-2 z-20 border border-white/20 text-white overflow-hidden"
         >
           <div className="px-4 py-3 border-b border-white/20">
             <div className="font-semibold text-sm">{formatAddress(address)}</div>
@@ -131,36 +131,13 @@ export function WalletConnectButton() {
               </button>
             </div>
             
-            {/* Chain selection dropdown */}
+            {/* Chain selection dropdown - Removed testnets per request */}
             {chainMenuOpen && (
-              <div className="mt-2 bg-black/30 rounded-md p-2">
-                <div className="mb-1">
-                  <div className="text-xs font-semibold text-white/70 mb-1">Mainnets</div>
+              <div className="mt-2 bg-black/70 rounded-md p-2">
+                <div>
+                  <div className="text-xs font-semibold text-white/70 mb-1">Available Networks</div>
                   <div className="grid grid-cols-2 gap-1">
                     {chainsByNetwork.mainnet.map((chain) => (
-                      <button
-                        key={chain.id}
-                        onClick={() => {
-                          switchChain({ chainId: chain.id })
-                          setChainMenuOpen(false)
-                        }}
-                        className={cn(
-                          "text-xs py-1 px-2 rounded flex items-center justify-between", 
-                          chainId === chain.id 
-                            ? "bg-green-800/80 text-green-300" 
-                            : "hover:bg-white/10"
-                        )}
-                      >
-                        <span>{chain.name}</span>
-                        {chainId === chain.id && <Check className="h-3 w-3" />}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-white/70 mb-1">Testnets</div>
-                  <div className="grid grid-cols-2 gap-1">
-                    {chainsByNetwork.testnet.map((chain) => (
                       <button
                         key={chain.id}
                         onClick={() => {

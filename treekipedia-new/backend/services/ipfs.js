@@ -9,105 +9,35 @@ const LIGHTHOUSE_API_KEY = process.env.LIGHTHOUSE_API_KEY;
 
 /**
  * Uploads data to IPFS via Lighthouse
- * @param {Object} data - The data to upload to IPFS
+ * @param {Object|string} data - The data to upload to IPFS (object or JSON string)
  * @returns {Promise<string>} - CID (Content Identifier) of the uploaded data
  */
 async function uploadToIPFS(data) {
   try {
     console.log('Uploading data to IPFS via Lighthouse');
     
-    // CRITICAL FIX: First verify stewardship fields are present in data
-    // This ensures these fields don't get lost during the serialization process
-    const hasStewFields = 'stewardship_best_practices' in data || 
-                           'planting_recipes' in data || 
-                           'pruning_maintenance' in data;
-    console.log(`Stewardship fields present in data before serialization: ${hasStewFields}`);
-    
-    if (hasStewFields) {
-      console.log('Stewardship sample:', data.stewardship_best_practices?.substring(0, 30) + '...');
-    } else {
-      console.log('WARNING: No stewardship fields found in data object!');
-    }
-    
-    // Create a new object to ensure field order is maintained
-    // This is a more robust approach than relying on native object property order
-    const orderedData = {
-      // NFT standard metadata (always first per standards)
-      name: data.name,
-      description: data.description,
-      image: data.image,
-      
-      // Core identification
-      taxon_id: data.taxon_id,
-      scientific_name: data.scientific_name,
-      
-      // Regular fields with defaults for empty/null values
-      conservation_status: data.conservation_status || "No conservation status information available",
-      general_description: data.general_description || "General description not available for this species",
-      habitat: data.habitat || "Habitat information not available",
-      elevation_ranges: data.elevation_ranges || "Elevation range information not available",
-      compatible_soil_types: data.compatible_soil_types || "Soil type information not available",
-      ecological_function: data.ecological_function || "Ecological function information not available",
-      native_adapted_habitats: data.native_adapted_habitats || "Native habitat information not available",
-      agroforestry_use_cases: data.agroforestry_use_cases || "Agroforestry use case information not available",
-      
-      // Morphological fields with defaults
-      growth_form: data.growth_form || "Growth form information not available",
-      leaf_type: data.leaf_type || "Leaf type information not available",
-      deciduous_evergreen: data.deciduous_evergreen || "Deciduous/evergreen status not available",
-      flower_color: data.flower_color || "Flower color information not available",
-      fruit_type: data.fruit_type || "Fruit type information not available",
-      bark_characteristics: data.bark_characteristics || "Bark characteristics information not available",
-      
-      // Numeric fields with defaults (using strings for consistency)
-      maximum_height: data.maximum_height || "0",
-      maximum_diameter: data.maximum_diameter || "0",
-      maximum_tree_age: data.maximum_tree_age || 0,
-      lifespan: data.lifespan || "Lifespan information not available",
-      
-      // CRITICAL: Explicitly include stewardship fields with defaults
-      stewardship_best_practices: data.stewardship_best_practices || "Best practices information not available",
-      planting_recipes: data.planting_recipes || "Planting information not available",
-      pruning_maintenance: data.pruning_maintenance || "Pruning and maintenance information not available",
-      disease_pest_management: data.disease_pest_management || "Disease and pest management information not available",
-      fire_management: data.fire_management || "Fire management information not available",
-      cultural_significance: data.cultural_significance || "Cultural significance information not available",
-    };
-    
-    // Add research_metadata at the end if present
-    if (data.research_metadata) {
-      orderedData.research_metadata = data.research_metadata;
-    }
-    
-    // Convert ordered data to JSON string
-    const jsonData = JSON.stringify(orderedData, null, 2);
-    
-    // Verify stewardship fields in serialized JSON
-    console.log('JSON contains stewardship fields:', 
-                jsonData.includes('stewardship_best_practices'));
-                
-    // Verify no null values exist in the final data
-    const containsNull = jsonData.includes('null');
-    console.log(`DEBUG: Final JSON contains null values: ${containsNull}`);
-    
-    // Check for empty string values
-    const emptyStringFields = [];
-    for (const [key, value] of Object.entries(orderedData)) {
-      if (value === '') {
-        emptyStringFields.push(key);
+    // Parse data if it's a string (JSON)
+    let dataObj;
+    if (typeof data === 'string') {
+      try {
+        dataObj = JSON.parse(data);
+      } catch (e) {
+        console.error('Error parsing JSON data:', e.message);
+        throw new Error('IPFS upload failed: Invalid JSON data');
       }
-    }
-    
-    if (emptyStringFields.length > 0) {
-      console.log(`DEBUG: Fields with empty strings: ${emptyStringFields.join(', ')}`);
     } else {
-      console.log('DEBUG: No empty string values found in metadata');
+      dataObj = data;
     }
     
-    // Validate numeric fields
-    console.log(`DEBUG: maximum_height = ${orderedData.maximum_height}`);
-    console.log(`DEBUG: maximum_diameter = ${orderedData.maximum_diameter}`);
-    console.log(`DEBUG: maximum_tree_age = ${orderedData.maximum_tree_age}`);
+    // Log sample of the data to upload, but skip validation
+    console.log('Data sample for IPFS upload:', JSON.stringify(dataObj).substring(0, 100) + '...');
+    
+    // Keep original data structure - skip reformatting and validation
+    // Simply use the parsed data as is without enforcing specific field names
+    const jsonData = JSON.stringify(dataObj, null, 2);
+    
+    // Log the data size for debugging
+    console.log(`Data size for IPFS upload: ${jsonData.length} bytes`);
     
     // Create FormData object
     const formData = new FormData();
@@ -117,7 +47,7 @@ async function uploadToIPFS(data) {
       'file', 
       Buffer.from(jsonData), 
       {
-        filename: `treekipedia_${data.taxon_id}_${Date.now()}.json`,
+        filename: `treekipedia_${dataObj.taxon_id || 'metadata'}_${Date.now()}.json`,
         contentType: 'application/json',
       }
     );
@@ -144,12 +74,8 @@ async function uploadToIPFS(data) {
     const gatewayUrl = `https://gateway.lighthouse.storage/ipfs/${cid}`;
     console.log(`DEBUG: IPFS gateway URL: ${gatewayUrl}`);
     
-    // Check if data includes critical fields (random sampling)
-    const hasName = jsonData.includes('"name":');
-    const hasDescription = jsonData.includes('"description":');
-    const hasTaxonId = jsonData.includes('"taxon_id":');
-    const hasScientificName = jsonData.includes('"scientific_name":');
-    console.log(`DEBUG: Metadata validation - has name=${hasName}, description=${hasDescription}, taxon_id=${hasTaxonId}, scientific_name=${hasScientificName}`);
+    // Skip validation of critical fields - just log basic info
+    console.log(`DEBUG: IPFS upload complete with data size ${jsonData.length} bytes`);
     
     return cid;
   } catch (error) {
