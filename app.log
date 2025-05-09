@@ -25,3 +25,463 @@
 2025-04-30 19:33:27,793 - __main__ - INFO - Saved metadata for session f3b7ce90-5900-48e2-ba45-8da39c7a6148
 2025-04-30 19:33:27,793 - __main__ - INFO - Ontology generated successfully: biodiversity-ontology.owl (111610 bytes)
 2025-04-30 19:33:27,794 - werkzeug - INFO - 127.0.0.1 - - [30/Apr/2025 19:33:27] "POST /upload HTTP/1.1" 200 -
+2025-05-01 17:22:50,071 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.62:5001
+2025-05-01 17:22:50,072 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-01 17:22:55,478 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 17:22:55] "GET / HTTP/1.1" 200 -
+2025-05-01 17:22:58,320 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 17:22:58] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-01 17:23:17,054 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 17:23:17] "[32mGET /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-01 17:23:17,069 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 17:23:17] "GET / HTTP/1.1" 200 -
+2025-05-01 17:28:24,262 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 17:28:24] "GET / HTTP/1.1" 200 -
+2025-05-01 17:28:32,658 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 17:28:32] "GET / HTTP/1.1" 200 -
+2025-05-01 17:28:52,498 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.62:5001
+2025-05-01 17:28:52,499 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-01 17:28:59,070 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 17:28:59] "GET / HTTP/1.1" 200 -
+2025-05-01 17:29:14,289 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 17:29:14] "[32mGET /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-01 17:29:14,303 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 17:29:14] "GET / HTTP/1.1" 200 -
+2025-05-01 18:01:00,938 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-01 18:01:00,939 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-01 18:01:00,951 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-01 18:01:00,951 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-01 18:01:00,962 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.62:5001
+2025-05-01 18:01:00,963 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-01 18:01:06,119 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 18:01:06] "GET / HTTP/1.1" 200 -
+2025-05-01 18:01:11,629 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 18:01:11] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-01 18:11:35,289 - __main__ - INFO - Saving file: biomes.csv to Uploads/94909788-72dd-4a72-9ca8-6a57656dafc7
+2025-05-01 18:11:35,290 - __main__ - INFO - Saving file: countries.csv to Uploads/94909788-72dd-4a72-9ca8-6a57656dafc7
+2025-05-01 18:11:35,290 - __main__ - INFO - Saving file: data_properties.csv to Uploads/94909788-72dd-4a72-9ca8-6a57656dafc7
+2025-05-01 18:11:35,291 - __main__ - INFO - Saving file: ecoregions.csv to Uploads/94909788-72dd-4a72-9ca8-6a57656dafc7
+2025-05-01 18:11:35,291 - __main__ - INFO - Saving file: object_properties.csv to Uploads/94909788-72dd-4a72-9ca8-6a57656dafc7
+2025-05-01 18:11:35,291 - __main__ - INFO - Saving file: taxonomic_hierarchy.csv to Uploads/94909788-72dd-4a72-9ca8-6a57656dafc7
+2025-05-01 18:11:35,292 - __main__ - INFO - Generating ontology biodiversity-ontology for session 94909788-72dd-4a72-9ca8-6a57656dafc7
+2025-05-01 18:11:37,149 - __main__ - INFO - Saved metadata for session 94909788-72dd-4a72-9ca8-6a57656dafc7
+2025-05-01 18:11:41,087 - __main__ - ERROR - Error logging to Google Sheets: Error creating spreadsheet: {'code': 403, 'message': 'Google Drive API has not been used in project 359340185695 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.', 'errors': [{'message': 'Google Drive API has not been used in project 359340185695 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.', 'domain': 'usageLimits', 'reason': 'accessNotConfigured', 'extendedHelp': 'https://console.developers.google.com'}], 'status': 'PERMISSION_DENIED', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'SERVICE_DISABLED', 'domain': 'googleapis.com', 'metadata': {'activationUrl': 'https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695', 'containerInfo': '359340185695', 'service': 'drive.googleapis.com', 'serviceTitle': 'Google Drive API', 'consumer': 'projects/359340185695'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'Google Drive API has not been used in project 359340185695 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.'}, {'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Google developers console API activation', 'url': 'https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695'}]}]}
+2025-05-01 18:11:41,088 - __main__ - WARNING - Failed to log to Google Sheets: 94909788-72dd-4a72-9ca8-6a57656dafc7
+2025-05-01 18:11:41,088 - __main__ - INFO - Ontology generated successfully: biodiversity-ontology.owl (111610 bytes)
+2025-05-01 18:11:41,092 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 18:11:41] "POST /upload HTTP/1.1" 200 -
+2025-05-01 18:11:53,423 - __main__ - INFO - File download: 94909788-72dd-4a72-9ca8-6a57656dafc7/biodiversity-ontology.owl
+2025-05-01 18:11:53,435 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 18:11:53] "GET /download/94909788-72dd-4a72-9ca8-6a57656dafc7/biodiversity-ontology.owl HTTP/1.1" 200 -
+2025-05-01 18:15:42,947 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 18:15:42] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-01 18:36:47,111 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 18:36:47] "[32mPOST /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-01 18:36:47,120 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 18:36:47] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-01 18:37:48,359 - __main__ - WARNING - Could not import taxonomic_hierarchy from Google Sheets: Error getting worksheet data: taxonomic_hierarchy
+2025-05-01 18:37:48,719 - __main__ - WARNING - Could not import biomes from Google Sheets: Error getting worksheet data: biomes
+2025-05-01 18:37:49,079 - __main__ - WARNING - Could not import ecoregions from Google Sheets: Error getting worksheet data: ecoregions
+2025-05-01 18:37:49,434 - __main__ - WARNING - Could not import countries from Google Sheets: Error getting worksheet data: countries
+2025-05-01 18:37:49,791 - __main__ - WARNING - Could not import object_properties from Google Sheets: Error getting worksheet data: object_properties
+2025-05-01 18:37:50,150 - __main__ - WARNING - Could not import data_properties from Google Sheets: Error getting worksheet data: data_properties
+2025-05-01 18:37:50,153 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 18:37:50] "[32mPOST /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-01 18:37:50,160 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 18:37:50] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-01 19:24:29,943 - __main__ - WARNING - Could not import taxonomic_hierarchy from Google Sheets: Error getting worksheet data: taxonomic_hierarchy
+2025-05-01 19:24:30,849 - __main__ - WARNING - Could not import biomes from Google Sheets: Error getting worksheet data: biomes
+2025-05-01 19:24:31,743 - __main__ - WARNING - Could not import ecoregions from Google Sheets: Error getting worksheet data: ecoregions
+2025-05-01 19:24:32,764 - __main__ - WARNING - Could not import countries from Google Sheets: Error getting worksheet data: countries
+2025-05-01 19:24:33,766 - __main__ - WARNING - Could not import object_properties from Google Sheets: Error getting worksheet data: object_properties
+2025-05-01 19:24:34,459 - __main__ - WARNING - Could not import taxonomic_hierarchy from Google Sheets: Error getting worksheet data: taxonomic_hierarchy
+2025-05-01 19:24:34,917 - __main__ - WARNING - Could not import data_properties from Google Sheets: Error getting worksheet data: data_properties
+2025-05-01 19:24:34,918 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 19:24:34] "[32mPOST /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-01 19:24:35,390 - __main__ - WARNING - Could not import biomes from Google Sheets: Error getting worksheet data: biomes
+2025-05-01 19:24:36,409 - __main__ - WARNING - Could not import ecoregions from Google Sheets: Error getting worksheet data: ecoregions
+2025-05-01 19:24:37,344 - __main__ - WARNING - Could not import countries from Google Sheets: Error getting worksheet data: countries
+2025-05-01 19:24:38,271 - __main__ - WARNING - Could not import object_properties from Google Sheets: Error getting worksheet data: object_properties
+2025-05-01 19:24:39,223 - __main__ - WARNING - Could not import data_properties from Google Sheets: Error getting worksheet data: data_properties
+2025-05-01 19:24:39,225 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 19:24:39] "[32mPOST /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-01 19:24:39,231 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 19:24:39] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-01 19:26:21,839 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 19:26:21] "GET /import-from-sheets?spreadsheet_id=YOUR_SPREADSHEET_ID HTTP/1.1" 200 -
+2025-05-01 19:26:47,312 - werkzeug - INFO - 127.0.0.1 - - [01/May/2025 19:26:47] "GET /import-from-sheets?spreadsheet_id=1OtRdFcrRtGmxqyoNJxbNXgzmAVFscUDzDNfxVYe43wY HTTP/1.1" 200 -
+2025-05-02 19:18:47,337 - werkzeug - INFO - 127.0.0.1 - - [02/May/2025 19:18:47] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-02 19:19:02,949 - __main__ - WARNING - Could not import taxonomic_hierarchy from Google Sheets: Error getting worksheet data: taxonomic_hierarchy
+2025-05-02 19:19:03,941 - __main__ - WARNING - Could not import biomes from Google Sheets: Error getting worksheet data: biomes
+2025-05-02 19:19:04,836 - __main__ - WARNING - Could not import ecoregions from Google Sheets: Error getting worksheet data: ecoregions
+2025-05-02 19:19:05,785 - __main__ - WARNING - Could not import countries from Google Sheets: Error getting worksheet data: countries
+2025-05-02 19:19:06,698 - __main__ - WARNING - Could not import object_properties from Google Sheets: Error getting worksheet data: object_properties
+2025-05-02 19:19:07,671 - __main__ - WARNING - Could not import data_properties from Google Sheets: Error getting worksheet data: data_properties
+2025-05-02 19:19:07,678 - werkzeug - INFO - 127.0.0.1 - - [02/May/2025 19:19:07] "[32mPOST /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-02 19:19:07,687 - werkzeug - INFO - 127.0.0.1 - - [02/May/2025 19:19:07] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-02 19:33:35,502 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-02 19:33:35,502 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-02 19:33:35,512 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-02 19:33:35,512 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-02 19:33:35,526 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.4:5001
+2025-05-02 19:33:35,526 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-02 19:34:27,150 - werkzeug - INFO - 127.0.0.1 - - [02/May/2025 19:34:27] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-02 19:34:40,800 - __main__ - WARNING - Could not import taxonomic_hierarchy from Google Sheets: Error getting worksheet data: taxonomic_hierarchy - taxonomic_hierarchy
+2025-05-02 19:34:41,611 - __main__ - WARNING - Could not import biomes from Google Sheets: Error getting worksheet data: biomes - biomes
+2025-05-02 19:34:42,419 - __main__ - WARNING - Could not import ecoregions from Google Sheets: Error getting worksheet data: ecoregions - ecoregions
+2025-05-02 19:34:43,257 - __main__ - WARNING - Could not import countries from Google Sheets: Error getting worksheet data: countries - countries
+2025-05-02 19:34:44,109 - __main__ - WARNING - Could not import object_properties from Google Sheets: Error getting worksheet data: object_properties - object_properties
+2025-05-02 19:34:44,424 - __main__ - WARNING - Could not import data_properties from Google Sheets: Error getting worksheet data: data_properties - data_properties
+2025-05-02 19:34:44,426 - werkzeug - INFO - 127.0.0.1 - - [02/May/2025 19:34:44] "[32mPOST /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-02 19:34:44,433 - werkzeug - INFO - 127.0.0.1 - - [02/May/2025 19:34:44] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-02 21:33:07,422 - werkzeug - INFO - 127.0.0.1 - - [02/May/2025 21:33:07] "GET / HTTP/1.1" 200 -
+2025-05-02 21:33:30,684 - werkzeug - INFO - 127.0.0.1 - - [02/May/2025 21:33:30] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-07 20:41:14,296 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-07 20:41:14,297 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-07 20:41:14,307 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-07 20:41:14,307 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-07 20:41:14,329 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.41:5001
+2025-05-07 20:41:14,329 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-07 20:41:20,330 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 20:41:20] "GET / HTTP/1.1" 200 -
+2025-05-07 20:41:23,551 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 20:41:23] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-07 20:41:32,781 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 20:41:32] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-07 20:45:02,647 - __main__ - INFO - Found 6 worksheets: Ecoregion&biomes, properties sheet, country, Taxonomy Hierarchy , Biome, Sheet7
+2025-05-07 20:45:03,427 - __main__ - INFO - Imported Ecoregion&biomes from Google Sheets with 409 rows
+2025-05-07 20:45:05,154 - __main__ - INFO - Imported properties sheet from Google Sheets with 60 rows
+2025-05-07 20:45:06,333 - __main__ - INFO - Imported country from Google Sheets with 192 rows
+2025-05-07 20:45:07,481 - __main__ - INFO - Imported Taxonomy Hierarchy  from Google Sheets with 285 rows
+2025-05-07 20:45:09,226 - __main__ - INFO - Imported Biome from Google Sheets with 13 rows
+2025-05-07 20:45:10,889 - __main__ - INFO - Generating ontology biodiversity-ontology for session a0ce6239-7066-4a52-bf87-28b8e198b87a from Google Sheets data
+2025-05-07 20:45:11,988 - __main__ - INFO - Saved metadata for session a0ce6239-7066-4a52-bf87-28b8e198b87a
+2025-05-07 20:45:13,158 - __main__ - ERROR - Error logging to Google Sheets: Error creating spreadsheet: {'code': 403, 'message': 'Google Drive API has not been used in project 359340185695 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.', 'errors': [{'message': 'Google Drive API has not been used in project 359340185695 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.', 'domain': 'usageLimits', 'reason': 'accessNotConfigured', 'extendedHelp': 'https://console.developers.google.com'}], 'status': 'PERMISSION_DENIED', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'SERVICE_DISABLED', 'domain': 'googleapis.com', 'metadata': {'service': 'drive.googleapis.com', 'containerInfo': '359340185695', 'serviceTitle': 'Google Drive API', 'activationUrl': 'https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695', 'consumer': 'projects/359340185695'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'Google Drive API has not been used in project 359340185695 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.'}, {'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Google developers console API activation', 'url': 'https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695'}]}]}
+2025-05-07 20:45:13,159 - __main__ - INFO - ontology generated successfully from Google Sheets: biodiversity-ontology.owl (2124 bytes)
+2025-05-07 20:45:13,165 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 20:45:13] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-07 20:45:51,527 - __main__ - INFO - File download: a0ce6239-7066-4a52-bf87-28b8e198b87a/biodiversity-ontology.owl
+2025-05-07 20:45:51,537 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 20:45:51] "GET /download/a0ce6239-7066-4a52-bf87-28b8e198b87a/biodiversity-ontology.owl HTTP/1.1" 200 -
+2025-05-07 21:16:19,761 - __main__ - INFO - Found 6 worksheets: Ecoregion&biomes, properties sheet, country, Taxonomy Hierarchy , Biome, Sheet7
+2025-05-07 21:16:20,981 - __main__ - INFO - Imported Ecoregion&biomes from Google Sheets with 409 rows
+2025-05-07 21:16:22,629 - __main__ - INFO - Imported properties sheet from Google Sheets with 60 rows
+2025-05-07 21:16:23,833 - __main__ - INFO - Imported country from Google Sheets with 192 rows
+2025-05-07 21:16:24,496 - __main__ - INFO - Imported Taxonomy Hierarchy  from Google Sheets with 285 rows
+2025-05-07 21:16:25,686 - __main__ - INFO - Imported Biome from Google Sheets with 13 rows
+2025-05-07 21:16:26,878 - __main__ - INFO - Generating ontology biodiversity-ontology for session 2092b7d6-f6d2-4192-9dc9-357d6ac1ff40 from Google Sheets data
+2025-05-07 21:16:27,875 - __main__ - INFO - Saved metadata for session 2092b7d6-f6d2-4192-9dc9-357d6ac1ff40
+2025-05-07 21:16:29,113 - __main__ - ERROR - Error logging to Google Sheets: Error creating spreadsheet: {'code': 403, 'message': 'Google Drive API has not been used in project 359340185695 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.', 'errors': [{'message': 'Google Drive API has not been used in project 359340185695 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.', 'domain': 'usageLimits', 'reason': 'accessNotConfigured', 'extendedHelp': 'https://console.developers.google.com'}], 'status': 'PERMISSION_DENIED', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'SERVICE_DISABLED', 'domain': 'googleapis.com', 'metadata': {'service': 'drive.googleapis.com', 'consumer': 'projects/359340185695', 'activationUrl': 'https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695', 'serviceTitle': 'Google Drive API', 'containerInfo': '359340185695'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'Google Drive API has not been used in project 359340185695 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.'}, {'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Google developers console API activation', 'url': 'https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=359340185695'}]}]}
+2025-05-07 21:16:29,113 - __main__ - INFO - ontology generated successfully from Google Sheets: biodiversity-ontology.owl (2124 bytes)
+2025-05-07 21:16:29,118 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 21:16:29] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-07 21:16:34,603 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 21:16:34] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-07 21:17:14,133 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 21:17:14] "[32mPOST /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-07 21:17:14,141 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 21:17:14] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-07 21:21:50,723 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 21:21:50] "[32mPOST /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-07 21:21:50,729 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 21:21:50] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-07 21:22:05,096 - __main__ - INFO - Found 6 worksheets: Ecoregion&biomes, properties sheet, country, Taxonomy Hierarchy , Biome, Sheet7
+2025-05-07 21:22:06,263 - __main__ - INFO - Imported Ecoregion&biomes from Google Sheets with 409 rows
+2025-05-07 21:22:07,418 - __main__ - INFO - Imported properties sheet from Google Sheets with 60 rows
+2025-05-07 21:22:08,067 - __main__ - INFO - Imported country from Google Sheets with 192 rows
+2025-05-07 21:22:09,222 - __main__ - INFO - Imported Taxonomy Hierarchy  from Google Sheets with 285 rows
+2025-05-07 21:22:10,433 - __main__ - INFO - Imported Biome from Google Sheets with 13 rows
+2025-05-07 21:22:11,563 - __main__ - INFO - Generating ontology biodiversity-ontology for session 156a07d4-eabf-4aaf-8c4f-2045c1777f81 from Google Sheets data
+2025-05-07 21:22:12,488 - __main__ - INFO - Saved metadata for session 156a07d4-eabf-4aaf-8c4f-2045c1777f81
+2025-05-07 21:22:15,189 - __main__ - ERROR - Error logging to Google Sheets: 'SheetsIntegration' object has no attribute 'update_value'
+2025-05-07 21:22:15,189 - __main__ - INFO - ontology generated successfully from Google Sheets: biodiversity-ontology.owl (2124 bytes)
+2025-05-07 21:22:15,191 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 21:22:15] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-07 21:24:22,255 - __main__ - INFO - File download: 156a07d4-eabf-4aaf-8c4f-2045c1777f81/biodiversity-ontology.owl
+2025-05-07 21:24:22,257 - werkzeug - INFO - 127.0.0.1 - - [07/May/2025 21:24:22] "GET /download/156a07d4-eabf-4aaf-8c4f-2045c1777f81/biodiversity-ontology.owl HTTP/1.1" 200 -
+2025-05-08 18:18:35,782 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-08 18:18:35,783 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-08 18:18:35,792 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-08 18:18:35,792 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-08 18:18:35,815 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.41:5001
+2025-05-08 18:18:35,815 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-08 18:18:42,305 - werkzeug - INFO - 127.0.0.1 - - [08/May/2025 18:18:42] "GET / HTTP/1.1" 200 -
+2025-05-08 18:18:45,181 - werkzeug - INFO - 127.0.0.1 - - [08/May/2025 18:18:45] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-08 18:34:31,589 - werkzeug - INFO - 127.0.0.1 - - [08/May/2025 18:34:31] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-08 18:34:56,119 - __main__ - INFO - Found 6 worksheets: biome, country, data_properties, ecoregions, object_properties, Taxonomic_hierarchy 
+2025-05-08 18:34:57,349 - __main__ - INFO - Imported biome from Google Sheets with 14 rows
+2025-05-08 18:34:58,099 - __main__ - INFO - Imported country from Google Sheets with 192 rows
+2025-05-08 18:34:58,792 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-08 18:34:59,527 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-08 18:35:00,351 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-08 18:35:01,014 - __main__ - INFO - Imported Taxonomic_hierarchy  from Google Sheets with 285 rows
+2025-05-08 18:35:01,015 - __main__ - INFO - Generating ontology biodiversity-ontology for session 92f72a56-e389-4040-8004-42494e90049f from Google Sheets data
+2025-05-08 18:35:02,212 - __main__ - INFO - Saved metadata for session 92f72a56-e389-4040-8004-42494e90049f
+2025-05-08 18:35:04,752 - __main__ - INFO - Successfully logged to Google Sheets: 92f72a56-e389-4040-8004-42494e90049f
+2025-05-08 18:35:04,752 - __main__ - INFO - ontology generated successfully from Google Sheets: biodiversity-ontology.owl (21682 bytes)
+2025-05-08 18:35:04,763 - werkzeug - INFO - 127.0.0.1 - - [08/May/2025 18:35:04] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-08 18:36:09,933 - __main__ - INFO - File download: 92f72a56-e389-4040-8004-42494e90049f/biodiversity-ontology.owl
+2025-05-08 18:36:09,941 - werkzeug - INFO - 127.0.0.1 - - [08/May/2025 18:36:09] "GET /download/92f72a56-e389-4040-8004-42494e90049f/biodiversity-ontology.owl HTTP/1.1" 200 -
+2025-05-08 19:03:35,861 - werkzeug - INFO - 127.0.0.1 - - [08/May/2025 19:03:35] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-08 19:08:41,940 - __main__ - INFO - Found 6 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy
+2025-05-08 19:08:42,719 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-08 19:08:43,925 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-08 19:08:44,639 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-08 19:08:45,597 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-08 19:08:46,276 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-08 19:08:46,955 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-08 19:08:46,956 - __main__ - INFO - Generating ontology biodiversity-ontology for session 7eb8859a-febe-486f-8034-1fc203bd40f5 from Google Sheets data
+2025-05-08 19:08:48,354 - __main__ - INFO - Saved metadata for session 7eb8859a-febe-486f-8034-1fc203bd40f5
+2025-05-08 19:08:51,565 - __main__ - INFO - Successfully logged to Google Sheets: 7eb8859a-febe-486f-8034-1fc203bd40f5
+2025-05-08 19:08:51,566 - __main__ - INFO - ontology generated successfully from Google Sheets: biodiversity-ontology.owl (111610 bytes)
+2025-05-08 19:08:51,568 - werkzeug - INFO - 127.0.0.1 - - [08/May/2025 19:08:51] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-08 19:08:59,626 - __main__ - INFO - File download: 7eb8859a-febe-486f-8034-1fc203bd40f5/biodiversity-ontology.owl
+2025-05-08 19:08:59,627 - werkzeug - INFO - 127.0.0.1 - - [08/May/2025 19:08:59] "GET /download/7eb8859a-febe-486f-8034-1fc203bd40f5/biodiversity-ontology.owl HTTP/1.1" 200 -
+2025-05-09 17:28:28,574 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-09 17:28:28,575 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-09 17:28:28,584 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-09 17:28:28,584 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-09 17:28:28,597 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.41:5001
+2025-05-09 17:28:28,597 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 17:28:43,552 - app - ERROR - Exception on / [GET]
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/app.py", line 134, in index
+    return render_template('index.html')
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/templates/index.html", line 313, in top-level template code
+    <a href="{{ url_for('version_management') }}" class="btn btn-outline-primary">
+    ^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1697, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1686, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'version_management'. Did you mean 'create_version_snapshot' instead?
+2025-05-09 17:28:43,569 - __main__ - ERROR - Internal server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/app.py", line 134, in index
+    return render_template('index.html')
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/templates/index.html", line 313, in top-level template code
+    <a href="{{ url_for('version_management') }}" class="btn btn-outline-primary">
+    ^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1697, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1686, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'version_management'. Did you mean 'create_version_snapshot' instead?
+2025-05-09 17:28:43,577 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:28:43] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-05-09 17:28:51,808 - app - ERROR - Exception on / [GET]
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/app.py", line 134, in index
+    return render_template('index.html')
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/templates/index.html", line 313, in top-level template code
+    <a href="{{ url_for('version_management') }}" class="btn btn-outline-primary">
+    ^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1697, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1686, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'version_management'. Did you mean 'create_version_snapshot' instead?
+2025-05-09 17:28:51,813 - __main__ - ERROR - Internal server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/app.py", line 134, in index
+    return render_template('index.html')
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/templates/index.html", line 313, in top-level template code
+    <a href="{{ url_for('version_management') }}" class="btn btn-outline-primary">
+    ^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1697, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1686, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'version_management'. Did you mean 'create_version_snapshot' instead?
+2025-05-09 17:28:51,815 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:28:51] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-05-09 17:36:27,065 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-09 17:36:27,066 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-09 17:36:27,079 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-09 17:36:27,079 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-09 17:36:27,101 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.41:5001
+2025-05-09 17:36:27,101 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 17:36:31,360 - app - ERROR - Exception on / [GET]
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/app.py", line 134, in index
+    return render_template('index.html')
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/templates/index.html", line 313, in top-level template code
+    <a href="{{ url_for('version_management') }}" class="btn btn-outline-primary">
+    ^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1697, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1686, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'version_management'. Did you mean 'create_version_snapshot' instead?
+2025-05-09 17:36:31,370 - __main__ - ERROR - Internal server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/app.py", line 134, in index
+    return render_template('index.html')
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/templates/index.html", line 313, in top-level template code
+    <a href="{{ url_for('version_management') }}" class="btn btn-outline-primary">
+    ^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1697, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/flask/app.py", line 1686, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'version_management'. Did you mean 'create_version_snapshot' instead?
+2025-05-09 17:36:31,377 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:36:31] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-05-09 17:47:25,155 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-09 17:47:25,156 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-09 17:47:25,168 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-09 17:47:25,169 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-09 17:47:25,182 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.41:5001
+2025-05-09 17:47:25,182 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 17:47:29,472 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:47:29] "GET / HTTP/1.1" 200 -
+2025-05-09 17:48:14,867 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:48:14] "GET /version-management HTTP/1.1" 200 -
+2025-05-09 17:48:31,080 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:48:31] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-09 17:49:09,210 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:49:09] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-09 17:51:44,543 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:51:44] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-09 17:52:20,054 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:52:20] "GET / HTTP/1.1" 200 -
+2025-05-09 17:52:47,800 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:52:47] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-09 17:53:06,552 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:53:06] "GET /version-management HTTP/1.1" 200 -
+2025-05-09 17:53:23,030 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:53:23] "GET /versions?spreadsheet_name=Ontology HTTP/1.1" 200 -
+2025-05-09 17:53:24,735 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:53:24] "GET /spreadsheet-metadata?spreadsheet_name=Ontology HTTP/1.1" 200 -
+2025-05-09 18:00:53,643 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 18:00:53] "POST /update-spreadsheet-version HTTP/1.1" 200 -
+2025-05-09 18:00:55,684 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 18:00:55] "GET /version-management HTTP/1.1" 200 -

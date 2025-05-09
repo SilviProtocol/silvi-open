@@ -1,0 +1,41 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environment
+venv/
+ENV/
+env/
+myenv/
+.env
+
+# Application specific
+Uploads/
+Metadata/
+*.log
+*.owl
+
+# Google service account credentials (VERY IMPORTANT - NEVER COMMIT THESE)
+service_account.json
+*-credentials.json
+*credentials*.json
+*.p12
+*.pem

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spreadsheet Version Management - Biodiversity Ontology Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #336699;
+            --primary-dark: #264d73;
+            --accent-color: #66cc99;
+            --light-bg: #f8f9fa;
+            --border-radius: 8px;
+            --box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+        
+        .header {
+            padding: 2rem 1rem;
+            margin-bottom: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .header h1 {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        
+        .header .lead {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+        
+        .content-card {
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .content-card h3 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .alert {
+            margin-bottom: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-control {
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #ced4da;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(51, 102, 153, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        .info-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-card h4 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .info-card i {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #dee2e6;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        .or-divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        
+        .or-divider:before, .or-divider:after {
+            content: "";
+            position: absolute;
+            width: 45%;
+            height: 1px;
+            background-color: #dee2e6;
+            top: 50%;
+        }
+        
+        .or-divider:before {
+            left: 0;
+        }
+        
+        .or-divider:after {
+            right: 0;
+        }
+        
+        .or-divider span {
+            display: inline-block;
+            padding: 0 1rem;
+            background-color: white;
+            position: relative;
+            z-index: 1;
+            color: #6c757d;
+        }
+        
+        .version-badge {
+            background-color: #e7f5ff;
+            color: var(--primary-color);
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        
+        .version-card {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            transition: all 0.3s;
+        }
+        
+        .version-card:hover {
+            background-color: rgba(51, 102, 153, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .version-date {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        
+        .version-message {
+            margin-top: 0.5rem;
+        }
+        
+        .metadata-section {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .metadata-row {
+            display: flex;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metadata-label {
+            font-weight: 500;
+            min-width: 150px;
+        }
+        
+        .metadata-value {
+            flex-grow: 1;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .spinner-border {
+            color: var(--primary-color);
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        .tab-content {
+            padding-top: 1.5rem;
+        }
+        
+        .nav-tabs .nav-link {
+            color: #495057;
+            border: 1px solid transparent;
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            background-color: white;
+            border-color: #dee2e6 #dee2e6 #fff;
+            font-weight: 600;
+        }
+        
+        .snapshot-card {
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .snapshot-card:hover {
+            background-color: rgba(51, 102, 153, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <h1><i class="fas fa-code-branch"></i> Spreadsheet Version Management</h1>
+            <p class="lead">Track changes and manage versions of your biodiversity data spreadsheets</p>
+        </div>
+
+        <div id="alertsContainer">
+            <!-- Dynamic alerts will be inserted here -->
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="content-card">
+                    <h3><i class="fas fa-search"></i> Find Spreadsheet</h3>
+                    <form id="findSpreadsheetForm">
+                        <div class="mb-4">
+                            <label for="spreadsheet_id" class="form-label">Spreadsheet ID</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                <input type="text" class="form-control" id="spreadsheet_id" name="spreadsheet_id" placeholder="e.g., 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms">
+                            </div>
+                            <div class="form-text">The ID of your Google Sheet found in the URL between /d/ and /edit</div>
+                        </div>
+                        
+                        <div class="or-divider">
+                            <span>OR</span>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="spreadsheet_name" class="form-label">Spreadsheet Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                                <input type="text" class="form-control" id="spreadsheet_name" name="spreadsheet_name" placeholder="e.g., My Biodiversity Data">
+                            </div>
+                            <div class="form-text">The exact name of your Google Sheet (must be shared with service account)</div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Find Spreadsheet
+                            </button>
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary ms-2">
+                                <i class="fas fa-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Loading Spinner -->
+                <div id="loadingSpinner" class="loading-spinner">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3">Loading spreadsheet information...</p>
+                </div>
+                
+                <!-- Spreadsheet Details (initially hidden) -->
+                <div id="spreadsheetDetails" class="content-card" style="display: none;">
+                    <h3><i class="fas fa-table"></i> <span id="spreadsheetTitle">Spreadsheet Details</span></h3>
+                    
+                    <div class="mb-3">
+                        <span class="version-badge" id="currentVersion">v1.0.0</span>
+                        <span class="version-date" id="versionDate">Last updated: May 5, 2023</span>
+                    </div>
+                    
+                    <ul class="nav nav-tabs" id="versionTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="version-history-tab" data-bs-toggle="tab" data-bs-target="#version-history" type="button" role="tab" aria-controls="version-history" aria-selected="true">
+                                <i class="fas fa-history"></i> Version History
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="update-version-tab" data-bs-toggle="tab" data-bs-target="#update-version" type="button" role="tab" aria-controls="update-version" aria-selected="false">
+                                <i class="fas fa-edit"></i> Update Version
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="create-snapshot-tab" data-bs-toggle="tab" data-bs-target="#create-snapshot" type="button" role="tab" aria-controls="create-snapshot" aria-selected="false">
+                                <i class="fas fa-copy"></i> Create Snapshot
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="metadata-tab" data-bs-toggle="tab" data-bs-target="#metadata" type="button" role="tab" aria-controls="metadata" aria-selected="false">
+                                <i class="fas fa-info-circle"></i> Metadata
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="versionTabsContent">
+                        <!-- Version History Tab -->
+                        <div class="tab-pane fade show active" id="version-history" role="tabpanel" aria-labelledby="version-history-tab">
+                            <h4 class="mb-3">Version History</h4>
+                            <div id="versionHistoryContainer">
+                                <p class="text-muted">No version history available.</p>
+                            </div>
+                            
+                            <h4 class="mt-4 mb-3">Snapshots</h4>
+                            <div id="snapshotsContainer">
+                                <p class="text-muted">No snapshots available.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Update Version Tab -->
+                        <div class="tab-pane fade" id="update-version" role="tabpanel" aria-labelledby="update-version-tab">
+                            <h4 class="mb-3">Update Version</h4>
+                            <form id="updateVersionForm">
+                                <input type="hidden" id="update_spreadsheet_id" name="spreadsheet_id">
+                                <input type="hidden" id="update_spreadsheet_name" name="spreadsheet_name">
+                                
+                                <div class="mb-3">
+                                    <label for="new_version" class="form-label">New Version Number</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                        <input type="text" class="form-control" id="new_version" name="new_version" placeholder="e.g., 1.2.0">
+                                    </div>
+                                    <div class="form-text">Use semantic versioning (major.minor.patch)</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="modified_by" class="form-label">Modified By</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <input type="text" class="form-control" id="modified_by" name="modified_by" placeholder="Your name">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="changelog" class="form-label">Changelog</label>
+                                    <textarea class="form-control" id="changelog" name="changelog" rows="3" placeholder="Describe the changes made in this version"></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Update Version
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Create Snapshot Tab -->
+                        <div class="tab-pane fade" id="create-snapshot" role="tabpanel" aria-labelledby="create-snapshot-tab">
+                            <h4 class="mb-3">Create Version Snapshot</h4>
+                            <p>A snapshot creates a complete copy of the current spreadsheet with version information, preserving the current state.</p>
+                            
+                            <form id="createSnapshotForm">
+                                <input type="hidden" id="snapshot_spreadsheet_id" name="spreadsheet_id">
+                                <input type="hidden" id="snapshot_spreadsheet_name" name="spreadsheet_name">
+                                
+                                <div class="mb-3">
+                                    <label for="version_name" class="form-label">Version Name</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                        <input type="text" class="form-control" id="version_name" name="version_name" placeholder="e.g., v1.2.0">
+                                    </div>
+                                    <div class="form-text">A name to identify this version snapshot</div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-copy"></i> Create Snapshot
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Metadata Tab -->
+                        <div class="tab-pane fade" id="metadata" role="tabpanel" aria-labelledby="metadata-tab">
+                            <h4 class="mb-3">Spreadsheet Metadata</h4>
+                            
+                            <div class="metadata-section">
+                                <div id="metadataContainer">
+                                    <p class="text-muted">Loading metadata...</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h5>Available Worksheets</h5>
+                                <div id="worksheetsContainer">
+                                    <p class="text-muted">Loading worksheets...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="info-card">
+                    <h4><i class="fas fa-info-circle"></i> About Version Management</h4>
+                    <p>This tool helps you track changes and manage versions of your biodiversity data spreadsheets.</p>
+                    <ul>
+                        <li><strong>View version history</strong> - See all versions of your spreadsheet</li>
+                        <li><strong>Update version</strong> - Change version number and add changelog</li>
+                        <li><strong>Create snapshots</strong> - Make complete copies with version info</li>
+                        <li><strong>View metadata</strong> - See detailed info about your spreadsheet</li>
+                    </ul>
+                </div>
+                
+                <div class="info-card">
+                    <h4><i class="fas fa-lightbulb"></i> Version Management Tips</h4>
+                    <ul>
+                        <li>Use semantic versioning (major.minor.patch)</li>
+                        <li>Include detailed change notes in the changelog</li>
+                        <li>Create snapshots before major changes</li>
+                        <li>Share your snapshots with appropriate permissions</li>
+                    </ul>
+                </div>
+                
+                <div class="info-card">
+                    <h4><i class="fas fa-tools"></i> Other Actions</h4>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('import_from_sheets') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-file-import"></i> Import from Google Sheets
+                        </a>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-upload"></i> Upload CSV Files
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Biodiversity Ontology Generator | <a href="#" target="_blank">Documentation</a> | <a href="#" target="_blank">Report Issues</a></p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Helper function to display alerts
+        function showAlert(message, type = 'primary') {
+            const alertsContainer = document.getElementById('alertsContainer');
+            const alertHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show">
+                    <i class="fas fa-${type === 'danger' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            alertsContainer.innerHTML = alertHTML + alertsContainer.innerHTML;
+        }
+        
+        // Find Spreadsheet Form Submission
+        document.getElementById('findSpreadsheetForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const spreadsheetId = document.getElementById('spreadsheet_id').value.trim();
+            const spreadsheetName = document.getElementById('spreadsheet_name').value.trim();
+            
+            if (!spreadsheetId && !spreadsheetName) {
+                showAlert('Please provide either a spreadsheet ID or name.', 'danger');
+                return;
+            }
+            
+            // Show loading spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('spreadsheetDetails').style.display = 'none';
+            
+            // Fetch version history
+            const queryParams = new URLSearchParams();
+            if (spreadsheetId) queryParams.append('spreadsheet_id', spreadsheetId);
+            if (spreadsheetName) queryParams.append('spreadsheet_name', spreadsheetName);
+            
+            fetch(`/versions?${queryParams.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Hide loading spinner
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    
+                    if (data.success) {
+                        // Show spreadsheet details
+                        document.getElementById('spreadsheetDetails').style.display = 'block';
+                        
+                        // Update spreadsheet title and version
+                        document.getElementById('spreadsheetTitle').textContent = data.spreadsheet_title;
+                        document.getElementById('currentVersion').textContent = data.current_version;
+                        document.getElementById('versionDate').textContent = `Last updated: ${data.version_date || 'Unknown'}`;
+                        
+                        // Fill hidden form fields
+                        document.getElementById('update_spreadsheet_id').value = data.spreadsheet_id || '';
+                        document.getElementById('update_spreadsheet_name').value = data.spreadsheet_title || '';
+                        document.getElementById('snapshot_spreadsheet_id').value = data.spreadsheet_id || '';
+                        document.getElementById('snapshot_spreadsheet_name').value = data.spreadsheet_title || '';
+                        
+                        // Suggest next version for the update form
+                        const currentVersion = data.current_version || '1.0.0';
+                        try {
+                            const versionParts = currentVersion.replace(/^v/, '').split('.').map(Number);
+                            const suggestedVersion = `${versionParts[0]}.${versionParts[1]}.${versionParts[2] + 1}`;
+                            document.getElementById('new_version').value = suggestedVersion;
+                            document.getElementById('version_name').value = `v${suggestedVersion}`;
+                        } catch (e) {
+                            document.getElementById('new_version').value = '1.0.0';
+                            document.getElementById('version_name').value = 'v1.0.0';
+                        }
+                        
+                        // Populate version history
+                        const versionHistoryContainer = document.getElementById('versionHistoryContainer');
+                        if (data.version_history && data.version_history.length > 0) {
+                            let historyHTML = '';
+                            data.version_history.forEach(version => {
+                                historyHTML += `
+                                    <div class="version-card">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <span class="version-badge">${version.version}</span>
+                                                <span class="version-date">${version.date}</span>
+                                            </div>
+                                        </div>
+                                        <div class="version-message">${version.message}</div>
+                                    </div>
+                                `;
+                            });
+                            versionHistoryContainer.innerHTML = historyHTML;
+                        } else {
+                            versionHistoryContainer.innerHTML = '<p class="text-muted">No version history available.</p>';
+                        }
+                        
+                        // Populate snapshots
+                        const snapshotsContainer = document.getElementById('snapshotsContainer');
+                        if (data.snapshots && data.snapshots.length > 0) {
+                            let snapshotsHTML = '';
+                            data.snapshots.forEach(snapshot => {
+                                snapshotsHTML += `
+                                    <div class="snapshot-card">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <div><strong>${snapshot.title}</strong></div>
+                                                <div class="version-date">ID: ${snapshot.id}</div>
+                                            </div>
+                                            <a href="${snapshot.url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-external-link-alt"></i> Open
+                                            </a>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            snapshotsContainer.innerHTML = snapshotsHTML;
+                        } else {
+                            snapshotsContainer.innerHTML = '<p class="text-muted">No snapshots available.</p>';
+                        }
+                        
+                        // Now also fetch metadata
+                        fetch(`/spreadsheet-metadata?${queryParams.toString()}`)
+                            .then(response => response.json())
+                            .then(metadataData => {
+                                if (metadataData.success) {
+                                    // Populate metadata tab
+                                    populateMetadata(metadataData.metadata);
+                                } else {
+                                    document.getElementById('metadataContainer').innerHTML = 
+                                        `<p class="text-danger">Error loading metadata: ${metadataData.error || 'Unknown error'}</p>`;
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching metadata:', error);
+                                document.getElementById('metadataContainer').innerHTML = 
+                                    `<p class="text-danger">Error loading metadata: ${error.message || 'Network error'}</p>`;
+                            });
+                    } else {
+                        showAlert(`Error: ${data.error || 'Could not find spreadsheet'}`, 'danger');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    showAlert(`Error: ${error.message || 'Network error'}`, 'danger');
+                });
+        });
+        
+        // Helper function to populate metadata tab
+        function populateMetadata(metadata) {
+            const metadataContainer = document.getElementById('metadataContainer');
+            const worksheetsContainer = document.getElementById('worksheetsContainer');
+            
+            // Basic metadata
+            let metadataHTML = `
+                <div class="metadata-row">
+                    <div class="metadata-label">Title:</div>
+                    <div class="metadata-value">${metadata.title || 'N/A'}</div>
+                </div>
+                <div class="metadata-row">
+                    <div class="metadata-label">ID:</div>
+                    <div class="metadata-value">${metadata.id || 'N/A'}</div>
+                </div>
+                <div class="metadata-row">
+                    <div class="metadata-label">Last Updated:</div>
+                    <div class="metadata-value">${metadata.last_updated || 'N/A'}</div>
+                </div>
+                <div class="metadata-row">
+                    <div class="metadata-label">Created At:</div>
+                    <div class="metadata-value">${metadata.created_at || 'N/A'}</div>
+                </div>
+            `;
+            
+            // Version info
+            if (metadata.version_info && Object.keys(metadata.version_info).length > 0) {
+                metadataHTML += `<h5 class="mt-3 mb-2">Version Information</h5>`;
+                
+                for (const [key, value] of Object.entries(metadata.version_info)) {
+                    if (key === 'changelog') continue; // Skip changelog here
+                    metadataHTML += `
+                        <div class="metadata-row">
+                            <div class="metadata-label">${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</div>
+                            <div class="metadata-value">${value || 'N/A'}</div>
+                        </div>
+                    `;
+                }
+                
+                // Add changelog as a special section if it exists
+                if (metadata.version_info.changelog) {
+                    metadataHTML += `
+                        <h5 class="mt-3 mb-2">Changelog</h5>
+                        <div class="p-3 bg-light rounded">
+                            <pre class="mb-0" style="white-space: pre-wrap;">${metadata.version_info.changelog || 'No changelog available.'}</pre>
+                        </div>
+                    `;
+                }
+            }
+            
+            metadataContainer.innerHTML = metadataHTML;
+            
+            // Worksheets
+            if (metadata.worksheets && metadata.worksheets.length > 0) {
+                let worksheetsHTML = '<div class="row row-cols-1 row-cols-md-2 g-3">';
+                
+                metadata.worksheets.forEach(worksheet => {
+                    worksheetsHTML += `
+                        <div class="col">
+                            <div class="p-3 border rounded">
+                                <h6>${worksheet.title}</h6>
+                                <div class="small text-muted">
+                                    <div>Rows: ${worksheet.row_count || 'N/A'}</div>
+                                    <div>Columns: ${worksheet.col_count || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                worksheetsHTML += '</div>';
+                worksheetsContainer.innerHTML = worksheetsHTML;
+            } else {
+                worksheetsContainer.innerHTML = '<p class="text-muted">No worksheets found.</p>';
+            }
+        }
+        
+        // Update Version Form Submission
+        document.getElementById('updateVersionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            if (!formData.get('new_version')) {
+                showAlert('Please provide a new version number.', 'danger');
+                return;
+            }
+            
+            // Show loading spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            fetch('/update-spreadsheet-version', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    
+                    if (data.success) {
+                        showAlert(`Version updated successfully to ${formData.get('new_version')}`, 'success');
+                        
+                        // Update the displayed version
+                        document.getElementById('currentVersion').textContent = data.metadata.version_info.version || formData.get('new_version');
+                        document.getElementById('versionDate').textContent = `Last updated: ${data.metadata.version_info.version_date || 'Just now'}`;
+                        
+                        // Reset form fields
+                        document.getElementById('changelog').value = '';
+                        
+                        // Refresh the page after a delay to show updated data
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        showAlert(`Error: ${data.error || 'Could not update version'}`, 'danger');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    showAlert(`Error: ${error.message || 'Network error'}`, 'danger');
+                });
+        });
+        
+        // Create Snapshot Form Submission
+        document.getElementById('createSnapshotForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            if (!formData.get('version_name')) {
+                showAlert('Please provide a version name for the snapshot.', 'danger');
+                return;
+            }
+            
+            // Show loading spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            fetch('/create-version-snapshot', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    
+                    if (data.success) {
+                        showAlert(`Snapshot created successfully: ${data.snapshot_title}`, 'success');
+                        
+                        // Add the new snapshot to the list
+                        const snapshotsContainer = document.getElementById('snapshotsContainer');
+                        const newSnapshotHTML = `
+                            <div class="snapshot-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div><strong>${data.snapshot_title}</strong></div>
+                                        <div class="version-date">ID: ${data.snapshot_id}</div>
+                                    </div>
+                                    <a href="${data.snapshot_url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-external-link-alt"></i> Open
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        
+                        if (snapshotsContainer.querySelector('.text-muted')) {
+                            snapshotsContainer.innerHTML = newSnapshotHTML;
+                        } else {
+                            snapshotsContainer.innerHTML = newSnapshotHTML + snapshotsContainer.innerHTML;
+                        }
+                        
+                        // Reset form field
+                        document.getElementById('version_name').value = '';
+                    } else {
+                        showAlert(`Error: ${data.error || 'Could not create snapshot'}`, 'danger');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    showAlert(`Error: ${error.message || 'Network error'}`, 'danger');
+                });
+        });
+    </script>
+</body>
+</html>
