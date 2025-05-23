@@ -8,10 +8,10 @@ import json
 import re
 import logging
 import csv
-import requests
 from werkzeug.utils import secure_filename
 from generate_ontology import generate_ontology_from_directory
 from sheets_integration import SheetsIntegration
+from app import *
 
 # Configure logging
 logging.basicConfig(
@@ -45,10 +45,6 @@ app.config['USE_GOOGLE_SHEETS'] = True
 app.config['GOOGLE_SHEETS_CREDS_FILE'] = 'service_account.json'
 app.config['SPREADSHEET_ID'] = os.environ.get('SPREADSHEET_ID', '')
 
-# Blazegraph configuration
-app.config['BLAZEGRAPH_ENDPOINT'] = os.environ.get('BLAZEGRAPH_ENDPOINT', 'http://167.172.143.162:9999/blazegraph/namespace/kb/sparql')
-app.config['BLAZEGRAPH_ENABLED'] = True
-
 # Initialize Google Sheets integration
 sheets_integration = None
 try:
@@ -65,98 +61,6 @@ except Exception as e:
 # Ensure upload and metadata directories exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['METADATA_DIR'], exist_ok=True)
-
-def import_to_blazegraph(ontology_path, title, version):
-    """Import the ontology into Blazegraph with better error handling and user feedback."""
-    import requests
-    
-    try:
-        # Read the ontology file
-        with open(ontology_path, 'rb') as f:
-            ontology_data = f.read()
-        
-        # Define endpoint and headers
-        endpoint = app.config['BLAZEGRAPH_ENDPOINT']
-        headers = {'Content-Type': 'application/rdf+xml'}
-        
-        # Create a safe graph URI with no spaces
-        safe_title = ''.join(c if c.isalnum() else '_' for c in title)
-        safe_version = version.replace(' ', '')
-        
-        graph_uri = f"http://example.org/ontology/{safe_title}/version{safe_version}"
-        params = {'context-uri': graph_uri}
-        
-        # First try to clear the existing graph
-        try:
-            clear_query = f"CLEAR GRAPH <{graph_uri}>"
-            requests.post(
-                endpoint,
-                headers={'Content-Type': 'application/sparql-update'},
-                data=clear_query,
-                timeout=10
-            )
-            logger.info(f"Cleared existing graph: {graph_uri}")
-        except Exception as e:
-            logger.warning(f"Error clearing graph: {str(e)}")
-        
-        # Now import the new data with retry logic
-        max_retries = 3
-        retry_count = 0
-        success = False
-        
-        while retry_count < max_retries and not success:
-            try:
-                response = requests.post(
-                    endpoint,
-                    headers=headers,
-                    params=params,
-                    data=ontology_data,
-                    timeout=30
-                )
-                
-                if response.status_code >= 200 and response.status_code < 300:
-                    logger.info(f"Successfully imported to Blazegraph: {graph_uri}")
-                    
-                    # Verify the import by counting triples
-                    verify_query = f"SELECT (COUNT(*) as ?count) WHERE {{ GRAPH <{graph_uri}> {{ ?s ?p ?o }} }}"
-                    verify_response = requests.post(
-                        endpoint,
-                        headers={'Content-Type': 'application/sparql-query', 'Accept': 'application/sparql-results+json'},
-                        data=verify_query,
-                        timeout=10
-                    )
-                    
-                    if verify_response.status_code == 200:
-                        result = verify_response.json()
-                        triple_count = result['results']['bindings'][0]['count']['value'] if result['results']['bindings'] else 0
-                        logger.info(f"Imported {triple_count} triples to Blazegraph")
-                        return True, f"Successfully imported {triple_count} triples to Blazegraph", graph_uri
-                    
-                    success = True
-                    return True, "Successfully imported to Blazegraph", graph_uri
-                else:
-                    retry_count += 1
-                    logger.error(f"Error importing to Blazegraph (attempt {retry_count}): {response.status_code} {response.text}")
-                    if retry_count < max_retries:
-                        time.sleep(2)  # Short delay before retry
-            except Exception as e:
-                retry_count += 1
-                logger.error(f"Error importing to Blazegraph (attempt {retry_count}): {str(e)}")
-                if retry_count < max_retries:
-                    time.sleep(2)
-        
-        return False, f"Failed to import to Blazegraph after {max_retries} attempts", None
-    except Exception as e:
-        logger.error(f"Error importing to Blazegraph: {str(e)}", exc_info=True)
-        return False, f"Error importing to Blazegraph: {str(e)}", None
-
-def check_blazegraph_status():
-    """Check if Blazegraph is accessible."""
-    try:
-        response = requests.get(app.config['BLAZEGRAPH_ENDPOINT'], timeout=5)
-        return response.status_code == 200
-    except:
-        return False
 
 def allowed_file(filename):
     """Check if the file has a valid extension"""
@@ -203,8 +107,8 @@ def log_to_google_sheets(metadata):
             except:
                 spreadsheet = sheets_integration.create_spreadsheet("Biodiversity Ontology Generator Log")
                 # Initialize the headers
-                headers = [["Timestamp", "Session ID", "Ontology Name", "File Size", "Files Used", "Status", "Blazegraph Import", "Graph URI"]]
-                sheets_integration.update_values(spreadsheet, "A1:H1", headers)
+                headers = [["Timestamp", "Session ID", "Ontology Name", "File Size", "Files Used", "Status"]]
+                sheets_integration.update_value(spreadsheet, "A1:F1", headers)
 
         # Prepare the data row
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -212,12 +116,10 @@ def log_to_google_sheets(metadata):
         ontology_name = metadata.get("ontology_name", 'N/A')
         file_size = metadata.get("file_size", 0)
         files_used = ", ".join(metadata.get("uploaded_files", []))
-        status = metadata.get("status", "Success")
-        blazegraph_import = metadata.get("blazegraph_import", "N/A")
-        graph_uri = metadata.get("graph_uri", "N/A")
+        status  = "Success"
 
         # Append the data
-        row_data = [[timestamp, session_id, ontology_name, file_size, files_used, status, blazegraph_import, graph_uri]]
+        row_data = [[timestamp, session_id, ontology_name, file_size, files_used, status]]
         sheets_integration.append_rows(spreadsheet, values=row_data)
 
         logger.info(f"Successfully logged to Google Sheets: {session_id}")
@@ -229,29 +131,11 @@ def log_to_google_sheets(metadata):
 @app.route('/')
 def index():
     """Render the main page."""
-    blazegraph_status = check_blazegraph_status() if app.config['BLAZEGRAPH_ENABLED'] else False
-    return render_template('index.html', blazegraph_status=blazegraph_status)
-
-@app.route('/blazegraph-status')
-def blazegraph_status():
-    """Check the status of Blazegraph integration."""
-    if not app.config['BLAZEGRAPH_ENABLED']:
-        return jsonify({
-            "enabled": False,
-            "message": "Blazegraph integration is not enabled"
-        })
-    
-    status = check_blazegraph_status()
-    return jsonify({
-        "enabled": True,
-        "status": "online" if status else "offline",
-        "endpoint": app.config['BLAZEGRAPH_ENDPOINT'],
-        "message": "Blazegraph is accessible" if status else "Cannot connect to Blazegraph"
-    })
+    return render_template('index.html')
 
 @app.route('/sheets-status')
 def sheets_status():
-    """Check the status of Google Sheets integration."""
+    """Check the status of Google Sheetes integration."""
     if not app.config['USE_GOOGLE_SHEETS']:
         return jsonify({
             "enabled": False,
@@ -267,13 +151,13 @@ def sheets_status():
 
     return jsonify({
         "enabled": True,
-        "initialized": True,
+        "initialized": False,
         "message": "Google Sheets integration is enabled and working"
     })  
 
 @app.route('/upload', methods=['POST'])
 def upload_files():
-    """Handle file uploads and ontology generation."""
+    """Handle file uploads and ontology generatiion."""
     if request.method == 'POST':
         try:
             # Create a unique directory for this session
@@ -294,13 +178,13 @@ def upload_files():
                         flash('Invalid file type. Only CSV files are allowed.', 'warning')
                         continue
 
-                    logger.info(f"Saving file: {filename} to {session_dir}")
+                    logger.info(f"Saving files: {filename} to {session_dir}")
                     file.save(os.path.join(session_dir, filename))
                     files_uploaded = True
                     uploaded_file_names.append(filename) 
 
             if not files_uploaded:
-                flash("No files were uploaded. Please select at least one CSV file.", 'error')
+                flash("No files were uploaded. Please select at least one CSV file. ", 'error')
                 return redirect(url_for('index'))
 
             # Get ontology name, use default if not provided
@@ -308,7 +192,7 @@ def upload_files():
             if not ontology_name:
                 ontology_name = 'biodiversity-ontology'
 
-            # Sanitize ontology name
+             # Sanitize ontology name
             ontology_name = sanitize_filename(ontology_name)
 
             # Generate the ontology
@@ -336,30 +220,8 @@ def upload_files():
                     'file_size': file_size,
                     'uploaded_files': uploaded_file_names,
                     'creation_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    'expiry_time': expiry_time.strftime('%Y-%m-%d %H:%M:%S'),
-                    'status': 'Success'
+                    'expiry_time': expiry_time.strftime('%Y-%m-%d %H:%M:%S')
                 }
-
-                # Import to Blazegraph if enabled
-                blazegraph_import_status = "Not attempted"
-                blazegraph_message = ""
-                graph_uri = ""
-                
-                if app.config['BLAZEGRAPH_ENABLED']:
-                    logger.info("Attempting to import ontology to Blazegraph...")
-                    success, message, uri = import_to_blazegraph(
-                        download_path, 
-                        ontology_name,
-                        datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-                    )
-                    blazegraph_import_status = "Success" if success else "Failed"
-                    blazegraph_message = message
-                    graph_uri = uri or ""
-                    
-                    metadata['blazegraph_import'] = blazegraph_import_status
-                    metadata['blazegraph_message'] = blazegraph_message
-                    metadata['graph_uri'] = graph_uri
-
                 save_metadata(session_id, metadata)
 
                 # Log to Google Sheets if enabled
@@ -379,16 +241,12 @@ def upload_files():
                                        file_count=len(uploaded_file_names),
                                        creation_time=datetime.datetime.now().strftime('%H:%M'),
                                        expiry_minutes=app.config['SESSION_EXPIRY'] // 60,
-                                       sheets_logging=app.config['USE_GOOGLE_SHEETS'],
-                                       blazegraph_enabled=app.config['BLAZEGRAPH_ENABLED'],
-                                       blazegraph_status=blazegraph_import_status,
-                                       blazegraph_message=blazegraph_message,
-                                       graph_uri=graph_uri)
+                                       sheets_logging=app.config['USE_GOOGLE_SHEETS'])
 
             except Exception as e:
                 logger.error(f"Error generating ontology: {str(e)}", exc_info=True)
                 flash(f'Error generating ontology: {str(e)}', 'error')
-                # Clean up the session directory if an error occurs
+                # Cklean up the session directory if an error occurs
                 try:
                     shutil.rmtree(session_dir)
                 except Exception as cleanup_error:
@@ -404,9 +262,9 @@ def upload_files():
 def download(session_id, filename):
     """Handle file downloads.""" 
     try:
-        # Validate the session_id and filename to prevent directory traversal
+        # Validate the session_id and filename to prevent directory travesal
         if '..' in session_id or '/' in session_id or '..' in filename or '/' in filename:
-            logger.warning(f"Invalid download request: {session_id}/{filename} - Possible directory traversal attempt")
+            logger.warning(f"Invalid download request: {session_id}/{filename} - Possible directory traversal attrempt")
             flash('Invalid request', 'error')
             return redirect(url_for('index'))
 
@@ -426,10 +284,10 @@ def download(session_id, filename):
                 expiry_time = datetime.datetime.strptime(metadata['expiry_time'], '%Y-%m-%d %H:%M:%S')
                 if datetime.datetime.now() > expiry_time:
                     logger.info(f"Download attempted for expired file: {session_id}/{filename}")
-                    flash('This file has expired and is no longer available for download.', 'warning')
+                    flash('This file has expired and is no loger available for download.', 'warning')
                     return redirect(url_for('index'))
             except (KeyError, ValueError) as e:
-                logger.error(f"Error parsing metadata for session {session_id}: {str(e)}")
+                logger.erroe(f"Error parsing metadata for session {session_id}: {str(e)}")
 
         # Log the download
         logger.info(f"File download: {session_id}/{filename}")
@@ -443,24 +301,23 @@ def download(session_id, filename):
 
 @app.route('/import-from-sheets', methods=['GET', 'POST'])
 def import_from_sheets():
-    """Import data from Google Sheets and process it."""
+    """Import data from Google Sheets and process it,"""
     if not app.config['USE_GOOGLE_SHEETS'] or not sheets_integration or not sheets_integration.is_initialized():
         flash('Google Sheets integration is not enabled or properly configured.', 'error') 
         return redirect(url_for('index'))
 
     if request.method == 'GET':
-        # Render the import form
-        blazegraph_status = check_blazegraph_status() if app.config['BLAZEGRAPH_ENABLED'] else False
-        return render_template('import_sheets.html', blazegraph_status=blazegraph_status)
+        # Render the import from
+        return render_template('import_sheets.html')
 
-    elif request.method == 'POST':
+    elif request.method == 'POST' :
         try:
             # Get the spreadsheet ID or name
             spreadsheet_id = request.form.get('spreadsheet_id', '').strip()
             spreadsheet_name = request.form.get('spreadsheet_name', '').strip()
 
             if not spreadsheet_id and not spreadsheet_name:
-                flash('Please provide either a spreadsheet ID or name.', 'error')
+                flash('Please provided either a spreadsheet ID or name.', 'error')
                 return redirect(url_for('import_from_sheets'))
 
             # Open the spreadsheet
@@ -471,12 +328,6 @@ def import_from_sheets():
                     spreadsheet = sheets_integration.open_spreadsheet(spreadsheet_name=spreadsheet_name)
             except Exception as e:
                 flash(f'Error opening spreadsheet: {str(e)}', 'error') 
-                return redirect(url_for('import_from_sheets'))
-
-            # Check for changes before processing
-            has_changes, change_info = check_spreadsheet_changes(spreadsheet)
-            if not has_changes and not request.form.get('force_generation'):
-                flash('No changes detected in the spreadsheet since last generation. Use "Force Generation" to proceed anyway.', 'info')
                 return redirect(url_for('import_from_sheets'))
 
             # Create a unique session directory
@@ -514,6 +365,20 @@ def import_from_sheets():
                 # Clean up the session directory
                 shutil.rmtree(session_dir)
                 return redirect(url_for('import_from_sheets'))
+            
+            # Check for minimum required worksheets - adjust as needed
+            minimum_required = ["taxonomic_hierarchy"] # Set just one as absolutely required, or leave empty for complete flexibility
+            missing_essential = [sheet for sheet in minimum_required if f"{sheet}.csv" not in files_imported]
+
+            if missing_essential:
+                flash(f'Missing essential worksheets: {", ".join(missing_essential)}. These are required for basic ontology generation.', 'warning')
+                # You can choose whether to continue or abort here
+
+            if not files_imported:
+                flash('No valid data could be imported from Google Sheets.', 'error')
+                # Clean up the session directory
+                shutil.rmtree(session_dir)
+                return redirect(url_for('import_from_sheets'))
 
             # Get ontology name
             ontology_name = request.form.get('ontology_name', '').strip()
@@ -541,10 +406,6 @@ def import_from_sheets():
                 # Save metadata
                 expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=app.config['SESSION_EXPIRY'])
 
-                # Get current version
-                current_metadata = sheets_integration.get_spreadsheet_metadata(spreadsheet)
-                current_version = current_metadata.get('version_info', {}).get('version', '1.0.0')
-
                 metadata = {
                     'session_id': session_id,
                     'ontology_name': ontology_name,
@@ -552,57 +413,17 @@ def import_from_sheets():
                     'file_size': file_size,
                     'uploaded_files': files_imported,
                     'source': 'google_sheets',
-                    'spreadsheet_name': spreadsheet.title,
-                    'spreadsheet_id': spreadsheet.id,
+                    'spreadsheet_name': spreadsheet_name or 'N/A',
+                    'spreadsheet_id': spreadsheet_id or 'N/A',
                     'creation_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    'expiry_time': expiry_time.strftime('%Y-%m-%d %H:%M:%S'),
-                    'status': 'Success',
-                    'version': current_version,
-                    'changes_detected': has_changes,
-                    'change_info': change_info
+                    'expiry_time': expiry_time.strftime('%Y-%m-%d %H:%M:%S')
                 }
-
-                # Import to Blazegraph if enabled
-                blazegraph_import_status = "Not attempted"
-                blazegraph_message = ""
-                graph_uri = ""
-                
-                if app.config['BLAZEGRAPH_ENABLED']:
-                    logger.info("Attempting to import ontology to Blazegraph...")
-                    success, message, uri = import_to_blazegraph(
-                        download_path, 
-                        spreadsheet.title,
-                        current_version
-                    )
-                    blazegraph_import_status = "Success" if success else "Failed"
-                    blazegraph_message = message
-                    graph_uri = uri or ""
-                    
-                    metadata['blazegraph_import'] = blazegraph_import_status
-                    metadata['blazegraph_message'] = blazegraph_message
-                    metadata['graph_uri'] = graph_uri
-
-                    # Update version if import was successful and changes were detected
-                    if success and has_changes and app.config['USE_GOOGLE_SHEETS']:
-                        try:
-                            new_version = increment_version(current_version)
-                            sheets_integration.update_spreadsheet_version(
-                                spreadsheet=spreadsheet,
-                                new_version=new_version,
-                                modified_by="Ontology Generator",
-                                changelog=f"Generated ontology with {len(files_imported)} worksheets. Changes: {change_info}"
-                            )
-                            metadata['version'] = new_version
-                            logger.info(f"Updated spreadsheet version from {current_version} to {new_version}")
-                        except Exception as version_error:
-                            logger.error(f"Error updating version: {version_error}")
-
                 save_metadata(session_id, metadata)
 
                 # Log to Google Sheets
                 log_to_google_sheets(metadata)
 
-                logger.info(f"Ontology generated successfully from Google Sheets: {ontology_file} ({file_size} bytes)")
+                logger.info(f"ontology generated successfully from Google Sheets: {ontology_file} ({file_size} bytes)")
 
                 return render_template('success.html',
                                        session_id=session_id,
@@ -612,11 +433,7 @@ def import_from_sheets():
                                        creation_time=datetime.datetime.now().strftime('%H:%M'),
                                        expiry_minutes=app.config['SESSION_EXPIRY'] // 60,
                                        source='Google Sheets',
-                                       sheets_logging=True,
-                                       blazegraph_enabled=app.config['BLAZEGRAPH_ENABLED'],
-                                       blazegraph_status=blazegraph_import_status,
-                                       blazegraph_message=blazegraph_message,
-                                       graph_uri=graph_uri)
+                                       sheets_logging=True)
             
             except Exception as e:
                 logger.error(f"Error generating ontology from Google Sheets: {str(e)}", exc_info=True)
@@ -629,86 +446,6 @@ def import_from_sheets():
             logger.error(f"Unexpected error in Google Sheets import: {str(e)}", exc_info=True)
             flash(f'An unexpected error occurred: {str(e)}', 'error')
             return redirect(url_for('import_from_sheets'))
-
-def check_spreadsheet_changes(spreadsheet):
-    """
-    Check if there have been changes to the spreadsheet since last processing.
-    Returns: (has_changes, change_info)
-    """
-    try:
-        # Get the spreadsheet ID
-        spreadsheet_id = spreadsheet.id
-        
-        # Load the last processed state
-        state_file = f"state_{spreadsheet_id}.json"
-        last_state = {}
-        if os.path.exists(state_file):
-            with open(state_file, 'r') as f:
-                last_state = json.load(f)
-        
-        # Get current checksum of all worksheets
-        current_data = {}
-        for worksheet in spreadsheet.worksheets():
-            if worksheet.title != "metadata":
-                try:
-                    data = sheets_integration.get_worksheet_data(spreadsheet, worksheet_name=worksheet.title)
-                    current_data[worksheet.title] = data
-                except:
-                    pass
-        
-        # Calculate checksum
-        import hashlib
-        current_checksum = hashlib.md5(
-            json.dumps(current_data, sort_keys=True).encode()
-        ).hexdigest()
-        
-        last_checksum = last_state.get('checksum', '')
-        
-        # Save current state
-        with open(state_file, 'w') as f:
-            json.dump({
-                'checksum': current_checksum,
-                'last_processed': datetime.datetime.now().isoformat(),
-                'worksheets': list(current_data.keys())
-            }, f)
-        
-        if current_checksum != last_checksum:
-            # Determine what changed
-            change_info = "Data modifications detected"
-            if 'worksheets' in last_state:
-                old_sheets = set(last_state['worksheets'])
-                new_sheets = set(current_data.keys())
-                added = new_sheets - old_sheets
-                removed = old_sheets - new_sheets
-                
-                changes = []
-                if added:
-                    changes.append(f"Added sheets: {', '.join(added)}")
-                if removed:
-                    changes.append(f"Removed sheets: {', '.join(removed)}")
-                if changes:
-                    change_info = "; ".join(changes)
-            
-            return True, change_info
-        
-        return False, "No changes detected"
-        
-    except Exception as e:
-        logger.error(f"Error checking for changes: {str(e)}")
-        # If we can't determine changes, assume there are changes
-        return True, "Unable to determine changes"
-
-def increment_version(version_str):
-    """Increment the patch version number (x.y.z -> x.y.z+1)."""
-    try:
-        parts = version_str.split('.')
-        if len(parts) >= 3:
-            parts[2] = str(int(parts[2]) + 1)
-        else:
-            parts = ['1', '0', '0']
-        return '.'.join(parts)
-    except:
-        return '1.0.1'
 
 @app.route('/status/<session_id>')
 def check_status(session_id):
@@ -726,20 +463,18 @@ def check_status(session_id):
 
             return jsonify({
                 'status': 'active',
-                'time_remaining': time_remaining,
+                'time_remainig': time_remaining,
                 'filename': metadata.get('filename'),
                 'file_size': metadata.get('file_size', 0),
-                'source': metadata.get('source', 'upload'),
-                'blazegraph_import': metadata.get('blazegraph_import', 'N/A'),
-                'graph_uri': metadata.get('graph_uri', '')
+                'source': metadata.get('source', 'upload')
             })                    
         except (KeyError, ValueError) as e:
             logger.error(f"Error calculating time remaining for session {session_id}: {str(e)}")
 
     return jsonify({
         'status': 'expired',
-        'time_remaining': 0
-    })
+        'time_rmaining': 0
+    })        
 
 @app.route('/cleanup', methods=['POST'])
 def cleanup():
@@ -748,7 +483,7 @@ def cleanup():
         logger.warning("Unauthorized cleanup attempt")
         return "Unauthorized", 401
     
-    # Delete uploads older than the expiry time
+    # Delete uploads older thean the expiry time
     now = time.time()
     cleanup_count = 0
 
@@ -759,7 +494,7 @@ def cleanup():
             if now - created_time > app.config['SESSION_EXPIRY']:
                 try:
                     shutil.rmtree(dir_path)
-                    # Also remove metadata file if it exists
+                    #Also remove metadata file if it exists
                     metadata_path = os.path.join(app.config['METADATA_DIR'], f"{dir_name}.json")
                     if os.path.exists(metadata_path):
                         os.remove(metadata_path)
@@ -774,7 +509,7 @@ def cleanup():
 def request_entity_too_large(error):
     """Handle file size exceeded error."""
     flash(f'The file is too large. Maximum allowed size is {app.config["MAX_CONTENT_LENGTH"] // (1024 * 1024)}MB.', 'error')
-    return redirect(url_for('index')), 413
+    return redirect(url_for('index')),413
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -783,11 +518,17 @@ def page_not_found(error):
     return redirect(url_for('index')), 404
 
 @app.errorhandler(500)
-def internal_server_error(error):
+def page_not_found(error):
     """Handle 500 errors."""
     logger.error(f"Internal server error: {str(error)}", exc_info=True)
     flash('An internal server error occurred. Please try again later.', 'error')
     return redirect(url_for('index')), 500
+
+# Add these imports to the top of app.py
+import datetime
+import json
+
+# Add these new routes to app.py
 
 @app.route('/version-management')
 def version_management():
@@ -1071,12 +812,7 @@ else:
 
 if __name__ == '__main__':
     # Use production server when deployed
-    port = int(os.environ.get('PORT', 5001))
-    print(f"\n{'='*50}")
-    print(f"Starting Biodiversity Ontology Generator")
-    print(f"{'='*50}")
-    print(f"Server running at: http://localhost:{port}")
-    print(f"Blazegraph endpoint: {app.config['BLAZEGRAPH_ENDPOINT']}")
-    print(f"Google Sheets: {'Enabled' if app.config['USE_GOOGLE_SHEETS'] else 'Disabled'}")
-    print(f"{'='*50}\n")
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5001)) )                    
+                        
+
+

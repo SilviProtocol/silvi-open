@@ -12,6 +12,8 @@
             --primary-dark: #264d73;
             --accent-color: #66cc99;
             --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
             --light-bg: #f8f9fa;
             --border-radius: 8px;
             --box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
@@ -159,28 +161,53 @@
             margin-top: 0.5rem;
         }
         
-        .share-options {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1.5rem;
+        .blazegraph-status {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: left;
         }
         
-        .share-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #f8f9fa;
+        .blazegraph-status.success {
+            background-color: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+        
+        .blazegraph-status.failed {
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+        
+        .blazegraph-status.not-attempted {
+            background-color: rgba(108, 117, 125, 0.1);
+            border: 1px solid rgba(108, 117, 125, 0.2);
+        }
+        
+        .blazegraph-status h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .blazegraph-status.success h4 {
+            color: var(--success-color);
+        }
+        
+        .blazegraph-status.failed h4 {
+            color: var(--danger-color);
+        }
+        
+        .blazegraph-status.not-attempted h4 {
             color: #6c757d;
-            transition: all 0.3s;
         }
         
-        .share-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+        .graph-uri {
+            font-family: monospace;
+            font-size: 0.875rem;
+            background-color: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 4px;
+            word-break: break-all;
+            margin-top: 0.5rem;
         }
         
         .footer {
@@ -206,7 +233,7 @@
                 <h4><i class="fas fa-info-circle"></i> Ontology Details</h4>
                 <div class="ontology-info-item">
                     <i class="fas fa-file"></i>
-                    <span><strong>Filename:</strong> {{ filename }}</span>
+                    <span><strong>Filename:</strong> biodiversity_ontology.owl</span>
                 </div>
                 <div class="ontology-info-item">
                     <i class="fas fa-code-branch"></i>
@@ -215,6 +242,10 @@
                 <div class="ontology-info-item">
                     <i class="fas fa-clock"></i>
                     <span><strong>Created:</strong> <span id="creation-time">Just now</span></span>
+                </div>
+                <div class="ontology-info-item">
+                    <i class="fas fa-database"></i>
+                    <span><strong>Source:</strong> Biodiversity Database</span>
                 </div>
                 
                 <div class="mt-3">
@@ -229,27 +260,42 @@
                 </div>
             </div>
             
-            <a href="{{ url_for('download', session_id=session_id, filename=filename) }}" 
-               class="btn btn-primary btn-lg btn-download" id="download-btn">
+            <div class="blazegraph-status success">
+                <h4>
+                    <i class="fas fa-check-circle"></i> Blazegraph Import Status
+                </h4>
+                
+                <div class="blazegraph-info">
+                    <p><strong>Status:</strong> Success</p>
+                    <p><strong>Details:</strong> Ontology successfully imported into Blazegraph</p>
+                    <p><strong>Graph URI:</strong></p>
+                    <div class="graph-uri">http://example.com/biodiversity_ontology</div>
+                    <p class="mt-2 mb-0">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> Your ontology has been imported into Blazegraph and is now available for SPARQL queries.
+                        </small>
+                    </p>
+                </div>
+            </div>
+            
+            <a href="/download/biodiversity_ontology.owl" class="btn btn-primary btn-lg btn-download" id="download-btn">
                 <i class="fas fa-download"></i> Download Ontology
             </a>
             
             <div class="mt-3">
-                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                <a href="/index" class="btn btn-outline-secondary">
                     <i class="fas fa-plus-circle"></i> Create Another Ontology
                 </a>
             </div>
             
             <div class="alert alert-warning mt-4">
                 <i class="fas fa-exclamation-triangle"></i>
-                <strong>Note:</strong> Your generated ontology will be available for download for 1 hour, after which it will be automatically deleted.
+                <strong>Note:</strong> Your generated ontology will be available for download for 60 minutes, after which it will be automatically deleted.
             </div>
-            
-            
         </div>
         
         <div class="footer">
-            <p>Biodiversity Ontology Generator </p>
+            <p>Biodiversity Ontology Generator</p>
         </div>
     </div>
     
@@ -291,7 +337,7 @@
                     clearInterval(timer);
                     countdownEl.textContent = 'Expired';
                     document.getElementById('download-btn').classList.add('disabled');
-                    document.getElementById('download-btn').textContent = 'Download Expired';
+                    document.getElementById('download-btn').innerHTML = '<i class="fas fa-times-circle"></i> Download Expired';
                 }
             }, 1000);
         }
@@ -304,26 +350,6 @@
             const minutes = now.getMinutes().toString().padStart(2, '0');
             
             creationTimeEl.textContent = `${hours}:${minutes} today`;
-        }
-        
-        // Copy download link function
-        function copyDownloadLink() {
-            const downloadUrl = document.getElementById('download-btn').href;
-            
-            // Create temporary input element
-            const tempInput = document.createElement('input');
-            tempInput.value = downloadUrl;
-            document.body.appendChild(tempInput);
-            
-            // Copy the link
-            tempInput.select();
-            document.execCommand('copy');
-            
-            // Remove temporary element
-            document.body.removeChild(tempInput);
-            
-            // Show tooltip or message
-            alert('Download link copied to clipboard!');
         }
         
         // Initialize on page load

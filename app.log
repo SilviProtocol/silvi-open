@@ -485,3 +485,304 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'versio
 2025-05-09 17:53:24,735 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 17:53:24] "GET /spreadsheet-metadata?spreadsheet_name=Ontology HTTP/1.1" 200 -
 2025-05-09 18:00:53,643 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 18:00:53] "POST /update-spreadsheet-version HTTP/1.1" 200 -
 2025-05-09 18:00:55,684 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 18:00:55] "GET /version-management HTTP/1.1" 200 -
+2025-05-09 19:32:42,415 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:32:42] "GET /versions?spreadsheet_name=Ontology HTTP/1.1" 200 -
+2025-05-09 19:32:45,474 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:32:45] "GET /spreadsheet-metadata?spreadsheet_name=Ontology HTTP/1.1" 200 -
+2025-05-09 19:33:22,118 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:33:22] "GET / HTTP/1.1" 200 -
+2025-05-09 19:33:28,287 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:33:28] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-09 19:33:37,736 - __main__ - INFO - Found 7 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy, metadata
+2025-05-09 19:33:38,957 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-09 19:33:40,750 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-09 19:33:41,964 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-09 19:33:43,165 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-09 19:33:45,134 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-09 19:33:46,402 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-09 19:33:47,184 - __main__ - INFO - Imported metadata from Google Sheets with 7 rows
+2025-05-09 19:33:47,184 - __main__ - INFO - Generating ontology biodiversity-ontology for session 14706a91-c0ec-4690-bd4f-465ce12e8a12 from Google Sheets data
+2025-05-09 19:33:48,872 - __main__ - INFO - Saved metadata for session 14706a91-c0ec-4690-bd4f-465ce12e8a12
+2025-05-09 19:33:51,407 - __main__ - INFO - Successfully logged to Google Sheets: 14706a91-c0ec-4690-bd4f-465ce12e8a12
+2025-05-09 19:33:51,407 - __main__ - INFO - ontology generated successfully from Google Sheets: biodiversity-ontology.owl (111610 bytes)
+2025-05-09 19:33:51,414 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:33:51] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-09 19:34:47,773 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:34:47] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-09 19:41:40,755 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:41:40] "GET /version-management HTTP/1.1" 200 -
+2025-05-13 19:57:26,571 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-13 19:57:26,572 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-13 19:57:26,581 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-13 19:57:26,581 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-13 19:57:26,607 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.41:5001
+2025-05-13 19:57:26,607 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 19:57:31,324 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 19:57:31] "GET / HTTP/1.1" 200 -
+2025-05-13 19:57:35,124 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 19:57:35] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-13 19:58:06,574 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 19:58:06] "GET /version-management HTTP/1.1" 200 -
+2025-05-13 19:58:48,720 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 19:58:48] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-13 19:59:10,581 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 19:59:10] "GET / HTTP/1.1" 200 -
+2025-05-13 19:59:17,521 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 19:59:17] "GET /version-management HTTP/1.1" 200 -
+2025-05-13 19:59:29,645 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 19:59:29] "GET /versions?spreadsheet_name=Ontology HTTP/1.1" 200 -
+2025-05-13 19:59:32,275 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 19:59:32] "GET /spreadsheet-metadata?spreadsheet_name=Ontology HTTP/1.1" 200 -
+2025-05-13 20:16:03,110 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 20:16:03] "GET /version-management HTTP/1.1" 200 -
+2025-05-13 20:16:36,214 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 20:16:36] "GET /versions?spreadsheet_name=Ontology HTTP/1.1" 200 -
+2025-05-13 20:16:38,493 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 20:16:38] "GET /spreadsheet-metadata?spreadsheet_name=Ontology HTTP/1.1" 200 -
+2025-05-13 20:18:51,428 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 20:18:51] "GET / HTTP/1.1" 200 -
+2025-05-13 20:19:47,651 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 20:19:47] "GET /version-management HTTP/1.1" 200 -
+2025-05-13 20:24:37,089 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 20:24:37] "GET /versions?spreadsheet_id=1xc34u1d5HhIgdvEoXfsBwCrFbERUwWsF6xi-2r5hys0 HTTP/1.1" 200 -
+2025-05-13 20:24:38,789 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 20:24:38] "GET /spreadsheet-metadata?spreadsheet_id=1xc34u1d5HhIgdvEoXfsBwCrFbERUwWsF6xi-2r5hys0 HTTP/1.1" 200 -
+2025-05-13 20:26:15,578 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 20:26:15] "POST /create-version-snapshot HTTP/1.1" 200 -
+2025-05-14 19:51:59,601 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-14 19:51:59,601 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-14 19:51:59,612 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-14 19:51:59,612 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-14 19:51:59,641 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.4:5001
+2025-05-14 19:51:59,642 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-19 19:17:36,838 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-19 19:17:36,838 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-19 19:17:36,849 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-19 19:17:36,849 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-19 19:17:36,873 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.36:5001
+2025-05-19 19:17:36,874 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-19 19:17:40,867 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:17:40] "GET / HTTP/1.1" 200 -
+2025-05-19 19:17:44,149 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:17:44] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-19 19:17:50,206 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:17:50] "GET /version-management HTTP/1.1" 200 -
+2025-05-19 19:18:20,714 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:18:20] "GET /versions?spreadsheet_name=Ontology HTTP/1.1" 200 -
+2025-05-19 19:18:25,870 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:18:25] "GET /spreadsheet-metadata?spreadsheet_name=Ontology HTTP/1.1" 200 -
+2025-05-19 19:20:12,883 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:20:12] "POST /create-version-snapshot HTTP/1.1" 200 -
+2025-05-19 19:38:28,116 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:38:28] "GET / HTTP/1.1" 200 -
+2025-05-19 19:43:27,656 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:43:27] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-19 19:43:51,753 - __main__ - INFO - Found 7 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy, metadata
+2025-05-19 19:43:53,778 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-19 19:43:55,892 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-19 19:43:57,842 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-19 19:43:59,777 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-19 19:44:01,705 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-19 19:44:03,621 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-19 19:44:05,531 - __main__ - INFO - Imported metadata from Google Sheets with 7 rows
+2025-05-19 19:44:05,532 - __main__ - INFO - Generating ontology ontology1 for session 87fae49a-b5c5-4d5b-9c28-37bcf62b067c from Google Sheets data
+2025-05-19 19:44:07,052 - __main__ - INFO - Saved metadata for session 87fae49a-b5c5-4d5b-9c28-37bcf62b067c
+2025-05-19 19:44:10,837 - __main__ - INFO - Successfully logged to Google Sheets: 87fae49a-b5c5-4d5b-9c28-37bcf62b067c
+2025-05-19 19:44:10,838 - __main__ - INFO - ontology generated successfully from Google Sheets: ontology1.owl (111610 bytes)
+2025-05-19 19:44:10,846 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:44:10] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-19 19:50:00,577 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:50:00] "GET / HTTP/1.1" 200 -
+2025-05-19 19:50:10,276 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:50:10] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-19 19:50:28,911 - __main__ - INFO - Found 7 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy, metadata
+2025-05-19 19:50:30,735 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-19 19:50:32,362 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-19 19:50:33,973 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-19 19:50:35,583 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-19 19:50:37,220 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-19 19:50:38,860 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-19 19:50:40,545 - __main__ - INFO - Imported metadata from Google Sheets with 7 rows
+2025-05-19 19:50:40,545 - __main__ - INFO - Generating ontology ontology2 for session 5a47f676-1ea0-4b6e-9177-1c967494d755 from Google Sheets data
+2025-05-19 19:50:41,970 - __main__ - INFO - Saved metadata for session 5a47f676-1ea0-4b6e-9177-1c967494d755
+2025-05-19 19:50:45,935 - __main__ - INFO - Successfully logged to Google Sheets: 5a47f676-1ea0-4b6e-9177-1c967494d755
+2025-05-19 19:50:45,935 - __main__ - INFO - ontology generated successfully from Google Sheets: ontology2.owl (111610 bytes)
+2025-05-19 19:50:45,937 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:50:45] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-19 19:56:22,579 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:56:22] "GET / HTTP/1.1" 200 -
+2025-05-19 19:56:26,209 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:56:26] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-19 19:56:52,281 - __main__ - INFO - Found 7 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy, metadata
+2025-05-19 19:56:53,616 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-19 19:56:55,617 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-19 19:56:56,950 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-19 19:56:58,981 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-19 19:57:00,889 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-19 19:57:02,872 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-19 19:57:05,018 - __main__ - INFO - Imported metadata from Google Sheets with 7 rows
+2025-05-19 19:57:05,019 - __main__ - INFO - Generating ontology ontology3 for session b376a94b-5716-4e61-918d-8c33d166e1d1 from Google Sheets data
+2025-05-19 19:57:06,323 - __main__ - INFO - Saved metadata for session b376a94b-5716-4e61-918d-8c33d166e1d1
+2025-05-19 19:57:09,876 - __main__ - INFO - Successfully logged to Google Sheets: b376a94b-5716-4e61-918d-8c33d166e1d1
+2025-05-19 19:57:09,876 - __main__ - INFO - ontology generated successfully from Google Sheets: ontology3.owl (111610 bytes)
+2025-05-19 19:57:09,878 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 19:57:09] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-19 20:08:53,003 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 20:08:53] "GET / HTTP/1.1" 200 -
+2025-05-19 20:08:56,625 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 20:08:56] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-19 20:09:22,663 - __main__ - INFO - Found 7 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy, metadata
+2025-05-19 20:09:23,956 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-19 20:09:25,841 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-19 20:09:27,758 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-19 20:09:29,041 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-19 20:09:30,313 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-19 20:09:31,663 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-19 20:09:32,940 - __main__ - INFO - Imported metadata from Google Sheets with 7 rows
+2025-05-19 20:09:32,940 - __main__ - INFO - Generating ontology ontology4 for session 2d0fb507-6cd8-4ac8-a456-356e2c4b2234 from Google Sheets data
+2025-05-19 20:09:34,232 - __main__ - INFO - Saved metadata for session 2d0fb507-6cd8-4ac8-a456-356e2c4b2234
+2025-05-19 20:09:37,957 - __main__ - INFO - Successfully logged to Google Sheets: 2d0fb507-6cd8-4ac8-a456-356e2c4b2234
+2025-05-19 20:09:37,958 - __main__ - INFO - ontology generated successfully from Google Sheets: ontology4.owl (111610 bytes)
+2025-05-19 20:09:37,960 - werkzeug - INFO - 127.0.0.1 - - [19/May/2025 20:09:37] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-20 17:46:28,946 - app - INFO - Google Sheets integration initialized successfully!
+2025-05-20 17:46:28,947 - app - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-20 17:46:28,958 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-20 17:46:28,958 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-20 17:46:28,976 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.36:5001
+2025-05-20 17:46:28,976 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-20 17:46:31,900 - werkzeug - INFO - 127.0.0.1 - - [20/May/2025 17:46:31] "GET / HTTP/1.1" 200 -
+2025-05-20 17:49:27,035 - werkzeug - INFO - 127.0.0.1 - - [20/May/2025 17:49:27] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-20 17:50:00,864 - __main__ - INFO - Found 7 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy, metadata
+2025-05-20 17:50:02,878 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-20 17:50:04,706 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-20 17:50:06,494 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-20 17:50:08,070 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-20 17:50:09,795 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-20 17:50:11,429 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-20 17:50:13,120 - __main__ - INFO - Imported metadata from Google Sheets with 7 rows
+2025-05-20 17:50:13,121 - __main__ - INFO - Generating ontology ontology5 for session ac982756-3171-406e-acff-a99cf69dc5ff from Google Sheets data
+2025-05-20 17:50:15,059 - __main__ - INFO - Saved metadata for session ac982756-3171-406e-acff-a99cf69dc5ff
+2025-05-20 17:50:19,025 - __main__ - INFO - Successfully logged to Google Sheets: ac982756-3171-406e-acff-a99cf69dc5ff
+2025-05-20 17:50:19,025 - __main__ - INFO - ontology generated successfully from Google Sheets: ontology5.owl (238779 bytes)
+2025-05-20 17:50:19,030 - werkzeug - INFO - 127.0.0.1 - - [20/May/2025 17:50:19] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-20 19:07:23,350 - __main__ - INFO - Download attempted for expired file: ac982756-3171-406e-acff-a99cf69dc5ff/ontology5.owl
+2025-05-20 19:07:23,355 - werkzeug - INFO - 127.0.0.1 - - [20/May/2025 19:07:23] "[32mGET /download/ac982756-3171-406e-acff-a99cf69dc5ff/ontology5.owl HTTP/1.1[0m" 302 -
+2025-05-20 19:07:23,362 - werkzeug - INFO - 127.0.0.1 - - [20/May/2025 19:07:23] "GET / HTTP/1.1" 200 -
+2025-05-20 19:07:37,867 - werkzeug - INFO - 127.0.0.1 - - [20/May/2025 19:07:37] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-20 19:08:02,837 - __main__ - INFO - Found 7 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy, metadata
+2025-05-20 19:08:04,001 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-20 19:08:05,152 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-20 19:08:06,848 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-20 19:08:08,452 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-20 19:08:10,061 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-20 19:08:11,687 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-20 19:08:13,351 - __main__ - INFO - Imported metadata from Google Sheets with 7 rows
+2025-05-20 19:08:13,352 - __main__ - INFO - Generating ontology ontology6 for session f0b9c875-1fb8-459c-ae3f-ea655efbc4c6 from Google Sheets data
+2025-05-20 19:08:15,541 - __main__ - INFO - Saved metadata for session f0b9c875-1fb8-459c-ae3f-ea655efbc4c6
+2025-05-20 19:08:17,992 - __main__ - INFO - Successfully logged to Google Sheets: f0b9c875-1fb8-459c-ae3f-ea655efbc4c6
+2025-05-20 19:08:17,992 - __main__ - INFO - ontology generated successfully from Google Sheets: ontology6.owl (238779 bytes)
+2025-05-20 19:08:17,994 - werkzeug - INFO - 127.0.0.1 - - [20/May/2025 19:08:17] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-20 19:09:04,640 - __main__ - INFO - File download: f0b9c875-1fb8-459c-ae3f-ea655efbc4c6/ontology6.owl
+2025-05-20 19:09:04,650 - werkzeug - INFO - 127.0.0.1 - - [20/May/2025 19:09:04] "GET /download/f0b9c875-1fb8-459c-ae3f-ea655efbc4c6/ontology6.owl HTTP/1.1" 200 -
+2025-05-21 21:23:50,575 - werkzeug - INFO - 127.0.0.1 - - [21/May/2025 21:23:50] "GET / HTTP/1.1" 200 -
+2025-05-21 21:23:54,483 - werkzeug - INFO - 127.0.0.1 - - [21/May/2025 21:23:54] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-21 21:24:17,110 - __main__ - INFO - Found 7 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy, metadata
+2025-05-21 21:24:18,771 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-21 21:24:20,448 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-21 21:24:22,083 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-21 21:24:23,790 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-21 21:24:25,433 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-21 21:24:27,096 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-21 21:24:28,831 - __main__ - INFO - Imported metadata from Google Sheets with 7 rows
+2025-05-21 21:24:28,832 - __main__ - INFO - Generating ontology ontology7 for session 9ea75e90-7aa2-4854-9d03-6a794197b085 from Google Sheets data
+2025-05-21 21:24:31,049 - __main__ - INFO - Saved metadata for session 9ea75e90-7aa2-4854-9d03-6a794197b085
+2025-05-21 21:24:34,999 - __main__ - INFO - Successfully logged to Google Sheets: 9ea75e90-7aa2-4854-9d03-6a794197b085
+2025-05-21 21:24:34,999 - __main__ - INFO - ontology generated successfully from Google Sheets: ontology7.owl (238779 bytes)
+2025-05-21 21:24:35,002 - werkzeug - INFO - 127.0.0.1 - - [21/May/2025 21:24:35] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-21 21:37:32,754 - werkzeug - INFO - 127.0.0.1 - - [21/May/2025 21:37:32] "GET / HTTP/1.1" 200 -
+2025-05-21 21:38:15,060 - werkzeug - INFO - 127.0.0.1 - - [21/May/2025 21:38:15] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-21 21:39:45,729 - werkzeug - INFO - 127.0.0.1 - - [21/May/2025 21:39:45] "[32mPOST /import-from-sheets HTTP/1.1[0m" 302 -
+2025-05-21 21:39:45,744 - werkzeug - INFO - 127.0.0.1 - - [21/May/2025 21:39:45] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-21 21:40:01,488 - __main__ - INFO - Found 7 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy, metadata
+2025-05-21 21:40:02,248 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-21 21:40:03,638 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-21 21:40:05,047 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-21 21:40:07,034 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-21 21:40:08,983 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-21 21:40:10,347 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-21 21:40:12,262 - __main__ - INFO - Imported metadata from Google Sheets with 7 rows
+2025-05-21 21:40:12,262 - __main__ - INFO - Generating ontology biodiversity-ontology for session e98e8568-74a4-4346-9d38-15db52f90de0 from Google Sheets data
+2025-05-21 21:40:14,467 - __main__ - INFO - Saved metadata for session e98e8568-74a4-4346-9d38-15db52f90de0
+2025-05-21 21:40:18,256 - __main__ - INFO - Successfully logged to Google Sheets: e98e8568-74a4-4346-9d38-15db52f90de0
+2025-05-21 21:40:18,256 - __main__ - INFO - ontology generated successfully from Google Sheets: biodiversity-ontology.owl (238779 bytes)
+2025-05-21 21:40:18,258 - werkzeug - INFO - 127.0.0.1 - - [21/May/2025 21:40:18] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-21 21:43:40,429 - werkzeug - INFO - 127.0.0.1 - - [21/May/2025 21:43:40] "GET / HTTP/1.1" 200 -
+2025-05-21 21:43:45,300 - werkzeug - INFO - 127.0.0.1 - - [21/May/2025 21:43:45] "GET /version-management HTTP/1.1" 200 -
+2025-05-23 18:15:44,281 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-23 18:15:44,302 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-23 18:25:30,293 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-23 18:25:30,294 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-23 18:25:30,392 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.44:5001
+2025-05-23 18:25:30,393 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-23 18:25:30,394 - werkzeug - INFO -  * Restarting with stat
+2025-05-23 18:25:30,876 - __main__ - INFO - Google Sheets integration initialized successfully!
+2025-05-23 18:25:30,876 - __main__ - INFO - Service account email: ontology-generator@ontology-generator.iam.gserviceaccount.com
+2025-05-23 18:25:30,925 - werkzeug - WARNING -  * Debugger is active!
+2025-05-23 18:25:30,946 - werkzeug - INFO -  * Debugger PIN: 619-151-135
+2025-05-23 18:25:54,056 - werkzeug - INFO - 127.0.0.1 - - [23/May/2025 18:25:54] "GET / HTTP/1.1" 200 -
+2025-05-23 18:25:57,549 - werkzeug - INFO - 127.0.0.1 - - [23/May/2025 18:25:57] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-23 18:26:02,415 - werkzeug - INFO - 127.0.0.1 - - [23/May/2025 18:26:02] "GET /import-from-sheets HTTP/1.1" 200 -
+2025-05-23 18:27:07,459 - __main__ - ERROR - Error retrieving spreadsheet metadata: Error opening spreadsheet: 
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/gspread/client.py", line 169, in open
+    properties = finditem(
+        lambda x: x["name"] == title,
+        self.list_spreadsheet_files(title, folder_id),
+    )
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/gspread/utils.py", line 137, in finditem
+    return next(item for item in seq if func(item))
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/sheets_integration.py", line 78, in open_spreadsheet
+    return self.client.open(spreadsheet_name)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/gspread/client.py", line 179, in open
+    raise SpreadsheetNotFound
+gspread.exceptions.SpreadsheetNotFound
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/app.py", line 826, in get_spreadsheet_metadata
+    spreadsheet = sheets_integration.open_spreadsheet(spreadsheet_name=spreadsheet_name)
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/sheets_integration.py", line 82, in open_spreadsheet
+    raise ValueError(f"Error opening spreadsheet: {str(e)}")
+ValueError: Error opening spreadsheet: 
+2025-05-23 18:27:07,474 - werkzeug - INFO - 127.0.0.1 - - [23/May/2025 18:27:07] "[35m[1mGET /spreadsheet-metadata?spreadsheet_name=Ontolo HTTP/1.1[0m" 500 -
+2025-05-23 18:27:16,777 - __main__ - ERROR - Error retrieving spreadsheet metadata: Error opening spreadsheet: 
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/gspread/client.py", line 169, in open
+    properties = finditem(
+        lambda x: x["name"] == title,
+        self.list_spreadsheet_files(title, folder_id),
+    )
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/gspread/utils.py", line 137, in finditem
+    return next(item for item in seq if func(item))
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/sheets_integration.py", line 78, in open_spreadsheet
+    return self.client.open(spreadsheet_name)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/jeremicarose/Downloads/versioningTreekipedia/myenv/lib/python3.13/site-packages/gspread/client.py", line 179, in open
+    raise SpreadsheetNotFound
+gspread.exceptions.SpreadsheetNotFound
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/app.py", line 826, in get_spreadsheet_metadata
+    spreadsheet = sheets_integration.open_spreadsheet(spreadsheet_name=spreadsheet_name)
+  File "/Users/jeremicarose/Downloads/biodiversity-ontology-automation/sheets_integration.py", line 82, in open_spreadsheet
+    raise ValueError(f"Error opening spreadsheet: {str(e)}")
+ValueError: Error opening spreadsheet: 
+2025-05-23 18:27:16,780 - werkzeug - INFO - 127.0.0.1 - - [23/May/2025 18:27:16] "[35m[1mGET /spreadsheet-metadata?spreadsheet_name=Ontology HTTP/1.1[0m" 500 -
+2025-05-23 18:28:10,569 - werkzeug - INFO - 127.0.0.1 - - [23/May/2025 18:28:10] "GET /spreadsheet-metadata?spreadsheet_name=Treekipedia HTTP/1.1" 200 -
+2025-05-23 18:29:05,271 - __main__ - INFO - Found 7 worksheets: biomes, countries, data_properties, ecoregions, object_properties, taxonomic_hierarchy, metadata
+2025-05-23 18:29:05,934 - __main__ - INFO - Imported biomes from Google Sheets with 14 rows
+2025-05-23 18:29:07,648 - __main__ - INFO - Imported countries from Google Sheets with 192 rows
+2025-05-23 18:29:09,307 - __main__ - INFO - Imported data_properties from Google Sheets with 20 rows
+2025-05-23 18:29:11,038 - __main__ - INFO - Imported ecoregions from Google Sheets with 20 rows
+2025-05-23 18:29:12,797 - __main__ - INFO - Imported object_properties from Google Sheets with 20 rows
+2025-05-23 18:29:13,977 - __main__ - INFO - Imported taxonomic_hierarchy from Google Sheets with 285 rows
+2025-05-23 18:29:15,103 - __main__ - INFO - Imported metadata from Google Sheets with 7 rows
+2025-05-23 18:29:15,104 - __main__ - INFO - Generating ontology biodiversity-ontology for session 8f7562b1-b2be-4c12-92bd-f480dd720777 from Google Sheets data
+2025-05-23 18:29:18,513 - __main__ - INFO - Attempting to import ontology to Blazegraph...
+2025-05-23 18:29:19,219 - __main__ - INFO - Cleared existing graph: http://example.org/ontology/Treekipedia/version1.0.1
+2025-05-23 18:29:22,113 - __main__ - INFO - Successfully imported to Blazegraph: http://example.org/ontology/Treekipedia/version1.0.1
+2025-05-23 18:29:27,350 - __main__ - INFO - Updated spreadsheet version from 1.0.1 to 1.0.2
+2025-05-23 18:29:27,352 - __main__ - INFO - Saved metadata for session 8f7562b1-b2be-4c12-92bd-f480dd720777
+2025-05-23 18:29:30,908 - __main__ - INFO - Successfully logged to Google Sheets: 8f7562b1-b2be-4c12-92bd-f480dd720777
+2025-05-23 18:29:30,909 - __main__ - INFO - Ontology generated successfully from Google Sheets: biodiversity-ontology.owl (238779 bytes)
+2025-05-23 18:29:30,918 - werkzeug - INFO - 127.0.0.1 - - [23/May/2025 18:29:30] "POST /import-from-sheets HTTP/1.1" 200 -
+2025-05-23 18:45:42,349 - werkzeug - INFO - 127.0.0.1 - - [23/May/2025 18:45:42] "GET /import-from-sheets HTTP/1.1" 200 -
