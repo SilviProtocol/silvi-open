@@ -1,0 +1,50 @@
+{
+    "service_account_file": "service_account.json",
+
+    "// Spreadsheet Information": "List your spreadsheets by ID or name",
+    "spreadsheet_ids": [],
+    "spreadsheet_names": [
+        "Ontology"
+    ],
+
+    "// Automation Settings": "Control how the automation runs",
+    "check_interval": 3600,
+    "config_check_interval": 86400,
+    "force_intial_run": true,
+
+    "// Ontology Output Settings": "Where to store generated ontologies",
+    "ontology_output_dir": "generated_ontologies",
+    "save_history": true,
+    "history_dir": "ontology_history",
+
+    "// Version Settings": "Control version management",
+    "auto_update_version": true,
+    "version_update_user": "Automation System",
+    "initial_version": "1.0.0",
+
+    "// Blazegraph Integration": "Settings for Blazegraph import",
+    "blazegraph_endpoint": "http://localhost:9999/blazegraph/namespace/biodiversity/sparql",
+    "blazegraph_update_auth": null,
+    "named_graph_prefix": "http://example.org/ontology",
+
+    "// Notification Settings": "Email notification configuration",
+    "notify_email": "",
+    "smtp_server": "smpt.gmail.com",
+    "smpt_port": 587,
+    "smtp_username": "",
+    "smpt_password": "",
+
+    "// Configuration Automation": "Settings for config_automation script",
+    "config_path": "ontology_config.json",
+    "bankup_configs": true,
+    "config_backup_dir": "config_backups",
+    "detect_relationships": true,
+    "detect_new_spreadsheets": true,
+
+    "// Logging Settings": "Control logging behavior",
+    "log_level": "INFO",
+    "log_file": "automation.log",
+    "separate_logs": true,
+    "config_log_file": "config_automation.log",
+    "ontology_log_file": "ontology_automation.log"
+}

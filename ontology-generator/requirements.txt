@@ -1,0 +1,6 @@
+Flask==2.3.3
+Werkzeug==2.3.7
+gunicorn==20.1.0
+owlready2==0.34
+gspread==5.10.0
+google-auth==2.22.0
