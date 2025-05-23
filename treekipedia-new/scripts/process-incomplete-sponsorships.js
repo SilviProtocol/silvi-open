@@ -9,7 +9,7 @@ const { Pool } = require('pg');
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 // Correct way to import the performResearch function
-const researchController = require('./backend/controllers/research')(pool);
+const researchController = require('../backend/controllers/research')(pool);
 const performResearch = researchController.performResearch;
 
 async function processIncompleteSponshorships() {
