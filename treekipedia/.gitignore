@@ -73,4 +73,6 @@ yarn-error.log*
 /.mcp.json
 /FRONTEND_IMPROVEMENTS.md
 /LAUNCH.md
+/PAYMENT.md
+.claude/
 blazegraph/blazegraph.jnl
