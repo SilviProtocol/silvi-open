@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import from Google Sheets - Biodiversity Ontology Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #336699;
+            --primary-dark: #264d73;
+            --accent-color: #66cc99;
+            --light-bg: #f8f9fa;
+            --border-radius: 8px;
+            --box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        .header {
+            padding: 3rem 1rem;
+            margin-bottom: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .header h1 {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .header .lead {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #ced4da;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(51, 102, 153, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .info-card {
+            background-color: rgba(102, 204, 153, 0.1);
+            border: 1px solid rgba(102, 204, 153, 0.2);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card h4 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .info-card i {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .alert {
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-indicator.connected {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .status-indicator.disconnected {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .change-detection-section {
+            background-color: rgba(255, 193, 7, 0.05);
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .change-detection-section h5 {
+            color: #856404;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .custom-checkbox {
+            margin-top: 1rem;
+        }
+
+        .custom-checkbox .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .spreadsheet-info {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #dee2e6;
+            text-align: center;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <h1><i class="fas fa-table"></i> Import from Google Sheets</h1>
+            <p class="lead">Generate ontology directly from your Google Sheets data</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show">
+                        <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'info-circle' }}"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="main-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3><i class="fas fa-cloud-download-alt"></i> Import Spreadsheet Data</h3>
+                <div>
+                    <span class="status-indicator connected me-2">
+                        <i class="fas fa-check-circle me-1"></i> Google Sheets Connected
+                    </span>
+                    {% if blazegraph_status %}
+                    <span class="status-indicator connected">
+                        <i class="fas fa-database me-1"></i> Blazegraph Online
+                    </span>
+                    {% else %}
+                    <span class="status-indicator disconnected">
+                        <i class="fas fa-exclamation-circle me-1"></i> Blazegraph Offline
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h4><i class="fas fa-info-circle"></i> How It Works</h4>
+                <p>This tool will:</p>
+                <ol>
+                    <li>Connect to your Google Sheets spreadsheet</li>
+                    <li>Check for changes since the last generation (if applicable)</li>
+                    <li>Import all worksheets as CSV files</li>
+                    <li>Generate an OWL ontology based on your data</li>
+                    <li>Automatically import the ontology to Blazegraph (if available)</li>
+                    <li>Update the spreadsheet version if changes were detected</li>
+                </ol>
+            </div>
+
+            <form method="POST" action="{{ url_for('import_from_sheets') }}" id="importForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <label for="spreadsheet_id" class="form-label">
+                                <i class="fas fa-key"></i> Spreadsheet ID
+                            </label>
+                            <input type="text" class="form-control" id="spreadsheet_id" name="spreadsheet_id" 
+                                   placeholder="e.g., 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms">
+                            <div class="form-text">
+                                The ID from your Google Sheets URL (after /d/ and before /edit)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <label for="spreadsheet_name" class="form-label">
+                                <i class="fas fa-file-alt"></i> Or Spreadsheet Name
+                            </label>
+                            <input type="text" class="form-control" id="spreadsheet_name" name="spreadsheet_name" 
+                                   placeholder="e.g., Biodiversity Data 2025">
+                            <div class="form-text">
+                                The exact name of your spreadsheet (case-sensitive)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="spreadsheet-info" id="spreadsheetInfo">
+                    <h5><i class="fas fa-file-excel"></i> Spreadsheet Information</h5>
+                    <div id="spreadsheetDetails">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-cogs"></i> Import & Generate Ontology
+                    </button>
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg ms-2">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="footer">
+            <p>Biodiversity Ontology Generator</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-detect spreadsheet information when ID or name is entered
+        let checkTimeout;
+        
+        function checkSpreadsheet() {
+            const spreadsheetId = document.getElementById('spreadsheet_id').value;
+            const spreadsheetName = document.getElementById('spreadsheet_name').value;
+            
+            if (!spreadsheetId && !spreadsheetName) {
+                document.getElementById('spreadsheetInfo').style.display = 'none';
+                return;
+            }
+            
+            // Show loading state
+            document.getElementById('spreadsheetInfo').style.display = 'block';
+            document.getElementById('spreadsheetDetails').innerHTML = '<p class="text-muted"><i class="fas fa-spinner fa-spin"></i> Checking spreadsheet...</p>';
+            
+            // Make API call to get spreadsheet metadata
+            const params = new URLSearchParams();
+            if (spreadsheetId) params.append('spreadsheet_id', spreadsheetId);
+            if (spreadsheetName) params.append('spreadsheet_name', spreadsheetName);
+            
+            fetch('/spreadsheet-metadata?' + params.toString())
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const metadata = data.metadata;
+                        let html = `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Title:</strong> ${metadata.title}</p>
+                                    <p><strong>Worksheets:</strong> ${metadata.worksheets.length}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Current Version:</strong> ${metadata.version_info.version || 'Not set'}</p>
+                                    <p><strong>Last Modified:</strong> ${metadata.version_info.last_modified_by || 'Unknown'}</p>
+                                </div>
+                            </div>
+                        `;
+                        
+                        if (metadata.worksheets.length > 0) {
+                            html += '<p class="mb-2"><strong>Available Worksheets:</strong></p><ul class="small">';
+                            metadata.worksheets.forEach(ws => {
+                                html += `<li>${ws.title} (${ws.row_count} rows × ${ws.col_count} cols)</li>`;
+                            });
+                            html += '</ul>';
+                        }
+                        
+                        document.getElementById('spreadsheetDetails').innerHTML = html;
+                    } else {
+                        document.getElementById('spreadsheetDetails').innerHTML = 
+                            `<p class="text-danger"><i class="fas fa-exclamation-circle"></i> ${data.error}</p>`;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('spreadsheetDetails').innerHTML = 
+                        `<p class="text-danger"><i class="fas fa-exclamation-circle"></i> Error checking spreadsheet</p>`;
+                });
+        }
+        
+        // Add event listeners
+        document.getElementById('spreadsheet_id').addEventListener('input', function() {
+            clearTimeout(checkTimeout);
+            checkTimeout = setTimeout(checkSpreadsheet, 1000);
+        });
+        
+        document.getElementById('spreadsheet_name').addEventListener('input', function() {
+            clearTimeout(checkTimeout);
+            checkTimeout = setTimeout(checkSpreadsheet, 1000);
+        });
+        
+        // Form validation
+        document.getElementById('importForm').addEventListener('submit', function(e) {
+            const spreadsheetId = document.getElementById('spreadsheet_id').value;
+            const spreadsheetName = document.getElementById('spreadsheet_name').value;
+            
+            if (!spreadsheetId && !spreadsheetName) {
+                e.preventDefault();
+                alert('Please provide either a Spreadsheet ID or Spreadsheet Name');
+            }
+        });
+    </script>
+</body>
+</html><div class="mb-4">
+                    <label for="ontology_name" class="form-label">
+                        <i class="fas fa-tag"></i> Ontology Name
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                        <input type="text" class="form-control" id="ontology_name" name="ontology_name" 
+                               value="biodiversity-ontology" placeholder="Enter ontology name">
+                    </div>
+                    <div class="form-text">
+                        The name of your ontology file (without .owl extension)
+                    </div>
+                </div>
+
+                <div class="change-detection-section">
+                    <h5><i class="fas fa-sync-alt"></i> Change Detection & Versioning</h5>
+                    <p>The system will automatically check if there have been changes to your spreadsheet since the last ontology generation.</p>
+                    <div class="form-check custom-checkbox">
+                        <input class="form-check-input" type="checkbox" value="1" id="force_generation" name="force_generation">
+                        <label class="form-check-label" for="force_generation">
+                            <strong>Force Generation</strong> - Generate ontology even if no changes are detected
+                        </label>
+                    </div>
+                    <p class="mt-3 mb-0 text-muted">
+                        <small>
+                            <i class="fas fa-info-circle"></i> 
+                            If changes are detected and the ontology is successfully imported to Blazegraph, 
+                            the spreadsheet version will be automatically incremented.
+                        </small>
+                    </p>
+                </div>
