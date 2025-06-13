@@ -1,0 +1,11 @@
+{
+  "name": "treekipedia-blazegraph",
+  "version": "1.0.0",
+  "description": "Blazegraph RDF database for Treekipedia",
+  "scripts": {
+    "start": "./start-blazegraph.sh",
+    "start:port": "./start-blazegraph.sh 9999"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

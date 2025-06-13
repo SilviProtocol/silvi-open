@@ -1,0 +1,1 @@
+/root/silvi-open/treekipedia-new/database/current-schema.sql

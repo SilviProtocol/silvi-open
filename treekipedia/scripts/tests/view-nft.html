@@ -1,0 +1,104 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View NFT Metadata</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .nft-container { margin-bottom: 30px; border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
+        .error { color: red; }
+        .success { color: green; }
+        button { padding: 8px 16px; margin-right: 10px; }
+        input { padding: 8px; width: 50px; }
+    </style>
+</head>
+<body>
+    <h1>View NFT Metadata</h1>
+    <div>
+        <label for="tokenId">Token ID:</label>
+        <input type="number" id="tokenId" value="2" min="1">
+        <button onclick="fetchMetadata()">Fetch Metadata</button>
+    </div>
+    
+    <div id="result" class="nft-container"></div>
+    
+    <script>
+        const CONTRACT_ADDRESS = '0x3F451910B4Be90696f3622e7BF4fb2729Bd67aF3';
+        const PROVIDER_URL = 'https://base-sepolia.infura.io/v3/03ccdfb9f1b1421b803e7c9e0fbee198';
+        
+        // Basic ERC721 ABI for tokenURI function
+        const NFT_ABI = [
+            {
+                "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+                "name": "tokenURI",
+                "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+        
+        async function fetchMetadata() {
+            const tokenId = document.getElementById('tokenId').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Loading...</p>';
+            
+            try {
+                // Initialize Web3 and contract
+                const provider = new ethers.providers.JsonRpcProvider(PROVIDER_URL);
+                const nftContract = new ethers.Contract(CONTRACT_ADDRESS, NFT_ABI, provider);
+                
+                // Get token URI
+                const tokenURI = await nftContract.tokenURI(tokenId);
+                console.log('Token URI:', tokenURI);
+                
+                // Format output
+                let html = `<h2>NFT #${tokenId}</h2>`;
+                html += `<p><strong>Token URI:</strong> ${tokenURI}</p>`;
+                
+                // If it's an IPFS URI, try to retrieve the metadata
+                if (tokenURI.startsWith('ipfs://')) {
+                    const ipfsCid = tokenURI.replace('ipfs://', '');
+                    const gatewayUrl = `https://gateway.lighthouse.storage/ipfs/${ipfsCid}`;
+                    html += `<p><strong>Gateway URL:</strong> <a href="${gatewayUrl}" target="_blank">${gatewayUrl}</a></p>`;
+                    
+                    try {
+                        const response = await fetch(gatewayUrl);
+                        if (\!response.ok) throw new Error(`HTTP error\! Status: ${response.status}`);
+                        const metadata = await response.json();
+                        
+                        html += `<p class="success">✅ Metadata successfully retrieved\!</p>`;
+                        html += `<h3>Metadata:</h3>`;
+                        html += `<pre>${JSON.stringify(metadata, null, 2)}</pre>`;
+                        
+                        // If there's an image, try to display it
+                        if (metadata.image) {
+                            let imageUrl = metadata.image;
+                            if (imageUrl.startsWith('ipfs://')) {
+                                imageUrl = `https://gateway.lighthouse.storage/ipfs/${imageUrl.replace('ipfs://', '')}`;
+                            }
+                            html += `<h3>NFT Image:</h3>`;
+                            html += `<img src="${imageUrl}" style="max-width: 300px;" />`;
+                        }
+                    } catch (error) {
+                        html += `<p class="error">❌ Error fetching metadata: ${error.message}</p>`;
+                    }
+                }
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Automatically fetch token #2 on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load ethers.js from CDN
+            const script = document.createElement('script');
+            script.src = 'https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js';
+            script.onload = fetchMetadata;
+            document.head.appendChild(script);
+        });
+    </script>
+</body>
+</html>

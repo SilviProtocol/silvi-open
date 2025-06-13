@@ -1,0 +1,78 @@
+# Dependencies
+**/node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Environment variables
+**/.env
+**/.env.*
+!**/.env.example
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Build/output directories
+**/dist
+**/build
+**/.next
+**/out
+**/.vercel
+
+# TypeScript cache
+**/*.tsbuildinfo
+
+# Coverage directory used by testing tools
+**/coverage
+**/coverage.json
+
+# Logs
+**/logs
+**/*.log
+
+# Database files
+**/*.sqlite
+**/*.db
+
+# Package locks (optional, can be commented out if you want to track these)
+# **/package-lock.json
+# **/yarn.lock
+
+# Project specific (can be expanded as needed)
+**/temp
+**/tmp
+
+# Specific markdown files to ignore
+/CLAUDE.md
+/COMPARE_FRONTEND.md
+/DEPLOYMENT_SUMMARY.md
+/ERROR.md
+/FRONTEND.md
+/FRONTEND_PLAN.md
+/LIGHTPAPER.md
+/RESEARCH.md
+/RESPONSE.md
+/SPEC_SHEET.md
+/TREEPAGE.md
+/API_COMPARE.md
+/CONTEXT.md
+/.mcp.json
+/FRONTEND_IMPROVEMENTS.md
+/LAUNCH.md
+/PAYMENT.md
+.claude/
+blazegraph/blazegraph.jnl
