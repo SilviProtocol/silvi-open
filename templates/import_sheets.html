@@ -3,175 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Import from Google Sheets - Biodiversity Ontology Generator</title>
+    <title>Import from Google Sheets - Treekipedia GraphFlow</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/treekipedia-unified.css">
     <style>
-        :root {
-            --primary-color: #336699;
-            --primary-dark: #264d73;
-            --accent-color: #66cc99;
-            --light-bg: #f8f9fa;
-            --border-radius: 8px;
-            --box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            padding-top: 2rem;
-            padding-bottom: 4rem;
-            background-color: var(--light-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-        }
-
-        .header {
-            padding: 3rem 1rem;
-            margin-bottom: 2.5rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-        }
-
-        .header h1 {
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-        }
-
-        .header .lead {
-            font-size: 1.25rem;
-            opacity: 0.9;
-        }
-
-        .main-content {
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .form-label {
-            font-weight: 500;
-            color: #333;
-        }
-
-        .form-control {
-            padding: 0.75rem;
-            border-radius: var(--border-radius);
-            border: 1px solid #ced4da;
-            transition: all 0.3s;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(51, 102, 153, 0.25);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            border-radius: var(--border-radius);
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover, .btn-primary:focus {
-            background-color: var(--primary-dark);
-            border-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        }
-
-        .info-card {
-            background-color: rgba(102, 204, 153, 0.1);
-            border: 1px solid rgba(102, 204, 153, 0.2);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .info-card h4 {
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .info-card i {
-            margin-right: 0.5rem;
-            color: var(--accent-color);
-        }
-
-        .alert {
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-        }
-
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .status-indicator.connected {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-
-        .status-indicator.disconnected {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
-        .change-detection-section {
-            background-color: rgba(255, 193, 7, 0.05);
-            border: 1px solid rgba(255, 193, 7, 0.2);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .change-detection-section h5 {
-            color: #856404;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .custom-checkbox {
-            margin-top: 1rem;
-        }
-
-        .custom-checkbox .form-check-input:checked {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .spreadsheet-info {
-            background-color: #f8f9fa;
+        .preview-card {
+            background: white;
             border-radius: var(--border-radius);
             padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             margin-top: 1rem;
-            display: none;
         }
-
-        .footer {
-            margin-top: 3rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #dee2e6;
-            text-align: center;
-            color: #6c757d;
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .smart-features {
+            background: rgba(33, 150, 243, 0.05);
+            border: 1px solid rgba(33, 150, 243, 0.1);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        
+        .smart-features h6 {
+            color: #1976d2;
+            font-weight: 600;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header text-center">
+        <div class="header">
             <h1><i class="fas fa-table"></i> Import from Google Sheets</h1>
-            <p class="lead">Generate ontology directly from your Google Sheets data</p>
+            <p class="lead">Generate smart ontology directly from your Google Sheets data</p>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -193,6 +72,11 @@
                     <span class="status-indicator connected me-2">
                         <i class="fas fa-check-circle me-1"></i> Google Sheets Connected
                     </span>
+                    {% if has_dynamic_ontology %}
+                    <span class="status-indicator connected me-2">
+                        <i class="fas fa-magic me-1"></i> Smart Ontology Ready
+                    </span>
+                    {% endif %}
                     {% if blazegraph_status %}
                     <span class="status-indicator connected">
                         <i class="fas fa-database me-1"></i> Blazegraph Online
@@ -212,13 +96,13 @@
                     <li>Connect to your Google Sheets spreadsheet</li>
                     <li>Check for changes since the last generation (if applicable)</li>
                     <li>Import all worksheets as CSV files</li>
-                    <li>Generate an OWL ontology based on your data</li>
+                    <li>Analyze your data structure and generate a smart ontology</li>
                     <li>Automatically import the ontology to Blazegraph (if available)</li>
                     <li>Update the spreadsheet version if changes were detected</li>
                 </ol>
             </div>
 
-            <form method="POST" action="{{ url_for('import_from_sheets') }}" id="importForm">
+            <form method="POST" action="{{ url_for('main.import_from_sheets') }}" id="importForm">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-4">
@@ -246,18 +130,92 @@
                     </div>
                 </div>
 
-                <div class="spreadsheet-info" id="spreadsheetInfo">
+                <div class="mb-4">
+                    <label for="ontology_name" class="form-label">
+                        <i class="fas fa-tag"></i> Ontology Name
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                        <input type="text" class="form-control" id="ontology_name" name="ontology_name" 
+                               value="biodiversity-ontology" placeholder="Enter ontology name">
+                    </div>
+                    <div class="form-text">
+                        The name of your ontology file (without .owl extension)
+                    </div>
+                </div>
+
+                <!-- Smart Features Section -->
+                {% if has_dynamic_ontology %}
+                <div class="smart-features">
+                    <h6><i class="fas fa-sparkles text-primary me-2"></i>Smart Ontology Features:</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Automatic field type detection</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Smart biological categorization</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Relationship inference</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Constraint generation</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Quality assessment</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Adaptive to changes</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="previewBtn">
+                        <i class="fas fa-eye me-1"></i>Preview Smart Ontology
+                    </button>
+                </div>
+                
+                <!-- Hidden input to always use dynamic ontology -->
+                <input type="hidden" name="use_dynamic_ontology" value="true">
+                {% endif %}
+
+                <!-- Spreadsheet Information Section -->
+                <div class="spreadsheet-info" id="spreadsheetInfo" style="display: none;">
                     <h5><i class="fas fa-file-excel"></i> Spreadsheet Information</h5>
                     <div id="spreadsheetDetails">
                         <!-- Will be populated by JavaScript -->
                     </div>
                 </div>
 
+                <!-- Preview Section -->
+                {% if has_dynamic_ontology %}
+                <div class="preview-section" id="previewSection" style="display: none;">
+                    <h5><i class="fas fa-eye text-primary"></i> Smart Ontology Preview</h5>
+                    <div class="preview-card" id="previewContent">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Change Detection Section -->
+                <div class="change-detection-section">
+                    <h5><i class="fas fa-sync-alt"></i> Change Detection & Versioning</h5>
+                    <p>The system will automatically check for changes since the last ontology generation.</p>
+                    <div class="form-check custom-checkbox">
+                        <input class="form-check-input" type="checkbox" value="1" id="force_generation" name="force_generation">
+                        <label class="form-check-label" for="force_generation">
+                            <strong>Force Generation</strong> - Generate ontology even if no changes are detected
+                        </label>
+                    </div>
+                    <p class="mt-3 mb-0 text-muted">
+                        <small>
+                            <i class="fas fa-info-circle"></i> 
+                            If changes are detected and the ontology is successfully imported to Blazegraph, 
+                            the spreadsheet version will be automatically incremented.
+                        </small>
+                    </p>
+                </div>
+
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-cogs"></i> Import & Generate Ontology
+                        <i class="fas fa-cogs"></i> Import & Generate Smart Ontology
                     </button>
-                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg ms-2">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary btn-lg ms-2">
                         <i class="fas fa-arrow-left"></i> Back
                     </a>
                 </div>
@@ -265,7 +223,7 @@
         </div>
 
         <div class="footer">
-            <p>Biodiversity Ontology Generator</p>
+            <p>Treekipedia GraphFlow - Smart Ontology Generation</p>
         </div>
     </div>
 
@@ -285,7 +243,7 @@
             
             // Show loading state
             document.getElementById('spreadsheetInfo').style.display = 'block';
-            document.getElementById('spreadsheetDetails').innerHTML = '<p class="text-muted"><i class="fas fa-spinner fa-spin"></i> Checking spreadsheet...</p>';
+            document.getElementById('spreadsheetDetails').innerHTML = '<p class="text-muted"><span class="loading-spinner me-2"></span>Checking spreadsheet...</p>';
             
             // Make API call to get spreadsheet metadata
             const params = new URLSearchParams();
@@ -330,7 +288,145 @@
                 });
         }
         
-        // Add event listeners
+        {% if has_dynamic_ontology %}
+        // Preview smart ontology
+        document.getElementById('previewBtn')?.addEventListener('click', function() {
+            const spreadsheetId = document.getElementById('spreadsheet_id').value;
+            const spreadsheetName = document.getElementById('spreadsheet_name').value;
+            
+            if (!spreadsheetId && !spreadsheetName) {
+                alert('Please enter a spreadsheet ID or name first');
+                return;
+            }
+            
+            const previewSection = document.getElementById('previewSection');
+            const previewContent = document.getElementById('previewContent');
+            
+            previewSection.style.display = 'block';
+            previewContent.innerHTML = '<p class="text-muted"><span class="loading-spinner me-2"></span>Generating smart ontology preview...</p>';
+            
+            const formData = new FormData();
+            if (spreadsheetId) formData.append('spreadsheet_id', spreadsheetId);
+            if (spreadsheetName) formData.append('spreadsheet_name', spreadsheetName);
+            
+            fetch('/preview-dynamic-ontology', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const preview = data.preview;
+                    let html = `
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-chart-bar text-primary me-2"></i>Smart Analysis Summary</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="text-center p-2 bg-light rounded">
+                                            <div class="h4 text-primary mb-0">${preview.ontology_summary.total_properties}</div>
+                                            <small class="text-muted">Properties</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center p-2 bg-light rounded">
+                                            <div class="h4 text-success mb-0">${preview.ontology_summary.total_classes}</div>
+                                            <small class="text-muted">Categories</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <div class="text-center p-2 bg-light rounded">
+                                            <div class="h4 text-info mb-0">${preview.ontology_summary.total_relationships}</div>
+                                            <small class="text-muted">Relationships</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center p-2 bg-light rounded">
+                                            <div class="h4 text-warning mb-0">${Math.round(preview.data_quality.completeness_score * 100)}%</div>
+                                            <small class="text-muted">Quality</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-tags text-success me-2"></i>Auto-Detected Categories</h6>
+                                <div class="d-flex flex-wrap">
+                    `;
+                    
+                    Object.keys(preview.field_categories).forEach(category => {
+                        const count = preview.field_categories[category].length;
+                        html += `<span class="badge bg-primary me-1 mb-1">${category.replace(/_/g, ' ')} (${count})</span>`;
+                    });
+                    
+                    html += `
+                                </div>
+                                <small class="text-muted mt-2 d-block">
+                                    <i class="fas fa-lightbulb me-1"></i>
+                                    Categories automatically detected from your field patterns.
+                                </small>
+                            </div>
+                        </div>
+                    `;
+                    
+                    if (preview.relationships && preview.relationships.length > 0) {
+                        html += `
+                            <hr>
+                            <h6><i class="fas fa-link text-info me-2"></i>Discovered Relationships</h6>
+                            <ul class="small">
+                        `;
+                        
+                        preview.relationships.slice(0, 3).forEach(rel => {
+                            html += `<li><strong>${rel.type.replace(/_/g, ' ')}:</strong> ${rel.description}</li>`;
+                        });
+                        
+                        html += '</ul>';
+                        
+                        if (preview.relationships.length > 3) {
+                            html += `<small class="text-muted">... and ${preview.relationships.length - 3} more relationships</small>`;
+                        }
+                    }
+                    
+                    // Sample field analysis
+                    if (preview.sample_properties) {
+                        html += `
+                            <hr>
+                            <h6><i class="fas fa-microscope text-secondary me-2"></i>Sample Field Analysis</h6>
+                            <div class="row">
+                        `;
+                        
+                        Object.entries(preview.sample_properties).slice(0, 3).forEach(([category, sample]) => {
+                            html += `
+                                <div class="col-md-4 mb-2">
+                                    <div class="card border-light">
+                                        <div class="card-body p-2">
+                                            <h6 class="card-title small mb-1">${category.replace(/_/g, ' ')}</h6>
+                                            <p class="card-text small text-muted mb-1">
+                                                <strong>${sample.field}:</strong> ${sample.details.data_type}
+                                            </p>
+                                            <span class="badge bg-light text-dark">${sample.details.source_type}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        html += '</div>';
+                    }
+                    
+                    previewContent.innerHTML = html;
+                } else {
+                    previewContent.innerHTML = `<p class="text-danger"><i class="fas fa-exclamation-circle"></i> ${data.error}</p>`;
+                }
+            })
+            .catch(error => {
+                previewContent.innerHTML = `<p class="text-danger"><i class="fas fa-exclamation-circle"></i> Error generating preview</p>`;
+            });
+        });
+        {% endif %}
+        
+        // Add event listeners for spreadsheet checking
         document.getElementById('spreadsheet_id').addEventListener('input', function() {
             clearTimeout(checkTimeout);
             checkTimeout = setTimeout(checkSpreadsheet, 1000);
@@ -353,34 +449,4 @@
         });
     </script>
 </body>
-</html><div class="mb-4">
-                    <label for="ontology_name" class="form-label">
-                        <i class="fas fa-tag"></i> Ontology Name
-                    </label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-tag"></i></span>
-                        <input type="text" class="form-control" id="ontology_name" name="ontology_name" 
-                               value="biodiversity-ontology" placeholder="Enter ontology name">
-                    </div>
-                    <div class="form-text">
-                        The name of your ontology file (without .owl extension)
-                    </div>
-                </div>
-
-                <div class="change-detection-section">
-                    <h5><i class="fas fa-sync-alt"></i> Change Detection & Versioning</h5>
-                    <p>The system will automatically check if there have been changes to your spreadsheet since the last ontology generation.</p>
-                    <div class="form-check custom-checkbox">
-                        <input class="form-check-input" type="checkbox" value="1" id="force_generation" name="force_generation">
-                        <label class="form-check-label" for="force_generation">
-                            <strong>Force Generation</strong> - Generate ontology even if no changes are detected
-                        </label>
-                    </div>
-                    <p class="mt-3 mb-0 text-muted">
-                        <small>
-                            <i class="fas fa-info-circle"></i> 
-                            If changes are detected and the ontology is successfully imported to Blazegraph, 
-                            the spreadsheet version will be automatically incremented.
-                        </small>
-                    </p>
-                </div>
+</html>

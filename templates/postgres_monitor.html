@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostgreSQL Monitor - Treekipedia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/treekipedia-unified.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header compact">
+            <h1><i class="fas fa-database"></i> Treekipedia PostgreSQL Monitor</h1>
+            <p class="lead">Monitor PostgreSQL integration and RDF generation</p>
+            <span class="treekipedia-highlight"><i class="fas fa-tree"></i> 50,000+ Tree Species</span>
+        </div>
+
+        <!-- Connection Status Alert -->
+        <div id="connection-alert" class="alert alert-warning d-none" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> <span id="connection-message">Checking connections...</span>
+        </div>
+
+        <!-- Status Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="info-card text-center">
+                    <h5><span id="postgres-status-indicator" class="status-indicator loading"></span>PostgreSQL</h5>
+                    <p id="postgres-status-text">Checking...</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="info-card text-center">
+                    <h5><span id="blazegraph-status-indicator" class="status-indicator loading"></span>Blazegraph</h5>
+                    <p id="blazegraph-status-text">Checking...</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="info-card text-center">
+                    <h5><i class="fas fa-table"></i> Tables</h5>
+                    <div id="table-count" class="h4 text-primary-custom">-</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="info-card text-center">
+                    <h5><i class="fas fa-project-diagram"></i> RDF Triples</h5>
+                    <div id="triple-count" class="h4 text-success">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Tables -->
+                <div class="info-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4><i class="fas fa-table"></i> Database Tables</h4>
+                        <button class="btn btn-primary btn-sm" onclick="loadTables()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr><th>Table</th><th>Rows</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="tables-list">
+                                <tr><td colspan="3" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Changes -->
+                <div class="info-card">
+                    <h4><i class="fas fa-history"></i> Recent Changes (24h)</h4>
+                    <div id="changes-content"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <!-- Automation Control -->
+                <div class="info-card">
+                    <h4><i class="fas fa-robot"></i> Automation</h4>
+                    <div id="automation-status" class="alert alert-info mb-3">
+                        <i class="fas fa-spinner fa-spin"></i> Checking...
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" onclick="runAutomation()" id="run-automation-btn">
+                            <i class="fas fa-play"></i> Run Automation
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="generateRDFModal()">
+                            <i class="fas fa-project-diagram"></i> Generate RDF
+                        </button>
+                        <a href="/" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="info-card">
+                    <h4><i class="fas fa-chart-bar"></i> Statistics</h4>
+                    <div class="row text-center">
+                        <div class="col-6 border-end">
+                            <h6>Species</h6>
+                            <span id="species-count" class="h5 text-primary-custom">-</span>
+                        </div>
+                        <div class="col-6">
+                            <h6>Est. Triples</h6>
+                            <span id="generated-triples" class="h5 text-success">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RDF Generation Modal -->
+    <div class="modal fade" id="rdfModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Generate RDF</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Table</label>
+                        <select id="rdf-table-select" class="form-select">
+                            <option value="">Select table...</option>
+                        </select>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="push-to-blazegraph" checked>
+                        <label class="form-check-label" for="push-to-blazegraph">Push to Blazegraph</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="startRDFGeneration()" id="generate-rdf-btn">Generate</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allTables = [];
+        let systemOnline = false;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 PostgreSQL Monitor starting...');
+            initializeMonitor();
+        });
+
+        async function initializeMonitor() {
+            try {
+                await checkSystemStatus();
+                await loadTables();
+                await loadChanges();
+                await checkAutomationStatus();
+                
+                // Auto-refresh every 30 seconds
+                setInterval(checkSystemStatus, 30000);
+                
+                hideConnectionAlert();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showConnectionAlert('Failed to initialize monitor', 'danger');
+            }
+        }
+
+        function showConnectionAlert(message, type = 'warning') {
+            const alert = document.getElementById('connection-alert');
+            const messageSpan = document.getElementById('connection-message');
+            
+            alert.className = `alert alert-${type}`;
+            alert.classList.remove('d-none');
+            messageSpan.textContent = message;
+        }
+
+        function hideConnectionAlert() {
+            document.getElementById('connection-alert').classList.add('d-none');
+        }
+
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch('/api/system-status');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const status = await response.json();
+                console.log('System status:', status);
+                
+                // Update PostgreSQL status
+                updateStatusIndicator('postgres', status.postgresql?.status || 'error');
+                document.getElementById('postgres-status-text').textContent = 
+                    status.postgresql?.message || 'Connection failed';
+                
+                // Update Blazegraph status
+                updateStatusIndicator('blazegraph', status.blazegraph?.status || 'error');
+                document.getElementById('blazegraph-status-text').textContent = 
+                    status.blazegraph?.message || 'Connection failed';
+                
+                systemOnline = status.postgresql?.status === 'connected';
+                
+                if (!systemOnline) {
+                    showConnectionAlert('PostgreSQL connection failed. Check database credentials.', 'danger');
+                    disableButtons();
+                } else {
+                    hideConnectionAlert();
+                    enableButtons();
+                }
+                
+            } catch (error) {
+                console.error('Status check error:', error);
+                updateStatusIndicator('postgres', 'error');
+                updateStatusIndicator('blazegraph', 'error');
+                document.getElementById('postgres-status-text').textContent = 'Check failed';
+                document.getElementById('blazegraph-status-text').textContent = 'Check failed';
+                showConnectionAlert(`System check failed: ${error.message}`, 'danger');
+                disableButtons();
+            }
+        }
+
+        function updateStatusIndicator(system, status) {
+            const indicator = document.getElementById(`${system}-status-indicator`);
+            indicator.className = 'status-indicator';
+            
+            switch (status) {
+                case 'connected':
+                case 'online':
+                    indicator.classList.add('online');
+                    break;
+                case 'error':
+                case 'offline':
+                    indicator.classList.add('offline');
+                    break;
+                default:
+                    indicator.classList.add('loading');
+            }
+        }
+
+        function enableButtons() {
+            document.getElementById('run-automation-btn').disabled = false;
+            document.getElementById('generate-rdf-btn').disabled = false;
+        }
+
+        function disableButtons() {
+            document.getElementById('run-automation-btn').disabled = true;
+            document.getElementById('generate-rdf-btn').disabled = true;
+        }
+
+        async function loadTables() {
+            try {
+                document.getElementById('tables-list').innerHTML = 
+                    '<tr><td colspan="3" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading tables...</td></tr>';
+                
+                const response = await fetch('/api/postgres-tables');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Tables data:', data);
+                
+                if (data.success && data.tables) {
+                    allTables = data.tables;
+                    document.getElementById('table-count').textContent = data.total_tables || 0;
+                    
+                    let totalRows = 0;
+                    let speciesCount = 0;
+                    
+                    const tbody = document.getElementById('tables-list');
+                    tbody.innerHTML = data.tables.map(table => {
+                        totalRows += table.total_rows || 0;
+                        if (table.name === 'species') {
+                            speciesCount = table.total_rows || 0;
+                        }
+                        
+                        return `
+                        <tr class="table-row-clickable">
+                            <td>
+                                <strong>${table.name}</strong>
+                                ${table.name === 'species' ? '<span class="treekipedia-highlight ms-2"><i class="fas fa-tree"></i></span>' : ''}
+                            </td>
+                            <td>${(table.total_rows || 0).toLocaleString()}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" onclick="generateRDF('${table.name}')" 
+                                        ${!systemOnline ? 'disabled' : ''}>
+                                    <i class="fas fa-project-diagram"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                    }).join('');
+
+                    // Update statistics
+                    document.getElementById('species-count').textContent = speciesCount.toLocaleString();
+                    document.getElementById('generated-triples').textContent = (totalRows * 20).toLocaleString();
+
+                    // Update table select dropdown
+                    const select = document.getElementById('rdf-table-select');
+                    select.innerHTML = '<option value="">Select table...</option>' + 
+                        data.tables.map(table => `<option value="${table.name}">${table.name} (${(table.total_rows || 0).toLocaleString()} rows)</option>`).join('');
+                } else {
+                    throw new Error(data.error || 'Invalid response format');
+                }
+            } catch (error) {
+                console.error('Load tables error:', error);
+                document.getElementById('tables-list').innerHTML = 
+                    `<tr><td colspan="3" class="text-center error-message">
+                        <i class="fas fa-exclamation-triangle"></i> Error loading tables: ${error.message}
+                    </td></tr>`;
+                document.getElementById('table-count').textContent = '?';
+            }
+        }
+
+        async function loadChanges() {
+            try {
+                document.getElementById('changes-content').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading changes...';
+                
+                const response = await fetch('/postgres-changes?hours=24');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Changes data:', data);
+                
+                if (data.success && data.changes) {
+                    const content = document.getElementById('changes-content');
+                    const changes = Object.entries(data.changes);
+                    
+                    if (changes.length === 0) {
+                        content.innerHTML = '<p class="text-muted"><i class="fas fa-info-circle"></i> No tables monitored</p>';
+                        return;
+                    }
+                    
+                    const totalChanges = changes.reduce((sum, [table, info]) => sum + (info.change_count || 0), 0);
+                    
+                    if (totalChanges === 0) {
+                        content.innerHTML = '<p class="text-muted"><i class="fas fa-check-circle"></i> No changes detected in last 24 hours</p>';
+                    } else {
+                        content.innerHTML = changes.map(([table, info]) => {
+                            let alertClass = 'alert-info';
+                            let icon = 'fas fa-info-circle';
+                            let message = '';
+                            
+                            if (info.error) {
+                                alertClass = 'alert-warning';
+                                icon = 'fas fa-exclamation-triangle';
+                                message = `Error: ${info.error}`;
+                            } else if (info.change_count > 0) {
+                                alertClass = 'alert-success';
+                                icon = 'fas fa-arrow-up';
+                                message = `${info.change_count} changes`;
+                            } else if (info.note) {
+                                alertClass = 'alert-secondary';
+                                icon = 'fas fa-database';
+                                message = info.note;
+                            } else {
+                                message = 'No changes';
+                            }
+                            
+                            return `<div class="alert ${alertClass} py-2 mb-2">
+                                <i class="${icon}"></i> <strong>${table}:</strong> ${message}
+                            </div>`;
+                        }).join('');
+                    }
+                } else {
+                    throw new Error(data.error || 'Invalid response format');
+                }
+            } catch (error) {
+                console.error('Load changes error:', error);
+                document.getElementById('changes-content').innerHTML = 
+                    `<p class="error-message"><i class="fas fa-exclamation-triangle"></i> Error loading changes: ${error.message}</p>`;
+            }
+        }
+
+        async function checkAutomationStatus() {
+            try {
+                const response = await fetch('/postgres-automation-status');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Automation status:', data);
+                
+                const statusDiv = document.getElementById('automation-status');
+                
+                if (data.running) {
+                    statusDiv.innerHTML = '<i class="fas fa-play-circle text-success"></i> Running';
+                    statusDiv.className = 'alert alert-success mb-3';
+                } else {
+                    statusDiv.innerHTML = `<i class="fas fa-pause-circle text-info"></i> Ready (Last: ${data.last_run})`;
+                    statusDiv.className = 'alert alert-info mb-3';
+                }
+            } catch (error) {
+                console.error('Automation status error:', error);
+                const statusDiv = document.getElementById('automation-status');
+                statusDiv.innerHTML = '<i class="fas fa-exclamation-circle text-warning"></i> Status unknown';
+                statusDiv.className = 'alert alert-warning mb-3';
+            }
+        }
+
+        async function runAutomation() {
+            if (!systemOnline) {
+                alert('Cannot run automation: PostgreSQL connection failed');
+                return;
+            }
+            
+            if (!confirm('Run PostgreSQL automation for Treekipedia database?\n\nThis will check for changes and generate RDF data.')) {
+                return;
+            }
+            
+            const button = document.getElementById('run-automation-btn');
+            const originalText = button.innerHTML;
+            
+            try {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running...';
+                
+                const response = await fetch('/run-postgres-automation', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Automation result:', result);
+                
+                if (result.success) {
+                    alert('✅ Automation completed successfully!');
+                    // Refresh data
+                    await loadTables();
+                    await loadChanges();
+                    await checkAutomationStatus();
+                } else {
+                    alert(`❌ Automation failed: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Automation error:', error);
+                alert(`❌ Error running automation: ${error.message}`);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        }
+
+        function generateRDF(tableName) {
+            if (!systemOnline) {
+                alert('Cannot generate RDF: PostgreSQL connection failed');
+                return;
+            }
+            
+            document.getElementById('rdf-table-select').value = tableName;
+            generateRDFModal();
+        }
+
+        function generateRDFModal() {
+            if (!systemOnline) {
+                alert('Cannot generate RDF: PostgreSQL connection failed');
+                return;
+            }
+            
+            new bootstrap.Modal(document.getElementById('rdfModal')).show();
+        }
+
+        async function startRDFGeneration() {
+            const tableName = document.getElementById('rdf-table-select').value;
+            const pushToBlazegraph = document.getElementById('push-to-blazegraph').checked;
+            
+            if (!tableName) {
+                alert('Please select a table');
+                return;
+            }
+
+            const button = document.getElementById('generate-rdf-btn');
+            const originalText = button.innerHTML;
+            
+            try {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                
+                const formData = new FormData();
+                formData.append('table_name', tableName);
+                formData.append('push_to_blazegraph', pushToBlazegraph);
+                
+                const response = await fetch('/postgres-generate-rdf', { 
+                    method: 'POST', 
+                    body: formData 
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('RDF generation result:', result);
+                
+                if (result.success) {
+                    const message = `✅ Success!\n\nTable: ${result.table_name}\nRecords: ${result.records_processed.toLocaleString()}\nRDF Triples: ${result.rdf_triples.toLocaleString()}\n\nBlazegraph: ${result.blazegraph.message}`;
+                    alert(message);
+                    
+                    document.getElementById('generated-triples').textContent = result.rdf_triples.toLocaleString();
+                    bootstrap.Modal.getInstance(document.getElementById('rdfModal')).hide();
+                } else {
+                    alert(`❌ Failed: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('RDF generation error:', error);
+                alert(`❌ Error: ${error.message}`);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        }
+    </script>
+</body>
+</html>

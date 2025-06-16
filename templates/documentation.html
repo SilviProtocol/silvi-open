@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Treekipedia GraphFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/treekipedia-unified.css">
+    <style>
+        .doc-nav {
+            position: sticky;
+            top: 2rem;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+        .doc-section {
+            scroll-margin-top: 2rem;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .doc-nav .nav-link {
+            color: #6c757d;
+            padding: 0.25rem 1rem;
+            border-radius: 0;
+            border-left: 3px solid transparent;
+        }
+        .doc-nav .nav-link:hover,
+        .doc-nav .nav-link.active {
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            background-color: rgba(51, 102, 153, 0.1);
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            margin-right: 0.75rem;
+        }
+        .feature-highlight {
+            background: linear-gradient(45deg, rgba(51, 102, 153, 0.1), rgba(102, 204, 153, 0.1));
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+        .warning-box {
+            background: linear-gradient(45deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+            border-left: 4px solid var(--warning-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+        .api-endpoint {
+            background-color: #e7f5ff;
+            border: 1px solid #b3d9ff;
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+            font-family: monospace;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: inline-block;
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Navigation Sidebar -->
+            <div class="col-lg-3">
+                <div class="doc-nav">
+                    <div class="header compact mb-4">
+                        <h4><i class="fas fa-book"></i> Documentation</h4>
+                        <p class="small mb-0">Complete guide to Treekipedia GraphFlow</p>
+                    </div>
+                    
+                    <nav class="nav nav-pills flex-column">
+                        <a class="nav-link active" href="#overview">
+                            <i class="fas fa-home me-2"></i>Overview
+                        </a>
+                        <a class="nav-link" href="#getting-started">
+                            <i class="fas fa-play me-2"></i>Getting Started
+                        </a>
+                        <a class="nav-link" href="#data-sources">
+                            <i class="fas fa-database me-2"></i>Data Sources
+                        </a>
+                        <a class="nav-link" href="#csv-upload">
+                            <i class="fas fa-file-csv me-2"></i>CSV Upload
+                        </a>
+                        <a class="nav-link" href="#google-sheets">
+                            <i class="fas fa-table me-2"></i>Google Sheets
+                        </a>
+                        <a class="nav-link" href="#postgresql">
+                            <i class="fas fa-database me-2"></i>PostgreSQL
+                        </a>
+                        <a class="nav-link" href="#version-management">
+                            <i class="fas fa-code-branch me-2"></i>Version Management
+                        </a>
+                        <a class="nav-link" href="#blazegraph">
+                            <i class="fas fa-project-diagram me-2"></i>Blazegraph Integration
+                        </a>
+                        <a class="nav-link" href="#automation">
+                            <i class="fas fa-robot me-2"></i>Automation
+                        </a>
+                        <a class="nav-link" href="#troubleshooting">
+                            <i class="fas fa-tools me-2"></i>Troubleshooting
+                        </a>
+                        <a class="nav-link" href="#api-reference">
+                            <i class="fas fa-code me-2"></i>API Reference
+                        </a>
+                        <a class="nav-link" href="#faq">
+                            <i class="fas fa-question-circle me-2"></i>FAQ
+                        </a>
+                    </nav>
+                    
+                    <div class="mt-4">
+                        <a href="/" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-arrow-left me-2"></i>Back to App
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Documentation Content -->
+            <div class="col-lg-9">
+                <div class="content-card">
+                    
+                    <!-- Overview Section -->
+                    <section id="overview" class="doc-section">
+                        <h1><i class="fas fa-dna me-3"></i>Treekipedia GraphFlow</h1>
+                        <p class="lead">A comprehensive platform for generating OWL ontologies from biodiversity data with seamless integration between data sources and knowledge graphs.</p>
+                        
+                        <div class="feature-highlight">
+                            <h5><i class="fas fa-star me-2"></i>Key Features</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul>
+                                        <li><strong>Multi-source Data Integration</strong> - CSV, Google Sheets, PostgreSQL</li>
+                                        <li><strong>Automatic OWL Generation</strong> - RDF/OWL ontology creation</li>
+                                        <li><strong>Change Detection</strong> - Smart incremental updates</li>
+                                        <li><strong>Version Control</strong> - Track data and ontology versions</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul>
+                                        <li><strong>Blazegraph Integration</strong> - Direct triple store import</li>
+                                        <li><strong>Real-time Monitoring</strong> - System health and status</li>
+                                        <li><strong>Automation Pipeline</strong> - Scheduled data processing</li>
+                                        <li><strong>50,000+ Tree Species</strong> - Specialized for biodiversity</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3>System Architecture</h3>
+                        <p>Treekipedia GraphFlow follows a data flow architecture:</p>
+                        <div class="text-center my-4">
+                            <div class="d-inline-flex align-items-center">
+                                <span class="badge bg-primary me-2">Data Sources</span>
+                                <i class="fas fa-arrow-right text-muted me-2"></i>
+                                <span class="badge bg-info me-2">Processing Engine</span>
+                                <i class="fas fa-arrow-right text-muted me-2"></i>
+                                <span class="badge bg-success me-2">OWL Generation</span>
+                                <i class="fas fa-arrow-right text-muted me-2"></i>
+                                <span class="badge bg-warning">Blazegraph</span>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Getting Started Section -->
+                    <section id="getting-started" class="doc-section mt-5">
+                        <h2><i class="fas fa-play me-3"></i>Getting Started</h2>
+                        
+                        <h4>Quick Start Guide</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-3">
+                                    <span class="step-number">1</span>
+                                    <div>
+                                        <h6>Check System Status</h6>
+                                        <p class="small text-muted">Verify all services are online on the main dashboard.</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-start mb-3">
+                                    <span class="step-number">2</span>
+                                    <div>
+                                        <h6>Choose Data Source</h6>
+                                        <p class="small text-muted">Select from CSV upload, Google Sheets, or PostgreSQL.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-3">
+                                    <span class="step-number">3</span>
+                                    <div>
+                                        <h6>Configure & Import</h6>
+                                        <p class="small text-muted">Set up your data source and import data.</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-start mb-3">
+                                    <span class="step-number">4</span>
+                                    <div>
+                                        <h6>Generate Ontology</h6>
+                                        <p class="small text-muted">Create OWL ontology and push to Blazegraph.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h4>System Requirements</h4>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6><i class="fas fa-server me-2"></i>Required Services</h6>
+                                <ul class="small">
+                                    <li>Python 3.8+</li>
+                                    <li>Flask web framework</li>
+                                    <li>Blazegraph (optional)</li>
+                                    <li>PostgreSQL (optional)</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h6><i class="fas fa-cloud me-2"></i>External Services</h6>
+                                <ul class="small">
+                                    <li>Google Sheets API</li>
+                                    <li>Google Service Account</li>
+                                    <li>Network connectivity</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h6><i class="fas fa-file me-2"></i>Supported Formats</h6>
+                                <ul class="small">
+                                    <li>CSV files</li>
+                                    <li>Google Sheets</li>
+                                    <li>PostgreSQL tables</li>
+                                    <li>OWL/RDF output</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Data Sources Section -->
+                    <section id="data-sources" class="doc-section mt-5">
+                        <h2><i class="fas fa-database me-3"></i>Data Sources</h2>
+                        
+                        <p>Treekipedia GraphFlow supports multiple data sources, each with specific advantages:</p>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="info-card">
+                                    <h5><i class="fas fa-file-csv text-primary me-2"></i>CSV Files</h5>
+                                    <p class="small"><strong>Best for:</strong> One-time imports, small datasets, testing</p>
+                                    <ul class="small">
+                                        <li>Simple drag-and-drop upload</li>
+                                        <li>Multiple files supported</li>
+                                        <li>Immediate processing</li>
+                                        <li>No external dependencies</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="info-card">
+                                    <h5><i class="fas fa-table text-success me-2"></i>Google Sheets</h5>
+                                    <p class="small"><strong>Best for:</strong> Collaborative editing, live data, version tracking</p>
+                                    <ul class="small">
+                                        <li>Real-time collaboration</li>
+                                        <li>Automatic change detection</li>
+                                        <li>Version management</li>
+                                        <li>Multiple worksheets</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="info-card">
+                                    <h5><i class="fas fa-database text-info me-2"></i>PostgreSQL</h5>
+                                    <p class="small"><strong>Best for:</strong> Large datasets, automated pipelines, enterprise</p>
+                                    <ul class="small">
+                                        <li>High performance</li>
+                                        <li>Automated monitoring</li>
+                                        <li>Change tracking</li>
+                                        <li>Scalable processing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- CSV Upload Section -->
+                    <section id="csv-upload" class="doc-section mt-5">
+                        <h2><i class="fas fa-file-csv me-3"></i>CSV Upload Guide</h2>
+                        
+                        <h4>Uploading CSV Files</h4>
+                        <ol>
+                            <li>Navigate to the main dashboard</li>
+                            <li>Click "Choose Files" in the CSV upload section</li>
+                            <li>Select one or more CSV files</li>
+                            <li>Enter an ontology name</li>
+                            <li>Click "Generate Ontology"</li>
+                        </ol>
+                        
+                        <h4>CSV Format Requirements</h4>
+                        <div class="warning-box">
+                            <h6><i class="fas fa-exclamation-triangle me-2"></i>Important Format Notes</h6>
+                            <ul class="mb-0">
+                                <li>First row must contain column headers</li>
+                                <li>Use UTF-8 encoding for special characters</li>
+                                <li>Avoid empty rows or columns</li>
+                                <li>Column names should match your configuration</li>
+                            </ul>
+                        </div>
+                        
+                        <h4>Example CSV Structure</h4>
+                        <div class="code-block">
+species_id,scientific_name,common_name,family,conservation_status
+1,Quercus robur,English Oak,Fagaceae,Least Concern
+2,Pinus sylvestris,Scots Pine,Pinaceae,Least Concern
+3,Betula pendula,Silver Birch,Betulaceae,Least Concern
+                        </div>
+                    </section>
+                    
+                    <!-- Google Sheets Section -->
+                    <section id="google-sheets" class="doc-section mt-5">
+                        <h2><i class="fas fa-table me-3"></i>Google Sheets Integration</h2>
+                        
+                        <h4>Setting Up Google Sheets</h4>
+                        <ol>
+                            <li><strong>Create a Service Account</strong>
+                                <ul>
+                                    <li>Go to Google Cloud Console</li>
+                                    <li>Create a new service account</li>
+                                    <li>Download the JSON key file</li>
+                                    <li>Place it in your project directory</li>
+                                </ul>
+                            </li>
+                            <li><strong>Share Your Spreadsheet</strong>
+                                <ul>
+                                    <li>Share your Google Sheet with the service account email</li>
+                                    <li>Grant "Editor" permissions</li>
+                                </ul>
+                            </li>
+                            <li><strong>Configure the Application</strong>
+                                <ul>
+                                    <li>Set the path to your service account JSON</li>
+                                    <li>Test the connection</li>
+                                </ul>
+                            </li>
+                        </ol>
+                        
+                        <h4>Using Google Sheets Import</h4>
+                        <ol>
+                            <li>Go to "Import from Google Sheets"</li>
+                            <li>Enter either:
+                                <ul>
+                                    <li><strong>Spreadsheet ID</strong> - Found in the URL</li>
+                                    <li><strong>Spreadsheet Name</strong> - Exact name (case-sensitive)</li>
+                                </ul>
+                            </li>
+                            <li>Configure ontology name and options</li>
+                            <li>Enable/disable force generation</li>
+                            <li>Click "Import & Generate Ontology"</li>
+                        </ol>
+                        
+                        <h4>Change Detection</h4>
+                        <p>The system automatically detects changes by:</p>
+                        <ul>
+                            <li>Comparing current data with last processed version</li>
+                            <li>Checking modification timestamps</li>
+                            <li>Monitoring cell-level changes</li>
+                            <li>Tracking version metadata in the spreadsheet</li>
+                        </ul>
+                        
+                        <div class="feature-highlight">
+                            <h6><i class="fas fa-lightbulb me-2"></i>Pro Tip</h6>
+                            <p class="mb-0">Use the "Force Generation" option to regenerate ontologies even when no changes are detected. This is useful for testing or when you've updated the ontology configuration.</p>
+                        </div>
+                    </section>
+                    
+                    <!-- PostgreSQL Section -->
+                    <section id="postgresql" class="doc-section mt-5">
+                        <h2><i class="fas fa-database me-3"></i>PostgreSQL Integration</h2>
+                        
+                        <h4>Database Configuration</h4>
+                        <p>Configure your PostgreSQL connection in the application settings:</p>
+                        <div class="code-block">
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=treekipedia
+DB_USER=your_username
+DB_PASSWORD=your_password
+                        </div>
+                        
+                        <h4>Using PostgreSQL Monitor</h4>
+                        <ol>
+                            <li>Navigate to "PostgreSQL Monitor"</li>
+                            <li>Verify connection status</li>
+                            <li>Review available tables and row counts</li>
+                            <li>Check recent changes (24-hour view)</li>
+                            <li>Run automation or generate RDF manually</li>
+                        </ol>
+                        
+                        <h4>Automated Monitoring</h4>
+                        <p>The system monitors your PostgreSQL database for:</p>
+                        <ul>
+                            <li><strong>New Records</strong> - Automatically detected insertions</li>
+                            <li><strong>Updated Records</strong> - Changed existing data</li>
+                            <li><strong>Schema Changes</strong> - New tables or columns</li>
+                            <li><strong>Performance Metrics</strong> - Row counts and statistics</li>
+                        </ul>
+                        
+                        <h4>RDF Generation</h4>
+                        <p>Generate RDF triples from PostgreSQL tables:</p>
+                        <ol>
+                            <li>Select a table from the monitor interface</li>
+                            <li>Choose whether to push to Blazegraph</li>
+                            <li>Click "Generate RDF"</li>
+                            <li>Monitor progress and results</li>
+                        </ol>
+                    </section>
+                    
+                    <!-- Version Management Section -->
+                    <section id="version-management" class="doc-section mt-5">
+                        <h2><i class="fas fa-code-branch me-3"></i>Version Management</h2>
+                        
+                        <h4>Overview</h4>
+                        <p>Track changes and manage versions of your biodiversity data spreadsheets and ontologies.</p>
+                        
+                        <h4>Version Control Features</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-history me-2"></i>Version History</h6>
+                                <ul>
+                                    <li>Complete change log</li>
+                                    <li>Semantic versioning (major.minor.patch)</li>
+                                    <li>Author tracking</li>
+                                    <li>Timestamp records</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-copy me-2"></i>Snapshots</h6>
+                                <ul>
+                                    <li>Complete spreadsheet copies</li>
+                                    <li>Version-tagged backups</li>
+                                    <li>Independent access links</li>
+                                    <li>Rollback capabilities</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <h4>Creating Versions</h4>
+                        <ol>
+                            <li>Go to "Version Management"</li>
+                            <li>Find your spreadsheet by ID or name</li>
+                            <li>Navigate to "Update Version" tab</li>
+                            <li>Enter new version number (e.g., 1.2.0)</li>
+                            <li>Add changelog description</li>
+                            <li>Click "Update Version"</li>
+                        </ol>
+                        
+                        <h4>Creating Snapshots</h4>
+                        <ol>
+                            <li>In the same interface, go to "Create Snapshot"</li>
+                            <li>Enter a version name</li>
+                            <li>Click "Create Snapshot"</li>
+                            <li>Access the new copy via the provided link</li>
+                        </ol>
+                        
+                        <div class="warning-box">
+                            <h6><i class="fas fa-info-circle me-2"></i>Best Practices</h6>
+                            <ul class="mb-0">
+                                <li>Use semantic versioning consistently</li>
+                                <li>Create snapshots before major changes</li>
+                                <li>Include detailed changelog entries</li>
+                                <li>Regularly backup important versions</li>
+                            </ul>
+                        </div>
+                    </section>
+                    
+                    <!-- Blazegraph Section -->
+                    <section id="blazegraph" class="doc-section mt-5">
+                        <h2><i class="fas fa-project-diagram me-3"></i>Blazegraph Integration</h2>
+                        
+                        <h4>About Blazegraph</h4>
+                        <p>Blazegraph is a high-performance RDF graph database that stores and queries your ontology data using SPARQL.</p>
+                        
+                        <h4>Configuration</h4>
+                        <p>Set up your Blazegraph endpoint:</p>
+                        <div class="code-block">
+# Blazegraph Configuration
+BLAZEGRAPH_URL=http://localhost:9999/blazegraph
+BLAZEGRAPH_NAMESPACE=treekipedia
+                        </div>
+                        
+                        <h4>Automatic Import</h4>
+                        <p>When enabled, all generated ontologies are automatically imported to Blazegraph:</p>
+                        <ul>
+                            <li>OWL files converted to RDF triples</li>
+                            <li>Named graphs for organization</li>
+                            <li>Automatic conflict resolution</li>
+                            <li>Import status tracking</li>
+                        </ul>
+                        
+                        <h4>SPARQL Queries</h4>
+                        <p>Once imported, you can query your data using SPARQL:</p>
+                        <div class="code-block">
+PREFIX bio: &lt;http://example.com/biodiversity#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?species ?commonName ?family
+WHERE {
+  ?species a bio:Species ;
+           bio:commonName ?commonName ;
+           bio:belongsToFamily ?family .
+}
+LIMIT 10
+                        </div>
+                    </section>
+                    
+                    <!-- Automation Section -->
+                    <section id="automation" class="doc-section mt-5">
+                        <h2><i class="fas fa-robot me-3"></i>Automation</h2>
+                        
+                        <h4>Full Automation Pipeline</h4>
+                        <p>Run the complete automation process with a single click:</p>
+                        <ol>
+                            <li><strong>PostgreSQL Sync</strong> - Check for database changes</li>
+                            <li><strong>Google Sheets Import</strong> - Process updated spreadsheets</li>
+                            <li><strong>OWL Generation</strong> - Create ontologies from new data</li>
+                            <li><strong>Blazegraph Import</strong> - Push to triple store</li>
+                            <li><strong>Version Updates</strong> - Increment version numbers</li>
+                        </ol>
+                        
+                        <h4>Scheduled Automation</h4>
+                        <p>Set up automated runs using cron jobs or task schedulers:</p>
+                        <div class="code-block">
+# Run every hour
+0 * * * * /path/to/python /path/to/automation_script.py
+
+# Run daily at 2 AM
+0 2 * * * /path/to/python /path/to/daily_sync.py
+                        </div>
+                        
+                        <h4>Monitoring Automation</h4>
+                        <ul>
+                            <li><strong>Status Dashboard</strong> - Real-time automation status</li>
+                            <li><strong>Logs</strong> - Detailed execution logs</li>
+                            <li><strong>Error Handling</strong> - Automatic retry mechanisms</li>
+                            <li><strong>Notifications</strong> - Email/webhook alerts</li>
+                        </ul>
+                    </section>
+                    
+                    <!-- Troubleshooting Section -->
+                    <section id="troubleshooting" class="doc-section mt-5">
+                        <h2><i class="fas fa-tools me-3"></i>Troubleshooting</h2>
+                        
+                        <h4>Common Issues</h4>
+                        
+                        <div class="accordion" id="troubleshootingAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue1">
+                                        Google Sheets Connection Failed
+                                    </button>
+                                </h2>
+                                <div id="issue1" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                    <div class="accordion-body">
+                                        <p><strong>Symptoms:</strong> "Authentication failed" or "Service account not found" errors</p>
+                                        <p><strong>Solutions:</strong></p>
+                                        <ul>
+                                            <li>Verify service account JSON file path</li>
+                                            <li>Check if spreadsheet is shared with service account email</li>
+                                            <li>Ensure service account has editor permissions</li>
+                                            <li>Verify Google Sheets API is enabled</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue2">
+                                        PostgreSQL Connection Issues
+                                    </button>
+                                </h2>
+                                <div id="issue2" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                    <div class="accordion-body">
+                                        <p><strong>Symptoms:</strong> "Connection refused" or "Authentication failed" errors</p>
+                                        <p><strong>Solutions:</strong></p>
+                                        <ul>
+                                            <li>Check database credentials in configuration</li>
+                                            <li>Verify database server is running</li>
+                                            <li>Test network connectivity to database host</li>
+                                            <li>Check firewall settings</li>
+                                            <li>Verify user permissions in PostgreSQL</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue3">
+                                        Blazegraph Import Failed
+                                    </button>
+                                </h2>
+                                <div id="issue3" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                    <div class="accordion-body">
+                                        <p><strong>Symptoms:</strong> "Import failed" or "Endpoint not reachable" errors</p>
+                                        <p><strong>Solutions:</strong></p>
+                                        <ul>
+                                            <li>Verify Blazegraph server is running</li>
+                                            <li>Check Blazegraph URL configuration</li>
+                                            <li>Test endpoint connectivity</li>
+                                            <li>Verify namespace exists</li>
+                                            <li>Check OWL file format and syntax</li>
+                                            <li>Review Blazegraph logs for detailed errors</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue4">
+                                        CSV Upload Problems
+                                    </button>
+                                </h2>
+                                <div id="issue4" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                    <div class="accordion-body">
+                                        <p><strong>Symptoms:</strong> "Invalid CSV format" or "Parsing failed" errors</p>
+                                        <p><strong>Solutions:</strong></p>
+                                        <ul>
+                                            <li>Check file encoding (use UTF-8)</li>
+                                            <li>Verify CSV headers match expected format</li>
+                                            <li>Remove empty rows and columns</li>
+                                            <li>Check for special characters in data</li>
+                                            <li>Ensure consistent delimiter usage</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h4>System Health Check</h4>
+                        <p>Use the built-in health check to diagnose system issues:</p>
+                        <ol>
+                            <li>Click "System Health Check" on the main dashboard</li>
+                            <li>Review connection status for all services</li>
+                            <li>Check detailed error messages</li>
+                            <li>Use the refresh button to retest connections</li>
+                        </ol>
+                        
+                        <h4>Log Files</h4>
+                        <p>Check application logs for detailed error information:</p>
+                        <div class="code-block">
+# Application logs location
+/var/log/treekipedia/app.log
+/var/log/treekipedia/error.log
+/var/log/treekipedia/automation.log
+                        </div>
+                    </section>
+                    
+                    <!-- API Reference Section -->
+                    <section id="api-reference" class="doc-section mt-5">
+                        <h2><i class="fas fa-code me-3"></i>API Reference</h2>
+                        
+                        <h4>Core Endpoints</h4>
+                        
+                        <h5>System Status</h5>
+                        <div class="api-endpoint">GET /system-status</div>
+                        <p>Returns the current status of all connected services.</p>
+                        <div class="code-block">
+{
+  "blazegraph": {
+    "status": "online",
+    "endpoint": "http://localhost:9999/blazegraph"
+  },
+  "google_sheets": {
+    "enabled": true,
+    "initialized": true
+  },
+  "postgresql": {
+    "enabled": true,
+    "status": "connected"
+  }
+}
+                        </div>
+                        
+                        <h5>Upload Files</h5>
+                        <div class="api-endpoint">POST /upload-files</div>
+                        <p>Upload CSV files and generate ontology.</p>
+                        <p><strong>Parameters:</strong></p>
+                        <ul>
+                            <li><code>files</code> - Multiple CSV files</li>
+                            <li><code>ontology_name</code> - Name for the generated ontology</li>
+                        </ul>
+                        
+                        <h5>Import from Google Sheets</h5>
+                        <div class="api-endpoint">POST /import-from-sheets</div>
+                        <p>Import data from Google Sheets and generate ontology.</p>
+                        <p><strong>Parameters:</strong></p>
+                        <ul>
+                            <li><code>spreadsheet_id</code> - Google Sheets ID</li>
+                            <li><code>spreadsheet_name</code> - Spreadsheet name (alternative to ID)</li>
+                            <li><code>ontology_name</code> - Name for the generated ontology</li>
+                            <li><code>force_generation</code> - Force generation even without changes</li>
+                        </ul>
+                        
+                        <h5>PostgreSQL Operations</h5>
+                        <div class="api-endpoint">GET /postgres-tables</div>
+                        <p>List all PostgreSQL tables with row counts.</p>
+                        
+                        <div class="api-endpoint">POST /postgres-generate-rdf</div>
+                        <p>Generate RDF from a specific PostgreSQL table.</p>
+                        <p><strong>Parameters:</strong></p>
+                        <ul>
+                            <li><code>table_name</code> - Name of the table to process</li>
+                            <li><code>push_to_blazegraph</code> - Whether to import to Blazegraph</li>
+                        </ul>
+                        
+                        <h5>Version Management</h5>
+                        <div class="api-endpoint">GET /versions</div>
+                        <p>Get version history for a spreadsheet.</p>
+                        <p><strong>Parameters:</strong></p>
+                        <ul>
+                            <li><code>spreadsheet_id</code> - Google Sheets ID</li>
+                            <li><code>spreadsheet_name</code> - Spreadsheet name</li>
+                        </ul>
+                        
+                        <div class="api-endpoint">POST /update-spreadsheet-version</div>
+                        <p>Update version information for a spreadsheet.</p>
+                        
+                        <div class="api-endpoint">POST /create-version-snapshot</div>
+                        <p>Create a version snapshot of a spreadsheet.</p>
+                        
+                        <h5>Automation</h5>
+                        <div class="api-endpoint">POST /run-full-automation</div>
+                        <p>Execute the complete automation pipeline.</p>
+                        
+                        <div class="api-endpoint">POST /run-postgres-automation</div>
+                        <p>Run PostgreSQL-specific automation tasks.</p>
+                    </section>
+                    
+                    <!-- FAQ Section -->
+                    <section id="faq" class="doc-section mt-5">
+                        <h2><i class="fas fa-question-circle me-3"></i>Frequently Asked Questions</h2>
+                        
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        What data formats are supported?
+                                    </button>
+                                </h2>
+                                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <p>Treekipedia GraphFlow supports:</p>
+                                        <ul>
+                                            <li><strong>CSV files</strong> - Standard comma-separated values</li>
+                                            <li><strong>Google Sheets</strong> - Online spreadsheets with real-time collaboration</li>
+                                            <li><strong>PostgreSQL tables</strong> - Relational database tables</li>
+                                        </ul>
+                                        <p>All data is converted to OWL/RDF format for semantic web compatibility.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        How does change detection work?
+                                    </button>
+                                </h2>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <p>The system uses multiple methods to detect changes:</p>
+                                        <ul>
+                                            <li><strong>Timestamps</strong> - Compares modification dates</li>
+                                            <li><strong>Content Hashing</strong> - Detects data changes</li>
+                                            <li><strong>Version Metadata</strong> - Tracks version numbers</li>
+                                            <li><strong>Cell-level Monitoring</strong> - For Google Sheets</li>
+                                        </ul>
+                                        <p>Only changed data is processed, improving efficiency and reducing processing time.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        Can I use this without Blazegraph?
+                                    </button>
+                                </h2>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <p>Yes! Blazegraph integration is optional. You can:</p>
+                                        <ul>
+                                            <li>Generate OWL ontologies without Blazegraph</li>
+                                            <li>Download generated files manually</li>
+                                            <li>Import to your own triple store</li>
+                                            <li>Use the ontologies in other semantic web tools</li>
+                                        </ul>
+                                        <p>The system will work with reduced functionality when Blazegraph is not available.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                        How do I set up automated processing?
+                                    </button>
+                                </h2>
+                                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <p>You can automate processing in several ways:</p>
+                                        <ul>
+                                            <li><strong>Web Interface</strong> - Use the "Run Full Automation" button</li>
+                                            <li><strong>Cron Jobs</strong> - Schedule regular execution</li>
+                                            <li><strong>API Calls</strong> - Integrate with external systems</li>
+                                            <li><strong>Webhooks</strong> - Trigger on external events</li>
+                                        </ul>
+                                        <p>The automation system handles error recovery and logging automatically.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                        What's the maximum data size supported?
+                                    </button>
+                                </h2>
+                                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <p>Data size limits depend on your setup:</p>
+                                        <ul>
+                                            <li><strong>CSV Files</strong> - Limited by browser upload (typically 100MB)</li>
+                                            <li><strong>Google Sheets</strong> - 10 million cells per spreadsheet</li>
+                                            <li><strong>PostgreSQL</strong> - No practical limit (depends on server resources)</li>
+                                        </ul>
+                                        <p>For large datasets, PostgreSQL integration is recommended for best performance.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                        How do I backup my ontologies?
+                                    </button>
+                                </h2>
+                                <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <p>Several backup options are available:</p>
+                                        <ul>
+                                            <li><strong>Download OWL Files</strong> - Save generated ontologies locally</li>
+                                            <li><strong>Version Snapshots</strong> - Create timestamped copies</li>
+                                            <li><strong>Blazegraph Export</strong> - Export RDF data from triple store</li>
+                                            <li><strong>Source Data Backup</strong> - Backup original CSV/database files</li>
+                                        </ul>
+                                        <p>Regular backups are recommended, especially before major data updates.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Footer -->
+                    <div class="mt-5 pt-4 border-top">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Need More Help?</h5>
+                                <p>Contact our support team or check the GitHub repository for additional resources.</p>
+                                <div class="d-flex gap-2">
+                                    <a href="#" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-envelope me-1"></i>Contact Support
+                                    </a>
+                                    <a href="#" class="btn btn-outline-secondary btn-sm">
+                                        <i class="fab fa-github me-1"></i>GitHub Repository
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Quick Links</h5>
+                                <ul class="list-unstyled">
+                                    <li><a href="/" class="text-decoration-none"><i class="fas fa-home me-2"></i>Main Dashboard</a></li>
+                                    <li><a href="/import-from-sheets" class="text-decoration-none"><i class="fas fa-table me-2"></i>Google Sheets Import</a></li>
+                                    <li><a href="/postgres-monitor" class="text-decoration-none"><i class="fas fa-database me-2"></i>PostgreSQL Monitor</a></li>
+                                    <li><a href="/version-management" class="text-decoration-none"><i class="fas fa-code-branch me-2"></i>Version Management</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <hr>
+                        <p class="text-center text-muted">
+                            <small>Treekipedia GraphFlow Documentation | Last updated: <span id="last-updated"></span></small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.doc-nav .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                
+                if (targetSection) {
+                    // Update active state
+                    document.querySelectorAll('.doc-nav .nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Smooth scroll
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Update active navigation based on scroll position
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.doc-section');
+            const navLinks = document.querySelectorAll('.doc-nav .nav-link');
+            
+            let currentSection = '';
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 100 && rect.bottom >= 100) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // Set last updated date
+        document.getElementById('last-updated').textContent = new Date().toLocaleDateString();
+        
+        // Initialize tooltips for API endpoints
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+</body>
+</html>

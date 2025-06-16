@@ -388,8 +388,8 @@ def import_to_blazegraph(ontology_path, spreadsheet_title, version):
             update_endpoint = endpoint
         
         # Create a named graph URI based on spreadsheet title and version
-        safe_title = spreadsheet_title.replace(' ', '_')
-        graph_uri = f"http://example.org/ontology/{safe_title}/v{version.replace(' ','')}"
+        safe_version = version.replace(" ", "")
+        graph_uri = f"http://example.org/ontology/{safe_title}/version{safe_version}"
         params = {'context-uri': graph_uri}
         
         # First, try to clear the existing graph

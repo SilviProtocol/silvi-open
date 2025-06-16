@@ -1,6 +1,44 @@
+# Core Flask dependencies
 Flask==2.3.3
 Werkzeug==2.3.7
 gunicorn==20.1.0
+
+# Ontology and RDF processing
 owlready2==0.34
+rdflib==6.3.2
+
+# Google Sheets integration
 gspread==5.10.0
 google-auth==2.22.0
+google-auth-oauthlib==1.0.0
+google-auth-httplib2==0.1.0
+
+# PostgreSQL integration
+psycopg2-binary==2.9.7
+SQLAlchemy==2.0.19
+
+# HTTP requests and utilities
+requests==2.31.0
+urllib3==2.0.4
+
+# Data processing
+pandas==2.0.3
+numpy==1.24.3
+
+# System monitoring and process management
+psutil==5.9.5
+
+# Configuration and logging
+python-dotenv==1.0.0
+PyYAML==6.0.1
+
+# Development and testing (optional)
+pytest==7.4.0
+pytest-flask==1.2.0
+black==23.7.0
+flake8==6.0.0
+
+# Additional utilities
+click==8.1.6
+python-dateutil==2.8.2
+pytz==2023.3
