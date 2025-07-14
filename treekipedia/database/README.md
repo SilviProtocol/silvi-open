@@ -5,13 +5,15 @@ This directory contains database schemas, migrations, and seed data for the Tree
 ## Current Schema Structure
 The definitive current schema is in `current-schema.sql` (with `schema.sql` as a symlink to this file) and has been updated with payment system tables from `payment_schema_update.sql`.
 
-The Treekipedia database consists of five main tables:
+The Treekipedia database consists of seven main tables:
 
 1. **species** - Contains all tree species data with separate fields for AI-generated and human-verified content
-2. **users** - Tracks user information and total points
-3. **contreebution_nfts** - Records of NFTs minted for research contributions
-4. **sponsorships** - Tracks payment transactions for species research funding
-5. **sponsorship_items** - Records individual species funded through sponsorships
+2. **images** - Stores image URLs and metadata for tree species with proper attribution
+3. **users** - Tracks user information and total points
+4. **contreebution_nfts** - Records of NFTs minted for research contributions
+5. **sponsorships** - Tracks payment transactions for species research funding
+6. **sponsorship_items** - Records individual species funded through sponsorships
+7. **geohash_species_tiles** - STAC-compliant compressed species occurrence data in level 7 geohash tiles (PostGIS enabled)
 
 ## Table Structure Details
 
@@ -33,6 +35,26 @@ The species table uses a suffix-based field naming convention to differentiate d
 - `sponsored` (BOOLEAN) - Flag indicating whether this species has been sponsored
 - `sponsored_by` (TEXT) - Wallet address of the sponsor
 - `sponsored_at` (TIMESTAMP WITH TIME ZONE) - When the species was sponsored
+
+### Images Table
+
+The images table stores image URLs and metadata for tree species with proper attribution and licensing information:
+
+- `id` (SERIAL) - Primary key
+- `taxon_id` (TEXT NOT NULL) - References species.taxon_id
+- `image_url` (TEXT NOT NULL) - Full URL to the image file
+- `license` (TEXT) - Creative Commons or other license (e.g., CC-BY-SA-3.0)
+- `photographer` (TEXT) - Attribution text for photographer (may contain HTML)
+- `page_url` (TEXT) - Original source page URL for the image
+- `source` (TEXT DEFAULT 'Wikimedia Commons') - Data source
+- `is_primary` (BOOLEAN DEFAULT false) - Whether this is the primary/default image for the species
+- `created_at` (TIMESTAMP) - Record creation timestamp
+- `updated_at` (TIMESTAMP) - Record update timestamp
+
+#### Images Table Constraints
+- Foreign key relationship to species.taxon_id
+- Unique constraint ensures only one primary image per species
+- Indexes on taxon_id, is_primary, and source for performance
 
 ### Users Table
 
@@ -82,15 +104,60 @@ The species table uses a suffix-based field naming convention to differentiate d
 - `created_at` (TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP) - Record creation timestamp
 - `updated_at` (TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP) - Record update timestamp
 
+### Geohash Species Tiles Table (PostGIS)
+
+STAC-compliant table storing compressed species occurrence data in level 7 geohash tiles (~150m x 150m resolution).
+
+- `geohash_l7` (VARCHAR(7)) - Primary key, level 7 geohash string
+- `species_data` (JSONB NOT NULL) - Species occurrence counts as {"taxon_id": count, ...}
+- `total_occurrences` (INTEGER NOT NULL) - Sum of all species counts in this tile
+- `species_count` (INTEGER NOT NULL) - Number of unique species in this tile
+- `datetime` (TIMESTAMP NOT NULL) - STAC-required temporal field (latest observation or processing date)
+- `geometry` (GEOMETRY(Polygon, 4326)) - PostGIS polygon representing the tile boundary
+- `center_point` (GEOGRAPHY(Point, 4326)) - Geographic center point for distance queries
+- `data_source` (VARCHAR(100)) - Data source (e.g., 'gbif', 'inaturalist', 'mixed')
+- `processing_date` (TIMESTAMP) - When Marina processed this tile
+- `observation_start_date` (DATE) - Earliest observation in tile (optional)
+- `observation_end_date` (DATE) - Latest observation in tile (optional)
+- `created_at` (TIMESTAMP DEFAULT NOW()) - Record creation timestamp
+- `updated_at` (TIMESTAMP DEFAULT NOW()) - Record update timestamp
+
+#### Geohash Tiles Indexes
+- GIST index on geometry for spatial queries
+- GIST index on center_point for distance calculations
+- GIN index on species_data for JSONB queries
+- B-tree indexes on datetime, species_count, and total_occurrences
+- Composite index on (datetime, geometry) for temporal-spatial queries
+
 ## Constraints and Relationships
 
 The database has several important constraints:
 
 - Primary keys on all table IDs
+- Foreign key between `images.taxon_id` and `species.taxon_id`
+- Unique constraint on `images` to ensure only one primary image per species
 - Foreign key between `sponsorship_items.sponsorship_id` and `sponsorships.id` (with CASCADE deletion)
 - Foreign key between `sponsorship_items.taxon_id` and `species.taxon_id`
 - Unique constraint on `sponsorships.transaction_hash`
 - Unique constraint on `(sponsorship_id, taxon_id)` pairs in `sponsorship_items`
+
+## PostGIS Extension
+
+The database uses PostGIS extension for geospatial functionality:
+
+### PostGIS Setup
+- **Extension**: PostGIS must be enabled with `CREATE EXTENSION postgis;`
+- **Version**: Compatible with PostgreSQL 14.17+
+- **Purpose**: Provides spatial data types and geohash conversion functions
+
+### Key PostGIS Functions Used
+- `ST_GeomFromGeoHash(geohash)` - Converts geohash string to polygon geometry
+- `ST_PointFromGeoHash(geohash, srid)` - Gets center point of geohash tile
+- `ST_DWithin(geography, geography, distance)` - Finds features within distance
+- `ST_Intersects(geometry, geometry)` - Tests spatial intersection
+- `ST_AsGeoJSON(geometry)` - Converts geometry to GeoJSON format
+- `ST_MakePoint(longitude, latitude)` - Creates point from coordinates
+- `ST_MakeEnvelope(xmin, ymin, xmax, ymax, srid)` - Creates bounding box
 
 ## Database Functions and Views
 
@@ -122,6 +189,12 @@ The database has several important constraints:
 - **Calculation**: Counts total species and completed research for each sponsorship
 - **Grouping**: Groups by sponsorship fields to provide aggregation
 
+#### geohash_tiles_stac
+- **Purpose**: STAC Item formatted view of geohash tiles for API responses
+- **Format**: Returns tiles as GeoJSON Features with STAC-compliant properties
+- **Columns**: id (geohash), type, geometry (GeoJSON), properties (JSON), links (JSON), collections (array)
+- **Usage**: Provides STAC-compliant output for geospatial API endpoints
+
 ## Status Values Documentation
 
 ### Sponsorships Table Status Values
@@ -137,21 +210,37 @@ The database has several important constraints:
 
 ## Recent Updates and Fixes
 
-1. **Fixed `get_sponsorship_status` function**: Updated the function signature to use VARCHAR(50) for status field instead of TEXT to match database schema
-2. **Added constraints documentation**: Clarified the constraints between tables
-3. **Standardized status values**: Documented the valid status values for both tables
-4. **Added trigger details**: Explained when and how triggers are executed
-5. **Updated USDC amount**: Noted the change to 0.01 USDC for testing (normally 3 USDC)
+1. **Added PostGIS Geospatial Support (July 2025)**: Integrated PostGIS extension and STAC-compliant geohash tiles table
+   - Enables spatial queries using compressed species occurrence data
+   - Level 7 geohash tiles (~150m resolution) for privacy-preserving location data
+   - STAC compliance with required datetime field for temporal queries
+   - Full API endpoints for nearby species, distribution maps, and heatmaps
+2. **Added Images Table (June 2025)**: New table for storing species image URLs with attribution and licensing information
+   - Supports multiple images per species with primary image designation
+   - Includes photographer attribution and source page URLs
+   - Designed for import of 30,000+ Wikimedia Commons images
+3. **Fixed `get_sponsorship_status` function**: Updated the function signature to use VARCHAR(50) for status field instead of TEXT to match database schema
+4. **Added constraints documentation**: Clarified the constraints between tables
+5. **Standardized status values**: Documented the valid status values for both tables
+6. **Added trigger details**: Explained when and how triggers are executed
+7. **Updated USDC amount**: Noted the change to 0.01 USDC for testing (normally 3 USDC)
 
 ## Database Migration Scripts
 
-The `/scripts/db/` directory contains migration scripts for schema updates:
+The `/database/` directory contains migration scripts for schema updates:
 
+- `01_enable_postgis.sql` - Enables PostGIS extension for spatial data support
+- `02_create_geohash_tiles_table.sql` - Creates STAC-compliant geohash species tiles table
 - `remove_base_fields_only.sql` - Removes the base fields without migrating data, while keeping the researched flag
 - `fix_varchar_fields.sql` - Increases VARCHAR field sizes from 100 to 300
 - `schema_update.sql` - Comprehensive schema update combining multiple changes
 - `payment_schema_update.sql` - Adds tables and fields for the payment system
+- `create_images_table.sql` - Creates the images table for species image management
 - `fix_sponsorship_status_function.sql` - Fixes the get_sponsorship_status function signature
+
+The `/scripts/` directory contains data import scripts:
+
+- `import_geohash_tiles.js` - Import Marina's compressed geohash occurrence data
 
 ## Connection Information
 
@@ -170,6 +259,34 @@ To apply database schema updates:
    ```
    psql -U [username] -d treekipedia -f database/[migration_script].sql
    ```
+
+### PostGIS Setup Steps:
+
+1. Enable PostGIS extension:
+```bash
+psql -U [username] -d treekipedia
+\i database/01_enable_postgis.sql
+```
+
+2. Create geohash tiles table:
+```bash
+psql -U [username] -d treekipedia
+\i database/02_create_geohash_tiles_table.sql
+```
+
+3. Import Marina's geohash data:
+```bash
+cd scripts
+node import_geohash_tiles.js marina_tiles.json
+```
+
+4. Generate sample data for testing:
+```bash
+node import_geohash_tiles.js --generate-sample sample_tiles.json
+node import_geohash_tiles.js sample_tiles.json
+```
+
+### Other Migrations:
 
 For example, to apply the payment system schema update:
 ```

@@ -129,6 +129,9 @@ app.use('/research', research.router);
 const sponsorshipRoutes = require('./controllers/sponsorship')(pool);
 app.use('/sponsorships', sponsorshipRoutes);
 
+const geospatialRoutes = require('./routes/geospatial');
+app.use('/api/geospatial', geospatialRoutes);
+
 // Admin monitoring endpoints
 app.get('/admin-api/stats', (req, res) => {
   const stats = {
