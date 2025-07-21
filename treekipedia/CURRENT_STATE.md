@@ -64,6 +64,11 @@
 - ~~JSON parsing errors in API communication~~ - **FIXED**: Related to PM2 directory issue
 - Database parameter validation issues ("null" strings vs NULL values)
 
+### Cleanup Needed:
+- `/scripts/research/` - 48 test files (4.1MB) from AI model testing, can be archived
+- Uncommitted image system work (carousel, import scripts) needs to be reviewed and committed
+- Large data file `database/treekipedia_images_full.json` should be gitignored
+
 ## 📁 Source of Truth Files
 
 ### ✅ Current and Maintained:
