@@ -120,10 +120,9 @@ cd frontend && yarn lint              # ESLint check
 
 ### Geospatial Data Import:
 ```bash
-# Generate sample data for testing
-cd scripts && node import_geohash_tiles.js --generate-sample sample.json
-# Import Marina's compressed geohash data
-cd scripts && node import_geohash_tiles.js marina_tiles.json
+# Import Marina's compressed geohash CSV data (COMPLETED - July 21, 2025)
+cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
+# Results: 4,716,132 tiles imported in 11.4 minutes at 6,881 rows/sec
 ```
 
 ## 📊 Current Metrics (As of Latest Check)
@@ -135,6 +134,7 @@ cd scripts && node import_geohash_tiles.js marina_tiles.json
 - **NFTs**: 20 minted across 18 species
 - **Contributors**: 7 unique wallets with contributions
 - **Total Points**: 40 points awarded
+- **Geospatial Data**: 4.7M geohash tiles containing 89M occurrence records (Level 7, ~150m resolution)
 
 ## 🚧 Upcoming Development Priorities
 
@@ -271,17 +271,24 @@ cd scripts && node import_geohash_tiles.js marina_tiles.json
 **Goal**: Improve quality and depth of AI-generated species research
 **Current Focus**: Scope out improvements to research quality and methodology
 
-#### 📊 **Geospatial Data Population** - **READY FOR MARINA**
+#### 📊 **Geospatial Data Population** - ✅ **COMPLETED**
 **Goal**: Import Marina's compressed geohash occurrence data
-**Next Steps**: Coordinate with Marina to import processed tiles into production database
+**Status**: Successfully imported 4.7M tiles with 89M occurrences on July 21, 2025
+**Next Steps**: Build frontend Analysis page for plot-based species queries
 
 ---
 
-**Last Updated**: July 8, 2025  
-**Next Review**: After geospatial data import and AI research enhancement  
+**Last Updated**: July 21, 2025  
+**Next Review**: After Analysis page implementation and AI research enhancement  
 **Maintainer**: Update this doc whenever major changes are made
 
-### Latest Completed Work (July 8, 2025):
+### Latest Completed Work (July 21, 2025):
+- **Geospatial Data Import**: Successfully imported 4.7M geohash tiles containing 89M occurrence records
+- **PostGIS 3.2 Installation**: Enabled full spatial functionality in PostgreSQL
+- **CSV Import Script**: Created streaming import script handling 480MB file efficiently
+- **Data Validation**: All tiles imported with 0 errors, ready for spatial queries
+
+### Previous Major Work (July 8, 2025):
 - **PostGIS Geospatial Integration**: Complete spatial database setup with STAC compliance
 - **Geohash Tiles Support**: Level 7 geohash table ready for Marina's compressed occurrence data
 - **Spatial API Endpoints**: 6 new endpoints for nearby species, distribution maps, and heatmaps  
@@ -298,6 +305,7 @@ cd scripts && node import_geohash_tiles.js marina_tiles.json
 ### Current Development Status:
 - **Geospatial Backend**: ✅ Complete and ready for data import
 - **Spatial API Endpoints**: ✅ Complete with full documentation  
-- **PostGIS Database**: ✅ Enabled and configured
+- **PostGIS Database**: ✅ Enabled and configured (PostGIS 3.2)
 - **Import Tools**: ✅ Ready for Marina's data
-- **Next Priority**: 🎯 Geospatial data import + AI Research Process Enhancement
+- **Geohash Data Import**: ✅ **COMPLETED** - 4.7M tiles with 89M occurrences successfully imported
+- **Next Priority**: 🎯 Frontend Analysis page for geospatial queries + AI Research Process Enhancement

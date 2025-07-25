@@ -4,6 +4,7 @@ import { TreeSpecies } from "@/lib/types";
 import { DataField } from "../DataField";
 import { FieldDefinition } from "../../hooks/useFieldDefinitions";
 import { Button } from "@/components/ui/button";
+import { ImageCarousel } from "../ImageCarousel";
 
 interface OverviewTabProps {
   species: TreeSpecies;
@@ -33,6 +34,9 @@ export function OverviewTab({ species, isResearched, getFieldValue, fields }: Ov
   return (
     <div>
       <div className="space-y-6">
+        {/* Species Images Carousel */}
+        <ImageCarousel taxonId={species.taxon_id} />
+        
         {/* General Description - Special treatment */}
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center">

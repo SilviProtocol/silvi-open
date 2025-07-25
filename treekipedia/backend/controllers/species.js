@@ -127,19 +127,27 @@ module.exports = (pool) => {
 
   /**
    * GET /:taxon_id
-   * Get a specific species by its taxon_id
+   * Get a specific species by its taxon_id with image data
    * Route params: taxon_id - The unique identifier for the species
    */
   router.get('/:taxon_id', async (req, res) => {
     try {
       const { taxon_id } = req.params;
       
-      const query = `
-        SELECT * FROM species 
-        WHERE taxon_id = $1
+      // Query species data with primary image
+      const speciesQuery = `
+        SELECT s.*, 
+               i.image_url as primary_image_url,
+               i.license as primary_image_license,
+               i.photographer as primary_image_photographer,
+               i.page_url as primary_image_page_url,
+               i.source as primary_image_source
+        FROM species s
+        LEFT JOIN images i ON s.taxon_id = i.taxon_id AND i.is_primary = true
+        WHERE s.taxon_id = $1
       `;
       
-      const result = await pool.query(query, [taxon_id]);
+      const result = await pool.query(speciesQuery, [taxon_id]);
       
       if (result.rows.length === 0) {
         return res.status(404).json({ error: 'Species not found' });
@@ -165,11 +173,56 @@ module.exports = (pool) => {
         species.researched = species.researched === true;
       }
       
-      console.log(`GET /species/${taxon_id} - researched flag: ${species.researched}, hasAiFields: ${hasAnyAiFields}`);
+      // Count total images for this species
+      const imageCountQuery = `SELECT COUNT(*) as image_count FROM images WHERE taxon_id = $1`;
+      const imageCountResult = await pool.query(imageCountQuery, [taxon_id]);
+      species.image_count = parseInt(imageCountResult.rows[0].image_count);
+      
+      console.log(`GET /species/${taxon_id} - researched flag: ${species.researched}, hasAiFields: ${hasAnyAiFields}, images: ${species.image_count}`);
       
       res.json(species);
     } catch (error) {
       console.error(`Error fetching species with taxon_id "${req.params.taxon_id}":`, error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  /**
+   * GET /:taxon_id/images
+   * Get all images for a specific species (for carousel display)
+   * Route params: taxon_id - The unique identifier for the species
+   */
+  router.get('/:taxon_id/images', async (req, res) => {
+    try {
+      const { taxon_id } = req.params;
+      
+      // First check if species exists
+      const speciesCheck = `SELECT taxon_id FROM species WHERE taxon_id = $1`;
+      const speciesResult = await pool.query(speciesCheck, [taxon_id]);
+      
+      if (speciesResult.rows.length === 0) {
+        return res.status(404).json({ error: 'Species not found' });
+      }
+      
+      // Get all images for this species, with primary image first
+      const imagesQuery = `
+        SELECT id, taxon_id, image_url, license, photographer, page_url, source, is_primary, created_at
+        FROM images 
+        WHERE taxon_id = $1
+        ORDER BY is_primary DESC, id ASC
+      `;
+      
+      const result = await pool.query(imagesQuery, [taxon_id]);
+      
+      console.log(`GET /species/${taxon_id}/images returned ${result.rowCount} images`);
+      
+      res.json({
+        taxon_id: taxon_id,
+        image_count: result.rowCount,
+        images: result.rows
+      });
+    } catch (error) {
+      console.error(`Error fetching images for species "${req.params.taxon_id}":`, error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });

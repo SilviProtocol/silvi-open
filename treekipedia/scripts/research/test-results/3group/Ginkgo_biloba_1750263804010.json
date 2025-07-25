@@ -1,0 +1,112 @@
+{
+  "metadata": {
+    "species_scientific_name": "Ginkgo biloba",
+    "common_names": "Ginkgo, maidenhair tree",
+    "taxon_id": "AngGiGiGN21141-00",
+    "timestamp": "2025-06-18T16:23:24.009Z",
+    "api_calls": 3,
+    "total_tokens": 97501,
+    "duration_ms": 26907,
+    "errors": null
+  },
+  "research_data": {
+    "habitat_ai": "Mixed mesophytic forests along the Yangtze River valley border in China, with populations found in rock crevices and disturbed streamside environments",
+    "elevation_ranges_ai": "300-1250 meters above sea level",
+    "ecological_function_ai": "Provides landscape regulation, acts as a resilient species in disturbed environments, demonstrates extreme ecological conservatism",
+    "native_adapted_habitats_ai": "Southeastern China, with natural populations in mountain regions like Dalou Mountains and Mt. Tianmu",
+    "agroforestry_use_cases_ai": "Widely planted in urban and rural areas, used for ornamental purposes, medicinal leaf and seed production",
+    "conservation_status_ai": "Listed as endangered by IUCN due to declining wild populations",
+    "general_description_ai": "Gymnosperm tree with fan-shaped leaves, dioecious reproduction, extremely resilient to environmental stresses, considered a living fossil dating back 200 million years",
+    "compatible_soil_types_ai": "Prefers well-drained soils, tolerates various soil conditions, but probability of occurrence decreases with increasing soil sand content and pH",
+    "growth_form_ai": "Large deciduous tree with a conical crown initially, becoming broadly ovoid when mature. Branches nearly verticillate, ascending at about 45° from the trunk",
+    "leaf_type_ai": "Fan-shaped leaves resembling maidenhair fern leaflets, up to 8 cm (3 inches) long, sometimes twice as broad. Two parallel veins enter each blade from the point of attachment and fork repeatedly toward the leaf edges. Most leaves divided into two lobes by a central notch",
+    "deciduous_evergreen_ai": "Deciduous",
+    "flower_color_ai": "Green flowers with a pleasant fragrance",
+    "fruit_type_ai": "Not a true fruit, but a naked seed with a fleshy covering (sarcotesta), plum-shaped (about 2.5 cm diameter), green then tan or orange, extremely messy and malodorous when ripe. Contains a hard shell (sclerotesta) and papery endotesta enclosing the embryo",
+    "bark_characteristics_ai": "Fissured bark, grayish, deeply furrowed on older trees, with a corky texture",
+    "maximum_height_ai": 70,
+    "maximum_diameter_ai": 5,
+    "lifespan_ai": "Living fossil species, with fossils recognizably related to modern ginkgo dating back over 290 million years",
+    "maximum_tree_age_ai": 1000,
+    "stewardship_best_practices_ai": "Plant in full sun with well-draining soil. Easily grown in average, medium moisture soil in full sun. Prefers moist, sandy, well-drained soils. Tolerant of a wide range of soil conditions, including both alkaline and acidic soils and compacted soils. Also tolerant of saline conditions, air pollution and heat.",
+    "planting_recipes_ai": "To plant a ginkgo:\n1. Loosen the soil and dig a hole that can accommodate deep roots\n2. Add compost to the excavated soil for extra nutrients\n3. Place the root ball at the same depth as in the original pot\n4. Fill the hole with soil mixture and compact slightly\n5. Create a watering rim around the base\n6. Secure the tree with stakes at opposite sides\n7. Water thoroughly to settle the soil",
+    "pruning_maintenance_ai": "Prune once a year during dormancy in late winter. Remove competing branches with sharp garden shears. Since these trees mature to have large canopies, you can choose to narrow their shape.",
+    "disease_pest_management_ai": "Ginkgo trees are not affected by diseases in Europe. They are relatively resistant to pests and produce chemicals that deter insects. They are also resistant to damage by bacteria, viruses, and fungi.",
+    "fire_management_ai": "Ginkgo is a very fire-resistant species. Historically, in the Edo period of Tokyo, ginkgo trees were planted along broad streets to prevent buildings from catching fire. A notable example is a tree near Hiroshima's atomic bomb epicenter that was destroyed by the blast but sprouted new buds the following spring.",
+    "cultural_significance_ai": "Ginkgo is particularly important in the cultures of China, Korea, and Japan, where it is viewed as a sacred tree and a symbol of resilience, health, and longevity. It is a cultural icon associated with hope and fertility. To ancient Chinese people, the ginkgo was more than a botanical curiosity. It was a manifestation of the sacred concept of yin and yang, primarily symbolizing longevity and vitality. The trees often marked locations of early shamanic worship and were ideal candidates for shamanic tree worship due to their mysterious, long-living nature."
+  },
+  "group_responses": {
+    "ecological_general": {
+      "success": true,
+      "data": {
+        "habitat_ai": "Mixed mesophytic forests along the Yangtze River valley border in China, with populations found in rock crevices and disturbed streamside environments",
+        "elevation_ranges_ai": "300-1250 meters above sea level",
+        "ecological_function_ai": "Provides landscape regulation, acts as a resilient species in disturbed environments, demonstrates extreme ecological conservatism",
+        "native_adapted_habitats_ai": "Southeastern China, with natural populations in mountain regions like Dalou Mountains and Mt. Tianmu",
+        "agroforestry_use_cases_ai": "Widely planted in urban and rural areas, used for ornamental purposes, medicinal leaf and seed production",
+        "conservation_status_ai": "Listed as endangered by IUCN due to declining wild populations",
+        "general_description_ai": "Gymnosperm tree with fan-shaped leaves, dioecious reproduction, extremely resilient to environmental stresses, considered a living fossil dating back 200 million years",
+        "compatible_soil_types_ai": "Prefers well-drained soils, tolerates various soil conditions, but probability of occurrence decreases with increasing soil sand content and pH"
+      },
+      "raw_response": "Based on the search results, I'll compile the JSON response:\n\n{\n  \"habitat_ai\": \"Mixed mesophytic forests along the Yangtze River valley border in China, with populations found in rock crevices and disturbed streamside environments\",\n  \"elevation_ranges_ai\": \"300-1250 meters above sea level\",\n  \"ecological_function_ai\": \"Provides landscape regulation, acts as a resilient species in disturbed environments, demonstrates extreme ecological conservatism\",\n  \"native_adapted_habitats_ai\": \"Southeastern China, with natural populations in mountain regions like Dalou Mountains and Mt. Tianmu\",\n  \"agroforestry_use_cases_ai\": \"Widely planted in urban and rural areas, used for ornamental purposes, medicinal leaf and seed production\",\n  \"conservation_status_ai\": \"Listed as endangered by IUCN due to declining wild populations\",\n  \"general_description_ai\": \"Gymnosperm tree with fan-shaped leaves, dioecious reproduction, extremely resilient to environmental stresses, considered a living fossil dating back 200 million years\",\n  \"compatible_soil_types_ai\": \"Prefers well-drained soils, tolerates various soil conditions, but probability of occurrence decreases with increasing soil sand content and pH\"\n}\n\nLet me provide some citations and additional context:\n\nWild species are native to mixed mesophytic forests along the Yangtze River valley border. The elevation ranges from 300-1250 meters above sea level, specifically documented in locations like Mt. Tianmu and Mt. Dalou.\n\nHistorically, Ginkgo was largely confined to disturbed streamside and levee environments, showing strong ecological conservatism. The species shows high resistance to environmental stresses, microbial diseases, pests, and pollutants, making it a model for studying disease resistance and stress in plants.\n\nThe IUCN has listed the species as endangered due to declining tree numbers. Future climate scenarios suggest potential positive impacts, with more climatically suitable areas expected under moderate warming scenarios.\n\nAs a living fossil, Ginkgo biloba has fossil records dating back 270 million years, originating in China and historically used for medicinal purposes. It survives in a wide range of temperatures (-3.3 to 23.3°C) and precipitation conditions, preferring warm, humid, open-canopy environments with good drainage. The species shows strong tolerance to drought, freezing, fire, air pollution, and heavy metals.",
+      "usage": {
+        "input_tokens": 19632,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 771,
+        "service_tier": "standard",
+        "server_tool_use": {
+          "web_search_requests": 1
+        }
+      }
+    },
+    "morphological": {
+      "success": true,
+      "data": {
+        "growth_form_ai": "Large deciduous tree with a conical crown initially, becoming broadly ovoid when mature. Branches nearly verticillate, ascending at about 45° from the trunk",
+        "leaf_type_ai": "Fan-shaped leaves resembling maidenhair fern leaflets, up to 8 cm (3 inches) long, sometimes twice as broad. Two parallel veins enter each blade from the point of attachment and fork repeatedly toward the leaf edges. Most leaves divided into two lobes by a central notch",
+        "deciduous_evergreen_ai": "Deciduous",
+        "flower_color_ai": "Green flowers with a pleasant fragrance",
+        "fruit_type_ai": "Not a true fruit, but a naked seed with a fleshy covering (sarcotesta), plum-shaped (about 2.5 cm diameter), green then tan or orange, extremely messy and malodorous when ripe. Contains a hard shell (sclerotesta) and papery endotesta enclosing the embryo",
+        "bark_characteristics_ai": "Fissured bark, grayish, deeply furrowed on older trees, with a corky texture",
+        "maximum_height_ai": 70,
+        "maximum_diameter_ai": 5,
+        "lifespan_ai": "Living fossil species, with fossils recognizably related to modern ginkgo dating back over 290 million years",
+        "maximum_tree_age_ai": 1000
+      },
+      "raw_response": "Based on the search results, I'll compile the JSON response with the requested information:\n\n{\n  \"growth_form_ai\": \"Large deciduous tree with a conical crown initially, becoming broadly ovoid when mature. Branches nearly verticillate, ascending at about 45° from the trunk\",\n  \"leaf_type_ai\": \n    \"Fan-shaped leaves resembling maidenhair fern leaflets, up to 8 cm (3 inches) long, sometimes twice as broad. Two parallel veins enter each blade from the point of attachment and fork repeatedly toward the leaf edges. Most leaves divided into two lobes by a central notch\"\n  ,\n  \"deciduous_evergreen_ai\": \"Deciduous\",\n  \"flower_color_ai\": \"Green flowers with a pleasant fragrance\",\n  \"fruit_type_ai\": \n    \"Not a true fruit, but a naked seed with a fleshy covering (sarcotesta), plum-shaped (about 2.5 cm diameter), green then tan or orange, extremely messy and malodorous when ripe. Contains a hard shell (sclerotesta) and papery endotesta enclosing the embryo\"\n  ,\n  \"bark_characteristics_ai\": \"Fissured bark, grayish, deeply furrowed on older trees, with a corky texture\",\n  \"maximum_height_ai\": 70,\n  \"maximum_diameter_ai\": 5,\n  \"lifespan_ai\": \"Living fossil species, with fossils recognizably related to modern ginkgo dating back over 290 million years\",\n  \"maximum_tree_age_ai\": 1000\n}\n\nKey notes:\n- The tree typically grows 50 to 80 feet tall (up to 70 meters)\n- Trunk can grow up to 500 cm (5 meters) in diameter\n- The species has no living relatives and is considered a unique \"living fossil\"\n- It is a gymnosperm with dioecious trees (separate male and female trees). Male trees produce pollen cones, female trees produce ovules, and fertilization occurs via motile sperm",
+      "usage": {
+        "input_tokens": 21241,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 797,
+        "service_tier": "standard",
+        "server_tool_use": {
+          "web_search_requests": 1
+        }
+      }
+    },
+    "stewardship": {
+      "success": true,
+      "data": {
+        "stewardship_best_practices_ai": "Plant in full sun with well-draining soil. Easily grown in average, medium moisture soil in full sun. Prefers moist, sandy, well-drained soils. Tolerant of a wide range of soil conditions, including both alkaline and acidic soils and compacted soils. Also tolerant of saline conditions, air pollution and heat.",
+        "planting_recipes_ai": "To plant a ginkgo:\n1. Loosen the soil and dig a hole that can accommodate deep roots\n2. Add compost to the excavated soil for extra nutrients\n3. Place the root ball at the same depth as in the original pot\n4. Fill the hole with soil mixture and compact slightly\n5. Create a watering rim around the base\n6. Secure the tree with stakes at opposite sides\n7. Water thoroughly to settle the soil",
+        "pruning_maintenance_ai": "Prune once a year during dormancy in late winter. Remove competing branches with sharp garden shears. Since these trees mature to have large canopies, you can choose to narrow their shape.",
+        "disease_pest_management_ai": "Ginkgo trees are not affected by diseases in Europe. They are relatively resistant to pests and produce chemicals that deter insects. They are also resistant to damage by bacteria, viruses, and fungi.",
+        "fire_management_ai": "Ginkgo is a very fire-resistant species. Historically, in the Edo period of Tokyo, ginkgo trees were planted along broad streets to prevent buildings from catching fire. A notable example is a tree near Hiroshima's atomic bomb epicenter that was destroyed by the blast but sprouted new buds the following spring.",
+        "cultural_significance_ai": "Ginkgo is particularly important in the cultures of China, Korea, and Japan, where it is viewed as a sacred tree and a symbol of resilience, health, and longevity. It is a cultural icon associated with hope and fertility. To ancient Chinese people, the ginkgo was more than a botanical curiosity. It was a manifestation of the sacred concept of yin and yang, primarily symbolizing longevity and vitality. The trees often marked locations of early shamanic worship and were ideal candidates for shamanic tree worship due to their mysterious, long-living nature."
+      },
+      "raw_response": "I'll perform another search to find more information about cultural significance and fire management:Based on the comprehensive search results, I'll compile the JSON response:\n\n{\n  \"stewardship_best_practices_ai\": \"Plant in full sun with well-draining soil. Easily grown in average, medium moisture soil in full sun. Prefers moist, sandy, well-drained soils. Tolerant of a wide range of soil conditions, including both alkaline and acidic soils and compacted soils. Also tolerant of saline conditions, air pollution and heat.\",\n  \n  \"planting_recipes_ai\": \"To plant a ginkgo:\n1. Loosen the soil and dig a hole that can accommodate deep roots\n2. Add compost to the excavated soil for extra nutrients\n3. Place the root ball at the same depth as in the original pot\n4. Fill the hole with soil mixture and compact slightly\n5. Create a watering rim around the base\n6. Secure the tree with stakes at opposite sides\n7. Water thoroughly to settle the soil\",\n  \n  \"pruning_maintenance_ai\": \"Prune once a year during dormancy in late winter. Remove competing branches with sharp garden shears. Since these trees mature to have large canopies, you can choose to narrow their shape.\",\n  \n  \"disease_pest_management_ai\": \"Ginkgo trees are not affected by diseases in Europe. They are relatively resistant to pests and produce chemicals that deter insects. They are also resistant to damage by bacteria, viruses, and fungi.\",\n  \n  \"fire_management_ai\": \"Ginkgo is a very fire-resistant species. Historically, in the Edo period of Tokyo, ginkgo trees were planted along broad streets to prevent buildings from catching fire. A notable example is a tree near Hiroshima's atomic bomb epicenter that was destroyed by the blast but sprouted new buds the following spring.\",\n  \n  \"cultural_significance_ai\": \"Ginkgo is particularly important in the cultures of China, Korea, and Japan, where it is viewed as a sacred tree and a symbol of resilience, health, and longevity. It is a cultural icon associated with hope and fertility. To ancient Chinese people, the ginkgo was more than a botanical curiosity. It was a manifestation of the sacred concept of yin and yang, primarily symbolizing longevity and vitality. The trees often marked locations of early shamanic worship and were ideal candidates for shamanic tree worship due to their mysterious, long-living nature.\"\n}",
+      "usage": {
+        "input_tokens": 54167,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 893,
+        "service_tier": "standard",
+        "server_tool_use": {
+          "web_search_requests": 2
+        }
+      }
+    }
+  }
+}

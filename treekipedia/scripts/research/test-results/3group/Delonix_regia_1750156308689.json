@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "species_scientific_name": "Delonix regia",
+    "common_names": "Flame Of The Forest, Royal Poinciana, Flamboyán",
+    "taxon_id": null,
+    "timestamp": "2025-06-17T10:31:48.688Z",
+    "api_calls": 3,
+    "total_tokens": 0,
+    "duration_ms": 48800,
+    "errors": [
+      "Ecological: JSON parsing failed",
+      "Morphological: JSON parsing failed",
+      "Stewardship: JSON parsing failed"
+    ]
+  },
+  "research_data": {
+    "habitat_ai": null,
+    "elevation_ranges_ai": null,
+    "ecological_function_ai": null,
+    "native_adapted_habitats_ai": null,
+    "agroforestry_use_cases_ai": null,
+    "conservation_status_ai": null,
+    "general_description_ai": null,
+    "compatible_soil_types_ai": null,
+    "growth_form_ai": null,
+    "leaf_type_ai": null,
+    "deciduous_evergreen_ai": null,
+    "flower_color_ai": null,
+    "fruit_type_ai": null,
+    "bark_characteristics_ai": null,
+    "maximum_height_ai": null,
+    "maximum_diameter_ai": null,
+    "lifespan_ai": null,
+    "maximum_tree_age_ai": null,
+    "stewardship_best_practices_ai": null,
+    "planting_recipes_ai": null,
+    "pruning_maintenance_ai": null,
+    "disease_pest_management_ai": null,
+    "fire_management_ai": null,
+    "cultural_significance_ai": null
+  },
+  "group_responses": {
+    "ecological_general": {
+      "success": false,
+      "raw_response": "I'll search for comprehensive scientific information about Delonix regia.Let me search for more specific information about soil types and agroforestry applications.Based on the search results, I'll compile a comprehensive JSON response about Delonix regia:\n\n{\n  \"habitat_ai\": The species is endemic to Madagascar's dry deciduous forests. While endangered in the wild, it has been widely introduced and naturalized in tropical and subtropical regions worldwide,\n\n  \"elevation_ranges_ai\": Found at elevations from sea level up to 2,000 meters, though primarily occurs in low to medium elevations in moist tropics,\n\n  \"ecological_function_ai\": The species serves multiple ecological functions:\n- Enhances soil fertility through nitrogen fixation\n- Improves soil nitrogen status - studies show 13% improvement in N levels and higher organic C after 5 years\n- Helps maintain soil moisture and reduces soil temperature,\n\n  \"native_adapted_habitats_ai\": Native habitat is restricted to the western dry forests of Madagascar, specifically:\n- North and west of the Bemaraha massif\n- Dry forest around Antsiranana south to Daraina\n- Possibly on Nosy Be\nThe species is now commonly cultivated throughout Madagascar and tropical countries,\n\n  \"agroforestry_use_cases_ai\": Used in multiple agroforestry applications:\n- Harvested for medicines, food, timber, fuel and beads\n- Cultivated as a shade tree in plantations\n- Used for soil stabilization and enrichment\n- Planted on eroded sites for erosion control\n- Used for soil rehabilitation through nitrogen fixation,\n\n  \"conservation_status_ai\": The species faces several threats in its native habitat:\n- Severely fragmented populations\n- Habitat threatened by slash-and-burn agriculture\n- Impacted by charcoal production\n- Threatened by grazing from domestic cattle and goats\n- Affected by uncontrolled bush fires,\n\n  \"general_description_ai\": Delonix regia is a conspicuous, fast-growing almost evergreen legume tree that reaches 10-30 m in height. Key characteristics include:\n- Crown is umbrella-shaped with broadly spreading horizontal branches\n- Overall tree diameter typically exceeds its height\n- Leaves are bipinnate, alternate, feathery, 20-60 cm long, with 10-25 pairs of pinnae\n- Produces large (5-13 cm) magnificent orange-red flowers,\n\n  \"compatible_soil_types_ai\": The species shows broad soil adaptability:\n- Tolerates clay, loamy, sandy, or gravelly soils\n- Grows in wide pH range between 4.9 and 10.6\n- Prefers well-draining loamy soil\n- Requires slightly acidic to neutral pH\n- Good drainage essential to prevent root rot\n}"
+    },
+    "morphological": {
+      "success": false,
+      "raw_response": "I'll search for detailed information about Delonix regia.Let me search for more specific details about the flowers and fruits.Let me search for one more specific detail about maximum age.Based on the search results, I'll provide a detailed JSON response about Delonix regia's morphological characteristics:\n\n{\n  \"growth_form_ai\": A conspicuous, fast growing almost evergreen legume tree with an umbrella-shaped, broadly spreading crown. The overall tree is larger in diameter than in height,\n\n  \"leaf_type_ai\": The leaves are bipinnate, alternate, feathery, 20-60 cm long, bearing 10-25 pairs of pinnae, each with 30-60 opposite leaflets,\n\n  \"deciduous_evergreen_ai\": In areas with a marked dry season, it sheds its leaves during the drought, but in other areas it is virtually evergreen,\n\n  \"flower_color_ai\": The flowers are large, 10 cm across and bright red. They vary considerably in intensity of coloring, ranging from orange-vermillion to deep scarlet,\n\n  \"fruit_type_ai\": The fruit is a flattened and woody pod (30-60 cm long and 3-5.5 cm wide) that turns from pale green to reddish-brown and eventually dark brown or black as it matures. These pods split open when fully mature to release their numerous (20-40) seeds,\n\n  \"bark_characteristics_ai\": The trunk is covered in a relatively smooth pale brown or greyish-colored bark, and the bases of older trees are usually somewhat buttressed in nature. Younger branches are usually hairless, greenish in color, and covered with numerous pale brown raised spots (lenticels),\n\n  \"maximum_height_ai\": 50,\n\n  \"maximum_diameter_ai\": 2,\n\n  \"lifespan_ai\": With a life expectancy of 60 years, it is originally from Madagascar, where it is in danger of extinction due to loss of habitat,\n\n  \"maximum_tree_age_ai\": 50\n}"
+    },
+    "stewardship": {
+      "success": false,
+      "raw_response": "I'll search for comprehensive information about Delonix regia management and cultural significance.Let me search for more information about cultural significance and fire management.Based on the search results, I'll provide a comprehensive JSON response about Delonix regia stewardship and cultural significance:\n\n{\n  \"stewardship_best_practices_ai\": The tree requires:\n- Full sun (minimum 6 hours direct sunlight daily)\n- Well-drained sandy or loamy soil\n- Regular watering for young trees to establish strong roots\n- Reduced watering during dry/dormant season\n- Spring fertilization with balanced fertilizer,\n\n  \"planting_recipes_ai\": Planting from seed requires:\n1. Scarify seeds by nicking seed coat\n2. Soak in warm water for 24 hours\n3. Plant 1 inch deep in well-draining soil mix\n4. Maintain soil moisture\n5. Provide warm location (70-85°F/21-29°C),\n\n  \"pruning_maintenance_ai\": Key pruning practices:\n- Best timing: late winter to early spring\n- Remove dead/diseased/damaged branches first\n- Thin crowded branches for air circulation\n- Shape young trees by removing lower branches\n- Avoid heavy pruning as it reduces flowering,\n\n  \"disease_pest_management_ai\": Common issues include:\n- Caterpillar damage to leaves (generally not severe)\n- Spider mites in low humidity environments\n- Scale insects under leaves (treatable with alcohol swabs)\n- Root rot from Phellinus noxious fungus (prevent with good drainage),\n\n  \"fire_management_ai\": The species is frost-sensitive rather than fire-adapted:\n- Highly heat-tolerant\n- Young trees vulnerable below 45°F (7°C)\n- Mature trees can briefly tolerate down to 25°F (-3°C),\n\n  \"cultural_significance_ai\": Notable cultural significance includes:\n- National flower of St. Kitts and Nevis\n- State tree of Delhi, India (known as gulmohar)\n- In Kerala, India, known as kaalvarippoo (\"flower of Calvary\")\n- Religious significance among Saint Thomas Christians who associate it with Christ's crucifixion\n\nAdditional cultural recognition:\n- Official tree of Key West (adopted 2018)\n- City flower of Sepang, Selangor, Malaysia (known as semarak api)\n- Inspired the song \"Poinciana\" in Cuba\n}"
+    }
+  }
+}

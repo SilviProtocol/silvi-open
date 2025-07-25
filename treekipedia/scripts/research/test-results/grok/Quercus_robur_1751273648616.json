@@ -1,0 +1,54 @@
+{
+  "metadata": {
+    "model": "grok-3-mini",
+    "species_scientific_name": "Quercus robur",
+    "common_names": "English oak",
+    "taxon_id": null,
+    "timestamp": "2025-06-30T08:54:08.616Z",
+    "api_calls": 3,
+    "total_tokens": 0,
+    "duration_ms": 167,
+    "errors": [
+      "Ecological: Request failed with status code 400",
+      "Morphological: Request failed with status code 400",
+      "Stewardship: Request failed with status code 400"
+    ]
+  },
+  "research_data": {
+    "habitat_ai": null,
+    "elevation_ranges_ai": null,
+    "ecological_function_ai": null,
+    "native_adapted_habitats_ai": null,
+    "agroforestry_use_cases_ai": null,
+    "conservation_status_ai": null,
+    "general_description_ai": null,
+    "compatible_soil_types_ai": null,
+    "growth_form_ai": null,
+    "leaf_type_ai": null,
+    "deciduous_evergreen_ai": null,
+    "flower_color_ai": null,
+    "fruit_type_ai": null,
+    "bark_characteristics_ai": null,
+    "maximum_height_ai": null,
+    "maximum_diameter_ai": null,
+    "lifespan_ai": null,
+    "maximum_tree_age_ai": null,
+    "stewardship_best_practices_ai": null,
+    "planting_recipes_ai": null,
+    "pruning_maintenance_ai": null,
+    "disease_pest_management_ai": null,
+    "fire_management_ai": null,
+    "cultural_significance_ai": null
+  },
+  "group_responses": {
+    "ecological_general": {
+      "success": false
+    },
+    "morphological": {
+      "success": false
+    },
+    "stewardship": {
+      "success": false
+    }
+  }
+}

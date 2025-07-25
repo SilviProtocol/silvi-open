@@ -1,9 +1,9 @@
-const pool = require('../server');
-
 /**
  * Geospatial controller for querying species data using PostGIS and geohash tiles
  * Provides spatial queries on Marina's compressed occurrence data
  */
+
+module.exports = (pool) => {
 
 // Find species near a specific location
 async function findSpeciesNearby(req, res) {
@@ -361,11 +361,108 @@ async function getGeospatialStats(req, res) {
   }
 }
 
-module.exports = {
+// Analyze species within a polygon area
+async function analyzePlot(req, res) {
+  try {
+    const { geometry } = req.body;
+    
+    if (!geometry || geometry.type !== 'Polygon') {
+      return res.status(400).json({ 
+        error: 'Invalid geometry. Must be a GeoJSON Polygon' 
+      });
+    }
+    
+    // Convert GeoJSON polygon to PostGIS format
+    const geoJsonString = JSON.stringify(geometry);
+    
+    const query = `
+      WITH intersecting_tiles AS (
+        SELECT 
+          species_data
+        FROM geohash_species_tiles
+        WHERE ST_Intersects(
+          geometry,
+          ST_GeomFromGeoJSON($1)
+        )
+      ),
+      species_expanded AS (
+        SELECT 
+          key as taxon_id,
+          value::int as occurrences
+        FROM intersecting_tiles,
+        LATERAL jsonb_each_text(species_data)
+        -- Include all keys, we'll handle numeric ones in the mapping step
+      ),
+      species_aggregated AS (
+        SELECT 
+          taxon_id,
+          SUM(occurrences) as total_occurrences
+        FROM species_expanded
+        GROUP BY taxon_id
+      ),
+      species_with_base_ids AS (
+        SELECT 
+          sa.taxon_id,
+          sa.total_occurrences,
+          -- Handle different taxon_id formats
+          CASE 
+            WHEN sa.taxon_id ~ '^[0-9]+$' THEN 
+              -- Numeric taxon_ids are data corruption artifacts - keep as-is for now
+              sa.taxon_id
+            WHEN sa.taxon_id LIKE '%;%' THEN 
+              -- Extract first taxon_id from semicolon-separated list
+              regexp_replace(split_part(sa.taxon_id, ';', 1), '-[0-9]{2}$', '-00')
+            WHEN sa.taxon_id ~ '-[0-9]{2}$' THEN 
+              -- Single taxon_id with subspecies suffix, convert to -00
+              regexp_replace(sa.taxon_id, '-[0-9]{2}$', '-00')
+            ELSE 
+              -- Add -00 if no subspecies suffix for proper taxon_ids
+              sa.taxon_id || '-00'
+          END as base_taxon_id
+        FROM species_aggregated sa
+      )
+      SELECT 
+        swb.base_taxon_id as taxon_id,  -- Return the cleaned base taxon_id
+        swb.total_occurrences,
+        s.species_scientific_name as scientific_name,
+        s.common_name
+      FROM species_with_base_ids swb
+      LEFT JOIN species s ON s.taxon_id = swb.base_taxon_id
+      ORDER BY swb.total_occurrences DESC;
+    `;
+    
+    const result = await pool.query(query, [geoJsonString]);
+    
+    const totalOccurrences = result.rows.reduce(
+      (sum, row) => sum + parseInt(row.total_occurrences), 
+      0
+    );
+    
+    res.json({
+      totalSpecies: result.rows.length,
+      totalOccurrences: totalOccurrences,
+      species: result.rows.map(row => ({
+        taxon_id: row.taxon_id,
+        scientific_name: row.scientific_name || (row.taxon_id.match(/^[0-9]+$/) ? 'Unidentified species' : 'Unknown species'),
+        common_name: row.common_name || null,
+        occurrences: parseInt(row.total_occurrences)
+      }))
+    });
+    
+  } catch (error) {
+    console.error('Error in analyzePlot:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+return {
   findSpeciesNearby,
   getSpeciesDistribution,
   getOccurrenceHeatmap,
   getSpeciesInTile,
   getTilesByTimeRange,
-  getGeospatialStats
+  getGeospatialStats,
+  analyzePlot
+};
+
 };

@@ -1,0 +1,39 @@
+[
+  {
+    "taxon_id": "test_1",
+    "species_scientific_name": "Quercus robur",
+    "common_name": "English oak, European oak",
+    "description": "Well-documented European oak species with extensive research available",
+    "complexity": "simple"
+  },
+  {
+    "taxon_id": "test_2", 
+    "species_scientific_name": "Plumeria rubra",
+    "common_name": "Red frangipani, temple tree",
+    "description": "Tropical ornamental with moderate documentation",
+    "complexity": "moderate"
+  },
+  {
+    "taxon_id": "test_3",
+    "species_scientific_name": "Adenanthera pavonina",
+    "common_name": "Red sandalwood, saga seed tree",
+    "description": "Lesser-known tropical species with limited documentation",
+    "complexity": "complex"
+  },
+  {
+    "taxon_id": "test_4",
+    "species_scientific_name": "Betula pendula",
+    "common_name": "Silver birch, European white birch",
+    "description": "Common European species with good research coverage",
+    "complexity": "simple"
+  },
+  {
+    "taxon_id": "AngGiGiGN21141-00",
+    "species_scientific_name": "Ginkgo biloba",
+    "common_name": "Ginkgo, maidenhair tree",
+    "description": "Well-known ancient species with existing Perplexity research data for comparison",
+    "complexity": "baseline_comparison",
+    "existing_research": true,
+    "note": "Use this to compare new Claude-based research against existing Perplexity+GPT-4o results"
+  }
+]

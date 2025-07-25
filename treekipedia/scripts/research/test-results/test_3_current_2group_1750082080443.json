@@ -1,0 +1,63 @@
+{
+  "species": {
+    "taxon_id": "test_3",
+    "species_scientific_name": "Adenanthera pavonina",
+    "common_name": "Red sandalwood, saga seed tree",
+    "description": "Lesser-known tropical species with limited documentation",
+    "complexity": "complex"
+  },
+  "strategy": "current_2group",
+  "strategy_name": "Current 2-Group (Ecological+Stewardship vs Morphological)",
+  "timestamp": "2025-06-16T13:54:40.217Z",
+  "groups": [
+    {
+      "group_number": 1,
+      "group_name": "Group 1",
+      "fields": [
+        "habitat_ai",
+        "elevation_ranges_ai",
+        "ecological_function_ai",
+        "native_adapted_habitats_ai",
+        "agroforestry_use_cases_ai",
+        "conservation_status_ai",
+        "stewardship_best_practices_ai",
+        "planting_recipes_ai",
+        "pruning_maintenance_ai",
+        "disease_pest_management_ai",
+        "fire_management_ai",
+        "cultural_significance_ai",
+        "general_description_ai",
+        "compatible_soil_types_ai"
+      ],
+      "error": "Request failed with status code 400",
+      "raw_response": null,
+      "citations": [],
+      "parsed_data": null
+    },
+    {
+      "group_number": 2,
+      "group_name": "Group 2",
+      "fields": [
+        "growth_form_ai",
+        "leaf_type_ai",
+        "deciduous_evergreen_ai",
+        "flower_color_ai",
+        "fruit_type_ai",
+        "bark_characteristics_ai",
+        "maximum_height_ai",
+        "maximum_diameter_ai",
+        "lifespan_ai",
+        "maximum_tree_age_ai"
+      ],
+      "error": "Request failed with status code 400",
+      "raw_response": null,
+      "citations": [],
+      "parsed_data": null
+    }
+  ],
+  "aggregated_data": {},
+  "errors": [
+    "Group 1: Request failed with status code 400",
+    "Group 2: Request failed with status code 400"
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "model": "grok-3-mini",
+    "species_scientific_name": "Ginkgo biloba",
+    "common_names": "Ginkgo, maidenhair tree",
+    "taxon_id": "AngGiGiGN21141-00",
+    "timestamp": "2025-06-30T09:04:20.783Z",
+    "api_calls": 3,
+    "total_tokens": 16753,
+    "duration_ms": 32730,
+    "errors": [
+      "Morphological: No JSON found in response"
+    ]
+  },
+  "research_data": {
+    "habitat_ai": "Mixed broadleaf forests in southeastern China, often associated with mountainous regions and temperate ecosystems.",
+    "elevation_ranges_ai": "Data not available",
+    "ecological_function_ai": "Data not available",
+    "native_adapted_habitats_ai": "Native to eastern China, specifically adapted to temperate forest ecosystems with seasonal climate variations.",
+    "agroforestry_use_cases_ai": "Data not available",
+    "conservation_status_ai": "Endangered",
+    "general_description_ai": "A large deciduous tree growing up to 20-35 meters in height, characterized by fan-shaped, bilobed leaves that turn golden yellow in autumn, dioecious with separate male and female trees, and known for its longevity and resistance to diseases and pests.",
+    "compatible_soil_types_ai": "Data not available",
+    "stewardship_best_practices_ai": "Plant in full sun with well-drained soil; ensure good air circulation to prevent issues; select male trees to avoid messy fruit; water deeply but infrequently once established, and fertilize sparingly with balanced fertilizer in spring.",
+    "planting_recipes_ai": "Plant in spring or fall in loamy, well-drained soil with pH 5.0-7.5; dig a hole twice the width and the same depth as the root ball; space trees 20-30 feet apart to allow for mature size; water thoroughly after planting and mulch to retain moisture.",
+    "pruning_maintenance_ai": "Prune during dormancy in late winter to shape the tree and remove dead or diseased branches; minimal pruning is needed as Ginkgo biloba has a strong natural form; avoid heavy pruning to prevent stress.",
+    "disease_pest_management_ai": "Generally highly resistant to diseases and pests; common issues include aphids, scale insects, or leaf miners, managed with horticultural oils or insecticidal soaps; no major diseases reported in most sources, but monitor for stress-related problems.",
+    "fire_management_ai": "Data not available",
+    "cultural_significance_ai": "Considered a living fossil with ancient origins; used in traditional Chinese medicine for cognitive and circulatory health; symbolically represents longevity and resilience, often planted in temples and gardens for ornamental and ceremonial purposes.",
+    "growth_form_ai": null,
+    "leaf_type_ai": null,
+    "deciduous_evergreen_ai": null,
+    "flower_color_ai": null,
+    "fruit_type_ai": null,
+    "bark_characteristics_ai": null,
+    "maximum_height_ai": null,
+    "maximum_diameter_ai": null,
+    "lifespan_ai": null,
+    "maximum_tree_age_ai": null
+  },
+  "group_responses": {
+    "ecological_general": {
+      "success": true,
+      "data": {
+        "habitat_ai": "Mixed broadleaf forests in southeastern China, often associated with mountainous regions and temperate ecosystems.",
+        "elevation_ranges_ai": "Data not available",
+        "ecological_function_ai": "Data not available",
+        "native_adapted_habitats_ai": "Native to eastern China, specifically adapted to temperate forest ecosystems with seasonal climate variations.",
+        "agroforestry_use_cases_ai": "Data not available",
+        "conservation_status_ai": "Endangered",
+        "general_description_ai": "A large deciduous tree growing up to 20-35 meters in height, characterized by fan-shaped, bilobed leaves that turn golden yellow in autumn, dioecious with separate male and female trees, and known for its longevity and resistance to diseases and pests.",
+        "compatible_soil_types_ai": "Data not available"
+      },
+      "raw_response": "{\n  \"habitat_ai\": \"Mixed broadleaf forests in southeastern China, often associated with mountainous regions and temperate ecosystems.\",\n  \"elevation_ranges_ai\": \"Data not available\",\n  \"ecological_function_ai\": \"Data not available\",\n  \"native_adapted_habitats_ai\": \"Native to eastern China, specifically adapted to temperate forest ecosystems with seasonal climate variations.\",\n  \"agroforestry_use_cases_ai\": \"Data not available\",\n  \"conservation_status_ai\": \"Endangered\",\n  \"general_description_ai\": \"A large deciduous tree growing up to 20-35 meters in height, characterized by fan-shaped, bilobed leaves that turn golden yellow in autumn, dioecious with separate male and female trees, and known for its longevity and resistance to diseases and pests.\",\n  \"compatible_soil_types_ai\": \"Data not available\"\n}",
+      "usage": {
+        "prompt_tokens": 6185,
+        "completion_tokens": 173,
+        "total_tokens": 9352,
+        "prompt_tokens_details": {
+          "text_tokens": 6185,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 332
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 2994,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    },
+    "morphological": {
+      "success": false,
+      "raw_response": ""
+    },
+    "stewardship": {
+      "success": true,
+      "data": {
+        "stewardship_best_practices_ai": "Plant in full sun with well-drained soil; ensure good air circulation to prevent issues; select male trees to avoid messy fruit; water deeply but infrequently once established, and fertilize sparingly with balanced fertilizer in spring.",
+        "planting_recipes_ai": "Plant in spring or fall in loamy, well-drained soil with pH 5.0-7.5; dig a hole twice the width and the same depth as the root ball; space trees 20-30 feet apart to allow for mature size; water thoroughly after planting and mulch to retain moisture.",
+        "pruning_maintenance_ai": "Prune during dormancy in late winter to shape the tree and remove dead or diseased branches; minimal pruning is needed as Ginkgo biloba has a strong natural form; avoid heavy pruning to prevent stress.",
+        "disease_pest_management_ai": "Generally highly resistant to diseases and pests; common issues include aphids, scale insects, or leaf miners, managed with horticultural oils or insecticidal soaps; no major diseases reported in most sources, but monitor for stress-related problems.",
+        "fire_management_ai": "Data not available",
+        "cultural_significance_ai": "Considered a living fossil with ancient origins; used in traditional Chinese medicine for cognitive and circulatory health; symbolically represents longevity and resilience, often planted in temples and gardens for ornamental and ceremonial purposes."
+      },
+      "raw_response": "{\n  \"stewardship_best_practices_ai\": \"Plant in full sun with well-drained soil; ensure good air circulation to prevent issues; select male trees to avoid messy fruit; water deeply but infrequently once established, and fertilize sparingly with balanced fertilizer in spring.\",\n  \"planting_recipes_ai\": \"Plant in spring or fall in loamy, well-drained soil with pH 5.0-7.5; dig a hole twice the width and the same depth as the root ball; space trees 20-30 feet apart to allow for mature size; water thoroughly after planting and mulch to retain moisture.\",\n  \"pruning_maintenance_ai\": \"Prune during dormancy in late winter to shape the tree and remove dead or diseased branches; minimal pruning is needed as Ginkgo biloba has a strong natural form; avoid heavy pruning to prevent stress.\",\n  \"disease_pest_management_ai\": \"Generally highly resistant to diseases and pests; common issues include aphids, scale insects, or leaf miners, managed with horticultural oils or insecticidal soaps; no major diseases reported in most sources, but monitor for stress-related problems.\",\n  \"fire_management_ai\": \"Data not available\",\n  \"cultural_significance_ai\": \"Considered a living fossil with ancient origins; used in traditional Chinese medicine for cognitive and circulatory health; symbolically represents longevity and resilience, often planted in temples and gardens for ornamental and ceremonial purposes.\"\n}",
+      "usage": {
+        "prompt_tokens": 5331,
+        "completion_tokens": 290,
+        "total_tokens": 7401,
+        "prompt_tokens_details": {
+          "text_tokens": 5331,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 327
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1780,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    }
+  }
+}

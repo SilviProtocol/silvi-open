@@ -1,6 +1,8 @@
 const express = require('express');
+
+module.exports = (pool) => {
 const router = express.Router();
-const geospatialController = require('../controllers/geospatial');
+const geospatialController = require('../controllers/geospatial')(pool);
 
 /**
  * Geospatial API Routes
@@ -31,4 +33,9 @@ router.get('/tiles', geospatialController.getTilesByTimeRange);
 // GET /api/geospatial/stats
 router.get('/stats', geospatialController.getGeospatialStats);
 
-module.exports = router;
+// Analyze species within a polygon plot
+// POST /api/geospatial/analyze-plot
+router.post('/analyze-plot', geospatialController.analyzePlot);
+
+return router;
+};

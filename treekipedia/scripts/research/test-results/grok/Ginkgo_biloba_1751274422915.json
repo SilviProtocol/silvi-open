@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "model": "grok-3-mini",
+    "species_scientific_name": "Ginkgo biloba",
+    "common_names": "Ginkgo, maidenhair tree",
+    "taxon_id": "AngGiGiGN21141-00",
+    "timestamp": "2025-06-30T09:07:02.914Z",
+    "api_calls": 3,
+    "total_tokens": 10133,
+    "duration_ms": 34667,
+    "errors": [
+      "Morphological: No JSON found in response"
+    ]
+  },
+  "research_data": {
+    "habitat_ai": "Ginkgo biloba naturally occurs in mixed broad-leaved deciduous forests in eastern China, often in areas with moist, well-drained conditions.",
+    "elevation_ranges_ai": "Data not available",
+    "ecological_function_ai": "Data not available",
+    "native_adapted_habitats_ai": "Native to eastern China, adapted to temperate climates with seasonal changes, including cold winters and warm summers.",
+    "agroforestry_use_cases_ai": "Data not available",
+    "conservation_status_ai": "Endangered, according to the IUCN Red List.",
+    "general_description_ai": "Ginkgo biloba is a large deciduous tree, typically growing 20-35 meters tall, with distinctive fan-shaped leaves that turn golden yellow in autumn; it is dioecious, with separate male and female trees, and is considered a living fossil due to its ancient lineage.",
+    "compatible_soil_types_ai": "Data not available",
+    "stewardship_best_practices_ai": "Best practices include planting only male cultivars to avoid the foul-smelling fruit from females, ensuring the tree is placed in full sun for optimal growth, and using well-draining soil to prevent root rot; regular watering is needed during establishment, with mature trees being drought-tolerant.",
+    "planting_recipes_ai": "Plant in full sun with well-draining soil; best done in spring or fall, with trees spaced 20-30 feet apart to accommodate mature size; adaptable to various soil types including urban soils.",
+    "pruning_maintenance_ai": "Prune in late winter or early spring to maintain shape and remove dead wood; minimal pruning is typically required due to the tree's strong branching habit.",
+    "disease_pest_management_ai": "Generally resistant to pests and diseases; occasional issues with aphids or scale insects may occur, managed through horticultural oils or insecticides; no major diseases commonly reported.",
+    "fire_management_ai": "Data not available",
+    "cultural_significance_ai": "Culturally significant in China, often planted in temples and associated with longevity and wisdom; used in traditional medicine for cognitive health and preserved in sacred sites for centuries.",
+    "growth_form_ai": null,
+    "leaf_type_ai": null,
+    "deciduous_evergreen_ai": null,
+    "flower_color_ai": null,
+    "fruit_type_ai": null,
+    "bark_characteristics_ai": null,
+    "maximum_height_ai": null,
+    "maximum_diameter_ai": null,
+    "lifespan_ai": null,
+    "maximum_tree_age_ai": null
+  },
+  "group_responses": {
+    "ecological_general": {
+      "success": true,
+      "data": {
+        "habitat_ai": "Ginkgo biloba naturally occurs in mixed broad-leaved deciduous forests in eastern China, often in areas with moist, well-drained conditions.",
+        "elevation_ranges_ai": "Data not available",
+        "ecological_function_ai": "Data not available",
+        "native_adapted_habitats_ai": "Native to eastern China, adapted to temperate climates with seasonal changes, including cold winters and warm summers.",
+        "agroforestry_use_cases_ai": "Data not available",
+        "conservation_status_ai": "Endangered, according to the IUCN Red List.",
+        "general_description_ai": "Ginkgo biloba is a large deciduous tree, typically growing 20-35 meters tall, with distinctive fan-shaped leaves that turn golden yellow in autumn; it is dioecious, with separate male and female trees, and is considered a living fossil due to its ancient lineage.",
+        "compatible_soil_types_ai": "Data not available"
+      },
+      "raw_response": "{\n  \"habitat_ai\": \"Ginkgo biloba naturally occurs in mixed broad-leaved deciduous forests in eastern China, often in areas with moist, well-drained conditions.\",\n  \"elevation_ranges_ai\": \"Data not available\",\n  \"ecological_function_ai\": \"Data not available\",\n  \"native_adapted_habitats_ai\": \"Native to eastern China, adapted to temperate climates with seasonal changes, including cold winters and warm summers.\",\n  \"agroforestry_use_cases_ai\": \"Data not available\",\n  \"conservation_status_ai\": \"Endangered, according to the IUCN Red List.\",\n  \"general_description_ai\": \"Ginkgo biloba is a large deciduous tree, typically growing 20-35 meters tall, with distinctive fan-shaped leaves that turn golden yellow in autumn; it is dioecious, with separate male and female trees, and is considered a living fossil due to its ancient lineage.\",\n  \"compatible_soil_types_ai\": \"Data not available\"\n}",
+      "usage": {
+        "prompt_tokens": 2902,
+        "completion_tokens": 199,
+        "total_tokens": 5596,
+        "prompt_tokens_details": {
+          "text_tokens": 2902,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 331
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 2495,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    },
+    "morphological": {
+      "success": false,
+      "raw_response": ""
+    },
+    "stewardship": {
+      "success": true,
+      "data": {
+        "stewardship_best_practices_ai": "Best practices include planting only male cultivars to avoid the foul-smelling fruit from females, ensuring the tree is placed in full sun for optimal growth, and using well-draining soil to prevent root rot; regular watering is needed during establishment, with mature trees being drought-tolerant.",
+        "planting_recipes_ai": "Plant in full sun with well-draining soil; best done in spring or fall, with trees spaced 20-30 feet apart to accommodate mature size; adaptable to various soil types including urban soils.",
+        "pruning_maintenance_ai": "Prune in late winter or early spring to maintain shape and remove dead wood; minimal pruning is typically required due to the tree's strong branching habit.",
+        "disease_pest_management_ai": "Generally resistant to pests and diseases; occasional issues with aphids or scale insects may occur, managed through horticultural oils or insecticides; no major diseases commonly reported.",
+        "fire_management_ai": "Data not available",
+        "cultural_significance_ai": "Culturally significant in China, often planted in temples and associated with longevity and wisdom; used in traditional medicine for cognitive health and preserved in sacred sites for centuries."
+      },
+      "raw_response": "{\n  \"stewardship_best_practices_ai\": \"Best practices include planting only male cultivars to avoid the foul-smelling fruit from females, ensuring the tree is placed in full sun for optimal growth, and using well-draining soil to prevent root rot; regular watering is needed during establishment, with mature trees being drought-tolerant.\",\n  \"planting_recipes_ai\": \"Plant in full sun with well-draining soil; best done in spring or fall, with trees spaced 20-30 feet apart to accommodate mature size; adaptable to various soil types including urban soils.\",\n  \"pruning_maintenance_ai\": \"Prune in late winter or early spring to maintain shape and remove dead wood; minimal pruning is typically required due to the tree's strong branching habit.\",\n  \"disease_pest_management_ai\": \"Generally resistant to pests and diseases; occasional issues with aphids or scale insects may occur, managed through horticultural oils or insecticides; no major diseases commonly reported.\",\n  \"fire_management_ai\": \"Data not available\",\n  \"cultural_significance_ai\": \"Culturally significant in China, often planted in temples and associated with longevity and wisdom; used in traditional medicine for cognitive health and preserved in sacred sites for centuries.\"\n}",
+      "usage": {
+        "prompt_tokens": 2508,
+        "completion_tokens": 246,
+        "total_tokens": 4537,
+        "prompt_tokens_details": {
+          "text_tokens": 2508,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 327
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1783,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    }
+  }
+}

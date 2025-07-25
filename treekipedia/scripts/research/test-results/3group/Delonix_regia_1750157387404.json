@@ -1,0 +1,95 @@
+{
+  "metadata": {
+    "species_scientific_name": "Delonix regia",
+    "common_names": "Flame Of The Forest, Royal Poinciana, Flamboyán",
+    "taxon_id": null,
+    "timestamp": "2025-06-17T10:49:47.403Z",
+    "api_calls": 3,
+    "total_tokens": 286913,
+    "duration_ms": 65143,
+    "errors": [
+      "Stewardship: Request failed with status code 502"
+    ]
+  },
+  "research_data": {
+    "habitat_ai": "Native to Madagascar's dry deciduous forests and seasonally dry tropical areas. Naturally found in wet tropical forests at elevations from sea level to 2000 meters. Thrives in seasonally dry areas of tropics and sub-tropics, tolerates salty conditions near coasts but not openly exposed beach conditions.",
+    "elevation_ranges_ai": "Sea level to 2000 meters",
+    "ecological_function_ai": "Provides shade tree function in plantations, helps maintain soil moisture and reduce soil temperature. Serves as food plant for larval stages of Tailed Emperor Butterfly. Offers habitat and shelter for birds and small animals with its broad spreading canopy. Seeds dispersed by mice and small rodents in forest ecosystems, and pods can be spread by floodwaters.",
+    "native_adapted_habitats_ai": "Endemic to northern and western Madagascar, specifically dry deciduous forests. Latitudinal range of 12-25°S in Madagascar. Originally found in seasonally dry areas but naturally occurs in wet tropical forests. Now adapted to disturbed beach forest and gallery forest environments where introduced.",
+    "agroforestry_use_cases_ai": "Used as shade tree in plantations and for soil stabilization and enrichment. Applied for erosion control and soil rehabilitation on eroded sites. Leaf and green stem prunings improve soil nitrogen content by 13% and increase organic carbon and mineralization when applied to soil for 5 years. Functions as nitrogen-fixing legume though research shows conflicting evidence on nodulation capacity.",
+    "conservation_status_ai": "Listed as Vulnerable (VU) on the IUCN Red List of Threatened Species (2010). Endangered in the wild in its native Madagascar range, though widely cultivated elsewhere. Main native subpopulations threatened by charcoal production.",
+    "general_description_ai": "Medium-sized deciduous tree growing 9-15 meters tall with umbrella-shaped spreading crown wider than height. Belongs to Fabaceae family, subfamily Caesalpinioideae. Features bipinnately compound fern-like leaves 30.5-50.8 cm long with 11-25 pairs of primary leaflets. Produces spectacular orange-red flowers 8-15 cm diameter in dense clusters, blooming seasonally in midsummer. Develops characteristic 30-75 cm long woody pods containing 30-45 hard seeds.",
+    "compatible_soil_types_ai": "Tolerates clay, loamy, sandy, and gravelly soils with wide pH range from 4.9-10.6 (acidic to alkaline). Prefers well-drained sandy or loamy soils but adapts to various soil types. Performs poorly on heavy clay soils and alluvial soils. Requires good drainage to prevent root rot, tolerates slight salinity and salt winds.",
+    "growth_form_ai": "<cite index=\"1-22,4-31,6-4,16-3\">Medium-sized deciduous tree with broad-spreading, open, umbrella-shaped crown and long, nearly horizontal branches forming a diameter wider than the tree's height</cite>",
+    "leaf_type_ai": "<cite index=\"1-5,1-6,21-6,21-7\">Compound (doubly pinnate) leaves with feathery appearance, characteristic light bright green color, 30-50 cm long with 20-40 pairs of primary leaflets (pinnae), each divided into 10-20 pairs of secondary leaflets (pinnules)</cite>",
+    "deciduous_evergreen_ai": "<cite index=\"1-8,4-31,16-30,35-14\">Deciduous in areas with pronounced dry seasons or cold winters, semi-evergreen to evergreen in consistently warm tropical climates</cite>",
+    "flower_color_ai": "<cite index=\"1-28,21-21,25-4\">Large flowers with four spreading scarlet or orange-red petals up to 8-11 cm diameter, and a fifth upright petal (standard) spotted with yellow and white; naturally occurring variety flavida has yellow flowers</cite>",
+    "fruit_type_ai": "<cite index=\"21-24,22-5,28-13,30-4\">Large flattened woody pods 30-75 cm long, 3-5.5 cm wide, green and flaccid when young, turning dark brown to black when mature, containing 30-45 hard oblong seeds</cite>",
+    "bark_characteristics_ai": "<cite index=\"1-23,1-24,22-1,22-30,24-4,24-5\">Light brown to greyish-brown bark, relatively smooth, often creased at branches with prominent lenticels, older trees may have slightly rough and fissured bark</cite>",
+    "maximum_height_ai": 20,
+    "maximum_diameter_ai": 2,
+    "lifespan_ai": "<cite index=\"34-1,34-13,35-2,35-12\">Typically 50-60 years, with some sources indicating they can live over 50 years</cite>",
+    "maximum_tree_age_ai": null,
+    "stewardship_best_practices_ai": null,
+    "planting_recipes_ai": null,
+    "pruning_maintenance_ai": null,
+    "disease_pest_management_ai": null,
+    "fire_management_ai": null,
+    "cultural_significance_ai": null
+  },
+  "group_responses": {
+    "ecological_general": {
+      "success": true,
+      "data": {
+        "habitat_ai": "Native to Madagascar's dry deciduous forests and seasonally dry tropical areas. Naturally found in wet tropical forests at elevations from sea level to 2000 meters. Thrives in seasonally dry areas of tropics and sub-tropics, tolerates salty conditions near coasts but not openly exposed beach conditions.",
+        "elevation_ranges_ai": "Sea level to 2000 meters",
+        "ecological_function_ai": "Provides shade tree function in plantations, helps maintain soil moisture and reduce soil temperature. Serves as food plant for larval stages of Tailed Emperor Butterfly. Offers habitat and shelter for birds and small animals with its broad spreading canopy. Seeds dispersed by mice and small rodents in forest ecosystems, and pods can be spread by floodwaters.",
+        "native_adapted_habitats_ai": "Endemic to northern and western Madagascar, specifically dry deciduous forests. Latitudinal range of 12-25°S in Madagascar. Originally found in seasonally dry areas but naturally occurs in wet tropical forests. Now adapted to disturbed beach forest and gallery forest environments where introduced.",
+        "agroforestry_use_cases_ai": "Used as shade tree in plantations and for soil stabilization and enrichment. Applied for erosion control and soil rehabilitation on eroded sites. Leaf and green stem prunings improve soil nitrogen content by 13% and increase organic carbon and mineralization when applied to soil for 5 years. Functions as nitrogen-fixing legume though research shows conflicting evidence on nodulation capacity.",
+        "conservation_status_ai": "Listed as Vulnerable (VU) on the IUCN Red List of Threatened Species (2010). Endangered in the wild in its native Madagascar range, though widely cultivated elsewhere. Main native subpopulations threatened by charcoal production.",
+        "general_description_ai": "Medium-sized deciduous tree growing 9-15 meters tall with umbrella-shaped spreading crown wider than height. Belongs to Fabaceae family, subfamily Caesalpinioideae. Features bipinnately compound fern-like leaves 30.5-50.8 cm long with 11-25 pairs of primary leaflets. Produces spectacular orange-red flowers 8-15 cm diameter in dense clusters, blooming seasonally in midsummer. Develops characteristic 30-75 cm long woody pods containing 30-45 hard seeds.",
+        "compatible_soil_types_ai": "Tolerates clay, loamy, sandy, and gravelly soils with wide pH range from 4.9-10.6 (acidic to alkaline). Prefers well-drained sandy or loamy soils but adapts to various soil types. Performs poorly on heavy clay soils and alluvial soils. Requires good drainage to prevent root rot, tolerates slight salinity and salt winds."
+      },
+      "raw_response": "Based on my comprehensive research, I can now provide detailed ecological information about Delonix regia. Here is the JSON response with the specific ecological data found:\n\n```json\n{\n  \"habitat_ai\": \"Native to Madagascar's dry deciduous forests and seasonally dry tropical areas. Naturally found in wet tropical forests at elevations from sea level to 2000 meters. Thrives in seasonally dry areas of tropics and sub-tropics, tolerates salty conditions near coasts but not openly exposed beach conditions.\",\n  \"elevation_ranges_ai\": \"Sea level to 2000 meters\",\n  \"ecological_function_ai\": \"Provides shade tree function in plantations, helps maintain soil moisture and reduce soil temperature. Serves as food plant for larval stages of Tailed Emperor Butterfly. Offers habitat and shelter for birds and small animals with its broad spreading canopy. Seeds dispersed by mice and small rodents in forest ecosystems, and pods can be spread by floodwaters.\",\n  \"native_adapted_habitats_ai\": \"Endemic to northern and western Madagascar, specifically dry deciduous forests. Latitudinal range of 12-25°S in Madagascar. Originally found in seasonally dry areas but naturally occurs in wet tropical forests. Now adapted to disturbed beach forest and gallery forest environments where introduced.\",\n  \"agroforestry_use_cases_ai\": \"Used as shade tree in plantations and for soil stabilization and enrichment. Applied for erosion control and soil rehabilitation on eroded sites. Leaf and green stem prunings improve soil nitrogen content by 13% and increase organic carbon and mineralization when applied to soil for 5 years. Functions as nitrogen-fixing legume though research shows conflicting evidence on nodulation capacity.\",\n  \"conservation_status_ai\": \"Listed as Vulnerable (VU) on the IUCN Red List of Threatened Species (2010). Endangered in the wild in its native Madagascar range, though widely cultivated elsewhere. Main native subpopulations threatened by charcoal production.\",\n  \"general_description_ai\": \"Medium-sized deciduous tree growing 9-15 meters tall with umbrella-shaped spreading crown wider than height. Belongs to Fabaceae family, subfamily Caesalpinioideae. Features bipinnately compound fern-like leaves 30.5-50.8 cm long with 11-25 pairs of primary leaflets. Produces spectacular orange-red flowers 8-15 cm diameter in dense clusters, blooming seasonally in midsummer. Develops characteristic 30-75 cm long woody pods containing 30-45 hard seeds.\",\n  \"compatible_soil_types_ai\": \"Tolerates clay, loamy, sandy, and gravelly soils with wide pH range from 4.9-10.6 (acidic to alkaline). Prefers well-drained sandy or loamy soils but adapts to various soil types. Performs poorly on heavy clay soils and alluvial soils. Requires good drainage to prevent root rot, tolerates slight salinity and salt winds.\"\n}\n```",
+      "usage": {
+        "input_tokens": 168409,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 1017,
+        "service_tier": "standard",
+        "server_tool_use": {
+          "web_search_requests": 5
+        }
+      }
+    },
+    "morphological": {
+      "success": true,
+      "data": {
+        "growth_form_ai": "<cite index=\"1-22,4-31,6-4,16-3\">Medium-sized deciduous tree with broad-spreading, open, umbrella-shaped crown and long, nearly horizontal branches forming a diameter wider than the tree's height</cite>",
+        "leaf_type_ai": "<cite index=\"1-5,1-6,21-6,21-7\">Compound (doubly pinnate) leaves with feathery appearance, characteristic light bright green color, 30-50 cm long with 20-40 pairs of primary leaflets (pinnae), each divided into 10-20 pairs of secondary leaflets (pinnules)</cite>",
+        "deciduous_evergreen_ai": "<cite index=\"1-8,4-31,16-30,35-14\">Deciduous in areas with pronounced dry seasons or cold winters, semi-evergreen to evergreen in consistently warm tropical climates</cite>",
+        "flower_color_ai": "<cite index=\"1-28,21-21,25-4\">Large flowers with four spreading scarlet or orange-red petals up to 8-11 cm diameter, and a fifth upright petal (standard) spotted with yellow and white; naturally occurring variety flavida has yellow flowers</cite>",
+        "fruit_type_ai": "<cite index=\"21-24,22-5,28-13,30-4\">Large flattened woody pods 30-75 cm long, 3-5.5 cm wide, green and flaccid when young, turning dark brown to black when mature, containing 30-45 hard oblong seeds</cite>",
+        "bark_characteristics_ai": "<cite index=\"1-23,1-24,22-1,22-30,24-4,24-5\">Light brown to greyish-brown bark, relatively smooth, often creased at branches with prominent lenticels, older trees may have slightly rough and fissured bark</cite>",
+        "maximum_height_ai": 20,
+        "maximum_diameter_ai": 2,
+        "lifespan_ai": "<cite index=\"34-1,34-13,35-2,35-12\">Typically 50-60 years, with some sources indicating they can live over 50 years</cite>",
+        "maximum_tree_age_ai": "Data not available"
+      },
+      "raw_response": "Based on my comprehensive research of Delonix regia from multiple botanical and horticultural sources, I can now provide the requested morphological characteristics in JSON format:\n\n{\n  \"growth_form_ai\": \"<cite index=\\\"1-22,4-31,6-4,16-3\\\">Medium-sized deciduous tree with broad-spreading, open, umbrella-shaped crown and long, nearly horizontal branches forming a diameter wider than the tree's height</cite>\",\n  \"leaf_type_ai\": \"<cite index=\\\"1-5,1-6,21-6,21-7\\\">Compound (doubly pinnate) leaves with feathery appearance, characteristic light bright green color, 30-50 cm long with 20-40 pairs of primary leaflets (pinnae), each divided into 10-20 pairs of secondary leaflets (pinnules)</cite>\",\n  \"deciduous_evergreen_ai\": \"<cite index=\\\"1-8,4-31,16-30,35-14\\\">Deciduous in areas with pronounced dry seasons or cold winters, semi-evergreen to evergreen in consistently warm tropical climates</cite>\",\n  \"flower_color_ai\": \"<cite index=\\\"1-28,21-21,25-4\\\">Large flowers with four spreading scarlet or orange-red petals up to 8-11 cm diameter, and a fifth upright petal (standard) spotted with yellow and white; naturally occurring variety flavida has yellow flowers</cite>\",\n  \"fruit_type_ai\": \"<cite index=\\\"21-24,22-5,28-13,30-4\\\">Large flattened woody pods 30-75 cm long, 3-5.5 cm wide, green and flaccid when young, turning dark brown to black when mature, containing 30-45 hard oblong seeds</cite>\",\n  \"bark_characteristics_ai\": \"<cite index=\\\"1-23,1-24,22-1,22-30,24-4,24-5\\\">Light brown to greyish-brown bark, relatively smooth, often creased at branches with prominent lenticels, older trees may have slightly rough and fissured bark</cite>\",\n  \"maximum_height_ai\": 20,\n  \"maximum_diameter_ai\": 2,\n  \"lifespan_ai\": \"<cite index=\\\"34-1,34-13,35-2,35-12\\\">Typically 50-60 years, with some sources indicating they can live over 50 years</cite>\",\n  \"maximum_tree_age_ai\": \"Data not available\"\n}",
+      "usage": {
+        "input_tokens": 116595,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 892,
+        "service_tier": "standard",
+        "server_tool_use": {
+          "web_search_requests": 4
+        }
+      }
+    },
+    "stewardship": {
+      "success": false
+    }
+  }
+}
