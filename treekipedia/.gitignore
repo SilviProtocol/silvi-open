@@ -74,5 +74,14 @@ yarn-error.log*
 /FRONTEND_IMPROVEMENTS.md
 /LAUNCH.md
 /PAYMENT.md
+/RECOMMENDATION_SERVICE.md
+/SCHEMA.md
+/SCHEMA_COMPARISON.md
+/SECURITY.md
 .claude/
 blazegraph/blazegraph.jnl
+
+# Large data files from v8 import
+/v8.csv
+/geohash.csv
+/images.json

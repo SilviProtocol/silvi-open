@@ -125,16 +125,17 @@ cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
 # Results: 4,716,132 tiles imported in 11.4 minutes at 6,881 rows/sec
 ```
 
-## 📊 Current Metrics (As of Latest Check)
+## 📊 Current Metrics (As of August 11, 2025)
 
-- **Species Database**: 50,922 total species
-- **Images Database**: 4,024 images across 1,576 species (3.1% coverage)
-- **Research Status**: 18 researched, 50,904 pending
+- **Species Database**: 61,455 total species (v8 import completed)
+- **Images Database**: 4,024 images across 1,576 species (2.6% coverage)
+- **Research Status**: 19 researched (preserved during v8 import)
 - **Users**: 8 registered wallet addresses
 - **NFTs**: 20 minted across 18 species
 - **Contributors**: 7 unique wallets with contributions
 - **Total Points**: 40 points awarded
 - **Geospatial Data**: 4.7M geohash tiles containing 89M occurrence records (Level 7, ~150m resolution)
+- **Database Features**: Added `legacy_taxon_id` field for geohash occurrence mapping
 
 ## 🚧 Upcoming Development Priorities
 
@@ -278,15 +279,35 @@ cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
 
 ---
 
-**Last Updated**: July 21, 2025  
+**Last Updated**: August 11, 2025  
 **Next Review**: After Analysis page implementation and AI research enhancement  
 **Maintainer**: Update this doc whenever major changes are made
 
-### Latest Completed Work (July 21, 2025):
+### Latest Completed Work (August 11, 2025):
+- **v8 Data Import Complete**: Successfully imported Marina's v8 data with 61,455 species including new soil/ecosystem fields
+- **Taxon ID Fix**: Corrected malformed taxon_ids (main species were labeled -01 instead of -00)
+- **Legacy Support**: Added legacy_taxon_id field to preserve original IDs for geohash occurrence mapping
+- **Data Integrity**: Preserved all 19 researched species and 1,576 species with images during import
+- **Clean Import**: Achieved clean database with no duplicates after comprehensive cleanup
+
+### Previous Work (July 28, 2025):
+- **Analysis Page Complete**: Full frontend implementation with React-Leaflet, polygon drawing, KML upload, and species analysis
+- **UI/UX Polish**: Applied Treekipedia design system, collapsible instructions, transparent backgrounds
+- **Data Quality Discovery**: Identified numeric taxon_id corruption in source data ("1", "2", "3") requiring upstream fix
+
+### Previous Work (July 21, 2025):
 - **Geospatial Data Import**: Successfully imported 4.7M geohash tiles containing 89M occurrence records
 - **PostGIS 3.2 Installation**: Enabled full spatial functionality in PostgreSQL
 - **CSV Import Script**: Created streaming import script handling 480MB file efficiently
 - **Data Validation**: All tiles imported with 0 errors, ready for spatial queries
+
+### ⚠️ Pending Data Quality Issue:
+**Status**: PAUSED - Awaiting Marina's investigation
+**Issue**: Original CSV data contains corrupted numeric taxon_ids ("1", "2", "3", etc.) mixed with valid species identifiers
+**Evidence**: Confirmed in source file `Treekipedia_geohash_15djuly.csv` - lines contain entries like `{"1":1}` instead of proper taxon_ids
+**Impact**: ~4.7M tiles imported include corrupted data, currently handled gracefully by showing "Unidentified species"
+**Next Steps**: Marina needs to investigate her compression script and provide corrected dataset for re-import
+**Current Workaround**: Analysis page functional, corrupted entries filtered out from results
 
 ### Previous Major Work (July 8, 2025):
 - **PostGIS Geospatial Integration**: Complete spatial database setup with STAC compliance
@@ -309,3 +330,56 @@ cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
 - **Import Tools**: ✅ Ready for Marina's data
 - **Geohash Data Import**: ✅ **COMPLETED** - 4.7M tiles with 89M occurrences successfully imported
 - **Next Priority**: 🎯 Frontend Analysis page for geospatial queries + AI Research Process Enhancement
+
+
+
+System Overview
+
+  - OS: Ubuntu 20.04 LTS (Linux 5.15.0-134-generic)
+  - Platform: DigitalOcean AMD Premium VM (KVM virtualized)
+  - CPU: 2-core AMD (DO-Premium-AMD, 2.3GHz)
+  - RAM: 4GB total, 67.5% used (2.7GB), only 798MB available
+  - Storage: 78GB disk, 38% used (29GB used, 49GB free)
+  - Uptime: 133 days, 3 hours
+
+  🚨 Critical Issues
+
+  Memory Pressure
+
+  - High RAM usage: 67.5% utilized with only 798MB free
+  - No swap configured - system has no swap space as fallback
+  - Top memory consumers:
+    - claude processes: 810MB + 231MB + 224MB = 1.27GB total
+    - code-server: 522MB
+    - blazegraph (Java): 201MB
+    - PostgreSQL: 277MB
+
+  Security Concerns
+
+  - Heavy firewall activity - UFW blocking numerous intrusion attempts
+  - SSH brute force attacks detected (kex_exchange_identification errors)
+  - Multiple scanning attempts from various IPs
+
+  Running Services Status
+
+  PM2 Managed Processes
+
+  - ✅ treekipedia-backend (PID 3306319): Healthy, 53.7MB RAM, 6 days uptime
+  - ✅ treekipedia-blazegraph (PID 4026162): Healthy, 248KB RAM, 38 days uptime
+  - ✅ node process (PID 594908): 21MB RAM, 29 days uptime
+
+  System Services
+
+  - ✅ PostgreSQL 14: Running normally
+  - ✅ Nginx: Active on ports 80/443
+  - ✅ RabbitMQ: Consuming 121MB RAM
+  - ✅ Code-server: Running on port 8080
+
+  Network Services
+
+  - Port 3000: Treekipedia backend
+  - Port 5432: PostgreSQL
+  - Port 9999: Blazegraph
+  - Port 8080: Code-server
+  - Port 8000: Biodiversity ontology service
+  - Ports 15672, 25672, 5672: RabbitMQ
