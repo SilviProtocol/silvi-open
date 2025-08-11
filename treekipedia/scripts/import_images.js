@@ -17,18 +17,28 @@ const pool = new Pool({
 });
 
 /**
- * Find taxon_id by matching species_scientific_name
+ * Find taxon_id by matching species_scientific_name and check if images exist
  */
 async function findTaxonIdBySpeciesName(species_name) {
   const query = `
-    SELECT taxon_id FROM species 
-    WHERE species_scientific_name = $1
+    SELECT s.taxon_id, 
+           CASE WHEN COUNT(i.taxon_id) > 0 THEN true ELSE false END as has_images
+    FROM species s 
+    LEFT JOIN images i ON s.taxon_id = i.taxon_id
+    WHERE s.species_scientific_name = $1
+    GROUP BY s.taxon_id
     LIMIT 1
   `;
   
   try {
     const result = await pool.query(query, [species_name]);
-    return result.rows[0]?.taxon_id || null;
+    if (result.rows[0]) {
+      return {
+        taxon_id: result.rows[0].taxon_id,
+        has_images: result.rows[0].has_images
+      };
+    }
+    return null;
   } catch (error) {
     console.error(`Error querying species ${species_name}:`, error.message);
     return null;
@@ -69,15 +79,17 @@ async function importImageRecord(taxon_id, image_data, is_primary = false, dry_r
 /**
  * Process images JSON and import to database
  */
-async function processImagesJson(json_file_path, dry_run = true) {
+async function processImagesJson(json_file_path, dry_run = true, skip_existing = true) {
   const stats = {
     total_entries: 0,
     matched_species: 0,
     unmatched_species: 0,
+    skipped_existing: 0,
     imported_images: 0,
     failed_imports: 0,
     species_with_primary: 0,
-    unmatched_list: []
+    unmatched_list: [],
+    skipped_list: []
   };
   
   // Load JSON data
@@ -107,12 +119,22 @@ async function processImagesJson(json_file_path, dry_run = true) {
   
   // Process each species
   for (const [species_name, images] of Object.entries(species_images)) {
-    // Find corresponding taxon_id
-    const taxon_id = await findTaxonIdBySpeciesName(species_name);
+    // Find corresponding taxon_id and check if images exist
+    const species_info = await findTaxonIdBySpeciesName(species_name);
     
-    if (taxon_id) {
+    if (species_info) {
+      const { taxon_id, has_images } = species_info;
+      
+      if (skip_existing && has_images) {
+        stats.skipped_existing++;
+        stats.skipped_list.push(species_name);
+        console.log(`⏭️  Skipping ${species_name} - already has images (${images.length} available)`);
+        continue;
+      }
+      
       stats.matched_species++;
-      console.log(`✓ Found taxon_id ${taxon_id} for ${species_name} (${images.length} images)`);
+      const status = has_images ? "(replacing existing)" : "(new)";
+      console.log(`✓ Found taxon_id ${taxon_id} for ${species_name} ${status} (${images.length} images)`);
       
       // Import images for this species
       for (let i = 0; i < images.length; i++) {
@@ -155,13 +177,14 @@ function printImportSummary(stats) {
   console.log(`Total JSON entries:     ${stats.total_entries}`);
   console.log(`Matched species:        ${stats.matched_species}`);
   console.log(`Unmatched species:      ${stats.unmatched_species}`);
+  console.log(`Skipped existing:       ${stats.skipped_existing}`);
   console.log(`Images imported:        ${stats.imported_images}`);
   console.log(`Failed imports:         ${stats.failed_imports}`);
   console.log(`Species with primary:   ${stats.species_with_primary}`);
   
   if (stats.unmatched_species > 0) {
-    const total_species = stats.matched_species + stats.unmatched_species;
-    const match_rate = (stats.matched_species / total_species) * 100;
+    const total_species = stats.matched_species + stats.unmatched_species + stats.skipped_existing;
+    const match_rate = ((stats.matched_species + stats.skipped_existing) / total_species) * 100;
     console.log(`\nMatch rate: ${match_rate.toFixed(1)}%`);
     
     console.log('\nFirst 10 unmatched species:');
@@ -173,6 +196,11 @@ function printImportSummary(stats) {
       console.log(`  ... and ${stats.unmatched_list.length - 10} more`);
     }
   }
+  
+  if (stats.skipped_existing > 0) {
+    console.log(`\nSkipped ${stats.skipped_existing} species that already have images.`);
+    console.log('Use --force flag to override and import anyway.');
+  }
 }
 
 /**
@@ -182,13 +210,15 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length < 1) {
-    console.log('Usage: node import_images.js <json_file> [--execute]');
+    console.log('Usage: node import_images.js <json_file> [--execute] [--force]');
     console.log('  --execute: Actually perform the import (default is dry run)');
+    console.log('  --force: Import images even for species that already have images');
     process.exit(1);
   }
   
   const json_file = args[0];
   const dry_run = !args.includes('--execute');
+  const skip_existing = !args.includes('--force');
   
   if (!fs.existsSync(json_file)) {
     console.error(`Error: JSON file ${json_file} not found`);
@@ -202,10 +232,17 @@ async function main() {
     console.log('⚠️  EXECUTE MODE - Database will be modified');
   }
   
+  if (skip_existing) {
+    console.log('📋 SKIP EXISTING MODE - Will skip species that already have images');
+    console.log('Add --force flag to import for all species');
+  } else {
+    console.log('🔄 FORCE MODE - Will import for all matched species (may replace existing)');
+  }
+  
   console.log(`Processing: ${json_file}`);
   
   try {
-    const stats = await processImagesJson(json_file, dry_run);
+    const stats = await processImagesJson(json_file, dry_run, skip_existing);
     printImportSummary(stats);
   } catch (error) {
     console.error('Import failed:', error);

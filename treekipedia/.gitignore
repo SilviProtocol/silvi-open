@@ -85,3 +85,6 @@ blazegraph/blazegraph.jnl
 /v8.csv
 /geohash.csv
 /images.json
+
+# Database backups
+database/backups/

@@ -186,6 +186,7 @@ function ExternalPolygonLayer({ geometry }: { geometry: GeoJSONPolygon | null })
 
 export default function Map({ onAnalysisComplete, onAnalysisError, onLoadingChange, onClear }: MapProps) {
   const [externalGeometry, setExternalGeometry] = useState<GeoJSONPolygon | null>(null);
+  const [showInstructions, setShowInstructions] = useState(true);
 
   // Function to handle externally provided geometry (from KML upload)
   const handleExternalGeometry = async (geometry: GeoJSONPolygon) => {
@@ -228,15 +229,40 @@ export default function Map({ onAnalysisComplete, onAnalysisError, onLoadingChan
         <ExternalPolygonLayer geometry={externalGeometry} />
       </MapContainer>
       
-      {/* Instructions overlay - positioned to avoid Leaflet controls */}
-      <div className="absolute bottom-4 left-4 z-10 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-3 max-w-sm">
-        <h3 className="font-medium text-gray-900 mb-2">How to use:</h3>
-        <ul className="text-sm text-gray-600 space-y-1">
-          <li>• Use the polygon tool to draw an area</li>
-          <li>• Use the rectangle tool for simple rectangular areas</li>
-          <li>• Edit or delete drawn shapes using the edit tools</li>
-          <li>• Or upload a KML file in the sidebar</li>
-        </ul>
+      {/* Collapsible instructions overlay */}
+      <div className="absolute bottom-4 left-4 z-10">
+        {showInstructions ? (
+          <div className="bg-black/80 backdrop-blur-md border border-white/20 rounded-xl shadow-lg p-4 max-w-sm">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-medium text-emerald-300">How to use:</h3>
+              <button
+                onClick={() => setShowInstructions(false)}
+                className="text-white/60 hover:text-white transition-colors"
+                aria-label="Minimize instructions"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+            <ul className="text-sm text-white/80 space-y-1">
+              <li>• Use the polygon tool to draw an area</li>
+              <li>• Use the rectangle tool for simple rectangular areas</li>
+              <li>• Edit or delete drawn shapes using the edit tools</li>
+              <li>• Or upload a KML file in the sidebar</li>
+            </ul>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowInstructions(true)}
+            className="bg-black/80 backdrop-blur-md border border-white/20 rounded-xl shadow-lg p-3 text-emerald-300 hover:text-emerald-200 transition-colors"
+            aria-label="Show instructions"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   );

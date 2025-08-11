@@ -28,6 +28,11 @@ export function Navbar() {
       active: pathname === "/search" || pathname === "/",
     },
     {
+      href: "/analysis",
+      label: "Analysis",
+      active: pathname === "/analysis",
+    },
+    {
       href: "/treederboard",
       label: "Treederboard",
       active: pathname === "/treederboard",

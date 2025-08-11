@@ -1,23 +1,24 @@
-# Treekipedia Current State (Updated: July 2025)
+# Treekipedia Current State (Updated: August 2025)
 
 ## 🚀 What's Live and Working
 
 ### Deployment Status
 - **Backend API**: Running at `https://treekipedia-api.silvi.earth` (PM2 managed, port 3000)
 - **Frontend**: Deployed on Vercel at `https://treekipedia.silvi.earth`
-- **Database**: PostgreSQL with 50,922 species, 18 researched, 8 users, 20 NFTs minted
+- **Database**: PostgreSQL with 61,455 species, 19 researched, 8 users, 20 NFTs minted
 - **PostGIS**: Spatial database extension enabled for geospatial queries
 - **Blazegraph**: Knowledge graph running on port 9999
 - **IPFS**: Lighthouse integration for decentralized storage
 
 ### Core Working Features ✅
 1. **Species Search & Browse** - Users can search and view species details
-2. **Species Images System** - Complete image carousel with 4,024 images across 1,576 species
+2. **Species Images System** - Complete image carousel with 31,796 images across 13,609 species  
 3. **AI Research Process** - Research generation, IPFS storage, NFT minting
 4. **User Registration** - Wallet-based user creation
 5. **Treederboard** - Leaderboard showing contributor rankings
 6. **Research Data Display** - Species pages show AI vs human data with visual indicators
-7. **Geospatial Queries** - PostGIS-powered location-based species search (ready for data import)
+7. **Geospatial Analysis** - Full interactive map-based species analysis with polygon drawing and KML upload
+8. **Spatial Species Queries** - PostGIS-powered location-based species search with 5.3M geohash tiles
 
 ## 🏗 Current Architecture
 
@@ -39,12 +40,12 @@
 - **State**: React Query for server state, custom hooks for complex logic
 
 ### Database Schema
-- **Species table**: 50K+ species with taxonomic and research fields
-- **Images table**: 4,024 images with full attribution and primary image designation
+- **Species table**: 61,455 species with taxonomic and research fields (v8 import completed)
+- **Images table**: 31,796 images across 13,609 species with full attribution and primary image designation
 - **Users table**: Wallet addresses with points/contributions
 - **Research NFTs table**: Minted NFT records with IPFS links
 - **Sponsorships table**: Payment tracking (current system uses direct USDC transfers)
-- **Geohash Species Tiles table**: STAC-compliant compressed occurrence data (PostGIS enabled, ready for Marina's data)
+- **Geohash Species Tiles table**: 5.3M geohash tiles with 89.3M species occurrences (Marina's compressed data imported)
 
 ## 🔄 Current User Flows
 
@@ -127,14 +128,15 @@ cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
 
 ## 📊 Current Metrics (As of August 11, 2025)
 
-- **Species Database**: 61,455 total species (v8 import completed)
-- **Images Database**: 4,024 images across 1,576 species (2.6% coverage)
-- **Research Status**: 19 researched (preserved during v8 import)
+- **Species Database**: 61,455 total species (v8 import completed - 21% increase)
+- **Images Database**: 31,796 images across 13,609 species (22.1% coverage - 764% increase)
+- **Research Status**: 19 researched (preserved during all imports)
 - **Users**: 8 registered wallet addresses
 - **NFTs**: 20 minted across 18 species
 - **Contributors**: 7 unique wallets with contributions
 - **Total Points**: 40 points awarded
-- **Geospatial Data**: 4.7M geohash tiles containing 89M occurrence records (Level 7, ~150m resolution)
+- **Geospatial Data**: 5.3M geohash tiles containing 89.3M species occurrences (Level 7, ~152m resolution)
+- **Global Coverage**: Species occurrence data spans all continents with 152m precision
 - **Database Features**: Added `legacy_taxon_id` field for geohash occurrence mapping
 
 ## 🚧 Upcoming Development Priorities
@@ -284,11 +286,24 @@ cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
 **Maintainer**: Update this doc whenever major changes are made
 
 ### Latest Completed Work (August 11, 2025):
-- **v8 Data Import Complete**: Successfully imported Marina's v8 data with 61,455 species including new soil/ecosystem fields
-- **Taxon ID Fix**: Corrected malformed taxon_ids (main species were labeled -01 instead of -00)
-- **Legacy Support**: Added legacy_taxon_id field to preserve original IDs for geohash occurrence mapping
-- **Data Integrity**: Preserved all 19 researched species and 1,576 species with images during import
-- **Clean Import**: Achieved clean database with no duplicates after comprehensive cleanup
+
+#### **Major Data Import Success:**
+- **v8 Species Data**: Successfully imported 61,455 species (up from 50,922) with new soil/ecosystem fields
+- **Image Database Expansion**: Imported 27,772 additional images, expanding coverage from 1,576 to 13,609 species (764% increase)
+- **Geospatial Data Import**: Successfully imported Marina's 3GB compressed geohash data with 5.3M tiles containing 89.3M species occurrences
+- **Perfect Data Quality**: Achieved clean imports with 100% success rates and zero data corruption
+
+#### **Technical Achievements:**
+- **Taxon ID Mapping**: Built comprehensive legacy↔current taxon_id mapping system for geohash data compatibility
+- **Legacy Support**: Added legacy_taxon_id field to preserve original IDs for occurrence data linkage
+- **Data Integrity**: Preserved all 19 researched species and existing image associations during imports
+- **Analysis Page Optimization**: Removed malformed data accommodations, now works seamlessly with clean geohash data
+- **Geospatial Functionality**: Full polygon-based species analysis with map drawing and KML upload capabilities
+
+#### **Coverage Improvements:**
+- **Species Coverage**: From 50,922 to 61,455 species (21% increase)
+- **Image Coverage**: From 2.6% to 22.1% of species with images
+- **Geospatial Coverage**: Global occurrence data at 152m resolution with 89.3M observations
 
 ### Previous Work (July 28, 2025):
 - **Analysis Page Complete**: Full frontend implementation with React-Leaflet, polygon drawing, KML upload, and species analysis

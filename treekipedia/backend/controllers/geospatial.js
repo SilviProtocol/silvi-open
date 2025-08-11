@@ -385,50 +385,22 @@ async function analyzePlot(req, res) {
           ST_GeomFromGeoJSON($1)
         )
       ),
-      species_expanded AS (
-        SELECT 
-          key as taxon_id,
-          value::int as occurrences
-        FROM intersecting_tiles,
-        LATERAL jsonb_each_text(species_data)
-        -- Include all keys, we'll handle numeric ones in the mapping step
-      ),
       species_aggregated AS (
         SELECT 
-          taxon_id,
-          SUM(occurrences) as total_occurrences
-        FROM species_expanded
-        GROUP BY taxon_id
-      ),
-      species_with_base_ids AS (
-        SELECT 
-          sa.taxon_id,
-          sa.total_occurrences,
-          -- Handle different taxon_id formats
-          CASE 
-            WHEN sa.taxon_id ~ '^[0-9]+$' THEN 
-              -- Numeric taxon_ids are data corruption artifacts - keep as-is for now
-              sa.taxon_id
-            WHEN sa.taxon_id LIKE '%;%' THEN 
-              -- Extract first taxon_id from semicolon-separated list
-              regexp_replace(split_part(sa.taxon_id, ';', 1), '-[0-9]{2}$', '-00')
-            WHEN sa.taxon_id ~ '-[0-9]{2}$' THEN 
-              -- Single taxon_id with subspecies suffix, convert to -00
-              regexp_replace(sa.taxon_id, '-[0-9]{2}$', '-00')
-            ELSE 
-              -- Add -00 if no subspecies suffix for proper taxon_ids
-              sa.taxon_id || '-00'
-          END as base_taxon_id
-        FROM species_aggregated sa
+          key as taxon_id,
+          SUM(value::int) as total_occurrences
+        FROM intersecting_tiles,
+        LATERAL jsonb_each_text(species_data)
+        GROUP BY key
       )
       SELECT 
-        swb.base_taxon_id as taxon_id,  -- Return the cleaned base taxon_id
-        swb.total_occurrences,
+        sa.taxon_id,
+        sa.total_occurrences,
         s.species_scientific_name as scientific_name,
         s.common_name
-      FROM species_with_base_ids swb
-      LEFT JOIN species s ON s.taxon_id = swb.base_taxon_id
-      ORDER BY swb.total_occurrences DESC;
+      FROM species_aggregated sa
+      LEFT JOIN species s ON s.taxon_id = sa.taxon_id
+      ORDER BY sa.total_occurrences DESC;
     `;
     
     const result = await pool.query(query, [geoJsonString]);
@@ -443,7 +415,7 @@ async function analyzePlot(req, res) {
       totalOccurrences: totalOccurrences,
       species: result.rows.map(row => ({
         taxon_id: row.taxon_id,
-        scientific_name: row.scientific_name || (row.taxon_id.match(/^[0-9]+$/) ? 'Unidentified species' : 'Unknown species'),
+        scientific_name: row.scientific_name || 'Unknown species',
         common_name: row.common_name || null,
         occurrences: parseInt(row.total_occurrences)
       }))
