@@ -186,7 +186,7 @@ function ExternalPolygonLayer({ geometry }: { geometry: GeoJSONPolygon | null })
 
 export default function Map({ onAnalysisComplete, onAnalysisError, onLoadingChange, onClear }: MapProps) {
   const [externalGeometry, setExternalGeometry] = useState<GeoJSONPolygon | null>(null);
-  const [showInstructions, setShowInstructions] = useState(true);
+  const [showInstructions, setShowInstructions] = useState(false);
 
   // Function to handle externally provided geometry (from KML upload)
   const handleExternalGeometry = async (geometry: GeoJSONPolygon) => {

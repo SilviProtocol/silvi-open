@@ -67,8 +67,8 @@ module.exports = (pool) => {
       // If field is specified, search only in that field
       if (field === 'common_name') {
         searchQuery = `
-          SELECT taxon_id, common_name, species, accepted_scientific_name 
-          FROM species 
+          SELECT taxon_id, common_name, species_scientific_name as species, species_scientific_name, accepted_scientific_name
+          FROM species
           WHERE common_name ILIKE $1
           ORDER BY common_name
           LIMIT 10
@@ -77,17 +77,15 @@ module.exports = (pool) => {
         queryParams = [`%${query}%`];
       } else if (field === 'species' || field === 'scientific_name' || field === 'species_scientific_name') {
         searchQuery = `
-          SELECT taxon_id, common_name, species, species_scientific_name, accepted_scientific_name 
-          FROM species 
-          WHERE species ILIKE $1 
-          OR species_scientific_name ILIKE $1
-          ORDER BY 
-            CASE 
-              WHEN species_scientific_name ILIKE $2 THEN 0 
-              WHEN species ILIKE $2 THEN 1
-              ELSE 2
+          SELECT taxon_id, common_name, species_scientific_name, species_scientific_name as species, accepted_scientific_name
+          FROM species
+          WHERE species_scientific_name ILIKE $1
+          ORDER BY
+            CASE
+              WHEN species_scientific_name ILIKE $2 THEN 0
+              ELSE 1
             END,
-            species_scientific_name, species
+            species_scientific_name
           LIMIT 10
         `;
         // For scientific names, we can prioritize "starts with" but should also find partial matches
@@ -95,17 +93,15 @@ module.exports = (pool) => {
       } else {
         // Search in all name fields (default behavior)
         searchQuery = `
-          SELECT taxon_id, common_name, species, species_scientific_name, accepted_scientific_name 
-          FROM species 
-          WHERE common_name ILIKE $1 
-          OR species ILIKE $1
+          SELECT taxon_id, common_name, species_scientific_name as species, species_scientific_name, accepted_scientific_name
+          FROM species
+          WHERE common_name ILIKE $1
           OR species_scientific_name ILIKE $1
-          ORDER BY 
-            CASE 
-              WHEN common_name ILIKE $2 THEN 0 
+          ORDER BY
+            CASE
+              WHEN common_name ILIKE $2 THEN 0
               WHEN species_scientific_name ILIKE $2 THEN 1
-              WHEN species ILIKE $2 THEN 2
-              ELSE 3
+              ELSE 2
             END,
             common_name, species_scientific_name
           LIMIT 10

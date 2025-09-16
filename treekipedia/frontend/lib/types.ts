@@ -295,5 +295,8 @@ export interface PlotSpeciesResult {
   taxon_id: string;
   scientific_name: string;
   common_name: string | null;
+  family?: string | null;
+  genus?: string | null;
   occurrences: number;
+  tile_count?: number;
 }

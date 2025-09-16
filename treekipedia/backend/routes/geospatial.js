@@ -37,5 +37,25 @@ router.get('/stats', geospatialController.getGeospatialStats);
 // POST /api/geospatial/analyze-plot
 router.post('/analyze-plot', geospatialController.analyzePlot);
 
+// Get species within a specific ecoregion
+// GET /api/geospatial/ecoregions/:ecoregion_id/species
+router.get('/ecoregions/:ecoregion_id/species', geospatialController.getSpeciesByEcoregion);
+
+// Get ecoregion info for coordinates
+// GET /api/geospatial/ecoregions/at-point?lat=37.7749&lng=-122.4194
+router.get('/ecoregions/at-point', geospatialController.getEcoregionAtPoint);
+
+// Get overlapping ecoregions for a polygon
+// POST /api/geospatial/ecoregions/intersect
+router.post('/ecoregions/intersect', geospatialController.getEcoregionsIntersecting);
+
+// Get ecoregion diversity statistics
+// GET /api/geospatial/ecoregions/stats
+router.get('/ecoregions/stats', geospatialController.getEcoregionStats);
+
+// Export ecoregion boundary as KML/GeoJSON/WKT
+// GET /api/geospatial/ecoregions/:ecoregion_id/export?format=kml
+router.get('/ecoregions/:ecoregion_id/export', geospatialController.exportEcoregion);
+
 return router;
 };

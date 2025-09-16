@@ -395,7 +395,7 @@ export function SearchForm({ placeholder = "Search over 50,000 tree species..." 
                               >
                                 <div className="flex justify-between items-start">
                                   <div className="font-medium italic text-white group-hover:text-emerald-300 transition-colors">
-                                    {suggestion.species}
+                                    {suggestion.species_scientific_name || suggestion.species}
                                   </div>
                                   <div className="flex items-center">
                                     {/* Expand/collapse button - only show if multiple names */}

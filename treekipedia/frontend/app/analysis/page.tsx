@@ -90,30 +90,11 @@ export default function AnalysisPage() {
 
           {/* Sidebar column - takes up 1/3 on large screens */}
           <div className="space-y-6">
-            {/* File Upload */}
+            {/* Analysis Results - Now prominently positioned at top */}
             <div className="rounded-xl bg-black/30 backdrop-blur-md border border-white/20">
               <div className="p-5 border-b border-white/20">
                 <h2 className="text-xl font-bold text-emerald-300 mb-2">
-                  KML Upload
-                </h2>
-                <p className="text-white/80">
-                  Upload a KML file to analyze species in those boundaries
-                </p>
-              </div>
-              <div className="p-5">
-                <FileUpload
-                  onAnalysisComplete={handleAnalysisComplete}
-                  onAnalysisError={handleAnalysisError}
-                  onLoadingChange={handleLoadingChange}
-                />
-              </div>
-            </div>
-
-            {/* Results */}
-            <div className="rounded-xl bg-black/30 backdrop-blur-md border border-white/20">
-              <div className="p-5 border-b border-white/20">
-                <h2 className="text-xl font-bold text-emerald-300 mb-2">
-                  Analysis Results
+                  Species Analysis
                 </h2>
                 {analysisResults && (
                   <p className="text-white/80">
@@ -127,6 +108,25 @@ export default function AnalysisPage() {
                   results={analysisResults}
                   isLoading={isLoading}
                   error={error}
+                />
+              </div>
+            </div>
+
+            {/* KML Upload - Moved below results, more compact */}
+            <div className="rounded-xl bg-black/30 backdrop-blur-md border border-white/20">
+              <div className="p-4 border-b border-white/20">
+                <h3 className="text-lg font-semibold text-emerald-300 mb-1">
+                  KML Upload
+                </h3>
+                <p className="text-sm text-white/70">
+                  Upload a KML file to analyze species boundaries
+                </p>
+              </div>
+              <div className="p-4">
+                <FileUpload
+                  onAnalysisComplete={handleAnalysisComplete}
+                  onAnalysisError={handleAnalysisError}
+                  onLoadingChange={handleLoadingChange}
                 />
               </div>
             </div>

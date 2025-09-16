@@ -1,0 +1,14 @@
+# Data directory - shapefiles and large datasets
+*.shp
+*.dbf
+*.shx
+*.prj
+*.cpg
+*.csv
+*.zip
+*.json
+*.xml
+
+# Keep the directory structure but ignore data files
+!.gitignore
+!README.md

@@ -1,12 +1,106 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { PlotAnalysisResponse } from '@/lib/types';
+import { getTopCommonNames } from '@/utils/commonNames';
 
 interface ResultsListProps {
   results: PlotAnalysisResponse | null;
   isLoading: boolean;
   error: string | null;
+}
+
+interface CompactCommonNameProps {
+  commonNames?: string;
+}
+
+function CompactCommonNameDisplay({ commonNames }: CompactCommonNameProps) {
+  const [expanded, setExpanded] = useState(false);
+
+  if (!commonNames) return <span className="text-xs text-white/50">No common names</span>;
+
+  // Use the optimized common names function with shorter limits for compact display
+  const optimizedNames = getTopCommonNames(commonNames, 6, 120);
+  
+  // Split by commas
+  const allNames = optimizedNames
+    .split(',')
+    .map(name => name.trim())
+    .filter(name => name.length > 0);
+    
+  if (allNames.length === 0) return <span className="text-xs text-white/50">No common names</span>;
+
+  const primary = allNames[0];
+  const others = allNames.slice(1);
+  
+  // Character limit for collapsed view in compact mode
+  const CHAR_LIMIT = 60;
+  
+  let displayText = primary;
+  let hasMore = false;
+  let visibleNames = [primary];
+
+  for (const name of others) {
+    if (displayText.length + name.length + 2 > CHAR_LIMIT && !expanded) {
+      hasMore = true;
+      break;
+    }
+    displayText += ", " + name;
+    visibleNames.push(name);
+  }
+
+  return (
+    <div>
+      {expanded ? (
+        <div className="text-xs text-white/70">
+          <div className="font-medium text-emerald-300">{primary}</div>
+          {others.length > 0 && (
+            <div className="mt-1 max-h-24 overflow-y-auto text-white/60 text-xs">
+              {others.slice(0, 8).map((name, idx) => (
+                <div key={idx} className="truncate">
+                  {name}
+                </div>
+              ))}
+              {others.length > 8 && <div className="text-white/50">...and {others.length - 8} more</div>}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="text-xs text-white/70">
+          <span className="font-medium text-emerald-300">{primary}</span>
+          {visibleNames.slice(1).map((name, idx) => (
+            <span key={idx}>
+              <span className="text-white/50">, </span>
+              <span>{name}</span>
+            </span>
+          ))}
+          {hasMore && <span className="text-emerald-400">...</span>}
+        </div>
+      )}
+      
+      {/* Show expand/collapse button if we have multiple names */}
+      {others.length > 1 && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center text-emerald-400 hover:text-emerald-300 mt-1 text-xs transition-colors"
+        >
+          {expanded ? (
+            <>
+              <ChevronUp className="w-3 h-3 mr-1" />
+              <span>Less</span>
+            </>
+          ) : (
+            <>
+              <ChevronDown className="w-3 h-3 mr-1" />
+              <span>More</span>
+            </>
+          )}
+        </button>
+      )}
+    </div>
+  );
 }
 
 export default function ResultsList({ results, isLoading, error }: ResultsListProps) {
@@ -105,18 +199,23 @@ export default function ResultsList({ results, isLoading, error }: ResultsListPr
                     href={`/species/${item.taxon_id}`}
                     className="block hover:underline"
                   >
-                    <h4 className="font-medium text-white text-sm leading-tight">
+                    <h4 className="font-medium text-white text-sm leading-tight mb-1">
                       {item.scientific_name || 'Unknown species'}
                     </h4>
-                    {item.common_name && (
-                      <p className="text-xs text-white/70 mt-1">
-                        {item.common_name}
+                    <div className="mt-1">
+                      <CompactCommonNameDisplay commonNames={item.common_name} />
+                    </div>
+                  </Link>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    <p className="text-xs text-white/50">
+                      ID: {item.taxon_id}
+                    </p>
+                    {item.family && (
+                      <p className="text-xs text-white/50">
+                        Family: {item.family}
                       </p>
                     )}
-                  </Link>
-                  <p className="text-xs text-white/50 mt-1">
-                    ID: {item.taxon_id}
-                  </p>
+                  </div>
                 </div>
                 
                 <div className="text-right ml-4 flex-shrink-0">
@@ -126,6 +225,11 @@ export default function ResultsList({ results, isLoading, error }: ResultsListPr
                   <div className="text-xs text-white/70">
                     occurrences
                   </div>
+                  {item.tile_count && (
+                    <div className="text-xs text-white/50 mt-1">
+                      {item.tile_count} tiles
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -150,10 +254,9 @@ export default function ResultsList({ results, isLoading, error }: ResultsListPr
           <button
             onClick={() => {
               const csvContent = [
-                'Scientific Name,Common Name,Taxon ID,Occurrences',
-                ...species.map(s => `"${s.scientific_name || ''}","${s.common_name || ''}","${s.taxon_id}",${s.occurrences}`)
+                'Scientific Name,Common Name,Family,Genus,Taxon ID,Occurrences,Tile Count',
+                ...species.map(s => `"${s.scientific_name || ''}","${s.common_name || ''}","${s.family || ''}","${s.genus || ''}","${s.taxon_id}",${s.occurrences},${s.tile_count || ''}`)
               ].join('\n');
-              
               const blob = new Blob([csvContent], { type: 'text/csv' });
               const url = window.URL.createObjectURL(blob);
               const a = document.createElement('a');
