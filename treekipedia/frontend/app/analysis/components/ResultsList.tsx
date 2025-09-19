@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { PlotAnalysisResponse } from '@/lib/types';
 import { getTopCommonNames } from '@/utils/commonNames';
+import CrossAnalysisSummary from './CrossAnalysisSummary';
 
 interface ResultsListProps {
   results: PlotAnalysisResponse | null;
@@ -104,6 +105,7 @@ function CompactCommonNameDisplay({ commonNames }: CompactCommonNameProps) {
 }
 
 export default function ResultsList({ results, isLoading, error }: ResultsListProps) {
+  const [sortBy, setSortBy] = useState<'occurrences' | 'native-first'>('occurrences');
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -161,6 +163,35 @@ export default function ResultsList({ results, isLoading, error }: ResultsListPr
 
   const { species, totalSpecies, totalOccurrences } = results;
 
+  // Sort species based on selected option
+  const getSortedSpecies = () => {
+    if (!species || species.length === 0) return [];
+
+    const speciesCopy = [...species];
+
+    if (sortBy === 'native-first') {
+      return speciesCopy.sort((a, b) => {
+        // First sort by native status priority
+        const getStatusPriority = (status: string | undefined) => {
+          if (status === 'native') return 0;
+          if (status === 'introduced') return 1;
+          return 2; // unknown
+        };
+
+        const priorityDiff = getStatusPriority(a.nativeStatus) - getStatusPriority(b.nativeStatus);
+        if (priorityDiff !== 0) return priorityDiff;
+
+        // Within same status, sort by occurrences (descending)
+        return b.occurrences - a.occurrences;
+      });
+    }
+
+    // Default: sort by occurrences (descending)
+    return speciesCopy.sort((a, b) => b.occurrences - a.occurrences);
+  };
+
+  const sortedSpecies = getSortedSpecies();
+
   return (
     <div className="space-y-4">
       {/* Summary stats */}
@@ -181,14 +212,32 @@ export default function ResultsList({ results, isLoading, error }: ResultsListPr
         </div>
       </div>
 
+      {/* Cross-analysis summary */}
+      {results.crossAnalysis && (
+        <CrossAnalysisSummary
+          crossAnalysis={results.crossAnalysis}
+          totalSpecies={totalSpecies}
+        />
+      )}
+
       {/* Species list */}
       {species.length > 0 ? (
         <div className="space-y-2 max-h-96 overflow-y-auto">
-          <h3 className="text-sm font-medium text-emerald-300 sticky top-0 bg-black/30 backdrop-blur-md py-2">
-            Species List ({species.length})
-          </h3>
+          <div className="sticky top-0 bg-black/30 backdrop-blur-md py-2 flex items-center justify-between">
+            <h3 className="text-sm font-medium text-emerald-300">
+              Species List ({species.length})
+            </h3>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'occurrences' | 'native-first')}
+              className="text-xs bg-black/40 border border-white/20 rounded-md px-2 py-1 text-white focus:outline-none focus:border-emerald-500"
+            >
+              <option value="occurrences">Most Occurrences</option>
+              <option value="native-first">Native First</option>
+            </select>
+          </div>
           
-          {species.map((item, index) => (
+          {sortedSpecies.map((item, index) => (
             <div
               key={`${item.taxon_id}-${index}`}
               className="border border-white/20 bg-black/20 backdrop-blur-md rounded-xl p-3 hover:bg-black/40 transition-colors"
@@ -214,6 +263,42 @@ export default function ResultsList({ results, isLoading, error }: ResultsListPr
                       <p className="text-xs text-white/50">
                         Family: {item.family}
                       </p>
+                    )}
+                  </div>
+
+                  {/* Status badges */}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {/* Native status badge with percentage */}
+                    {item.nativeStatus && (
+                      <span className={`px-2 py-1 text-xs rounded-full border ${
+                        item.nativeStatus === 'native'
+                          ? 'bg-green-600/20 text-green-400 border-green-600/30' :
+                        item.nativeStatus === 'introduced'
+                          ? 'bg-orange-600/20 text-orange-400 border-orange-600/30' :
+                        'bg-gray-600/20 text-gray-400 border-gray-600/30'
+                      }`}>
+                        {item.nativeStatus === 'native' ? '🏠 Native' :
+                         item.nativeStatus === 'introduced' ? '🌍 Introduced' : '❓ Unknown'}
+                        {item.nativePercentage !== undefined && (
+                          <span className="ml-1 font-medium">
+                            {item.nativePercentage}%
+                          </span>
+                        )}
+                      </span>
+                    )}
+
+                    {/* Intact forest badge */}
+                    {item.intactForestStatus === 'present' && (
+                      <span className="px-2 py-1 text-xs rounded-full bg-green-600/20 text-green-400 border border-green-600/30">
+                        🌲 Intact Forest
+                      </span>
+                    )}
+
+                    {/* Commercial badge */}
+                    {item.isCommercial && (
+                      <span className="px-2 py-1 text-xs rounded-full bg-yellow-600/20 text-yellow-400 border border-yellow-600/30">
+                        💰 Commercial
+                      </span>
                     )}
                   </div>
                 </div>

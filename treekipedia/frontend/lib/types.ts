@@ -288,7 +288,27 @@ export interface PlotAnalysisRequest {
 export interface PlotAnalysisResponse {
   totalSpecies: number;
   totalOccurrences: number;
+  crossAnalysis?: CrossAnalysisData;
   species: PlotSpeciesResult[];
+}
+
+export interface CrossAnalysisData {
+  country: string | null;
+  countryDetected: boolean;
+
+  // Native status breakdown
+  nativeSpecies: number;
+  introducedSpecies: number;
+  unknownNativeStatus: number;
+
+  // Intact forest breakdown
+  intactForestSpecies: number;
+  nonIntactForestSpecies: number;
+  unknownForestStatus: number;
+
+  // Commercial breakdown
+  commercialSpecies: number;
+  nonCommercialSpecies: number;
 }
 
 export interface PlotSpeciesResult {
@@ -299,4 +319,10 @@ export interface PlotSpeciesResult {
   genus?: string | null;
   occurrences: number;
   tile_count?: number;
+
+  // Enhanced analysis fields
+  nativeStatus?: 'native' | 'introduced' | 'unknown';
+  nativePercentage?: number; // Percentage of analysis zone where species is native (0-100)
+  intactForestStatus?: 'present' | 'absent' | 'unknown';
+  isCommercial?: boolean;
 }

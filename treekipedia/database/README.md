@@ -343,6 +343,54 @@ The database connection is configured through the `DATABASE_URL` environment var
 DATABASE_URL=postgres://[username]:[password]@[host]:[port]/treekipedia
 ```
 
+## Generating Schema Documentation
+
+To regenerate the schema summary and documentation files:
+
+### 1. Full Schema Dump (SQL format)
+Exports complete database structure including all tables, indexes, and constraints:
+
+```bash
+PGPASSWORD=Kj9mPx7vLq2wZn4t pg_dump -h localhost -U tree_user -d treekipedia \
+  --schema-only --no-owner --no-privileges > database/current_schema_dump.sql
+```
+
+### 2. Human-Readable Schema Summary
+Creates a readable text file with table structure and statistics:
+
+```bash
+# Run the schema summary SQL script
+PGPASSWORD=Kj9mPx7vLq2wZn4t psql -h localhost -U tree_user -d treekipedia \
+  -f scripts/export_schema_summary.sql > database/schema_summary.txt 2>&1
+```
+
+The `export_schema_summary.sql` script provides:
+- Table overview with all table names
+- Detailed column information for key tables (species, geohash_species_tiles, countries)
+- Data types, nullable constraints, and defaults
+- All indexes and their definitions
+
+### 3. Quick Column List for Specific Table
+To quickly view columns for any table:
+
+```bash
+PGPASSWORD=Kj9mPx7vLq2wZn4t psql -h localhost -U tree_user -d treekipedia -c \
+  "SELECT column_name, data_type, is_nullable
+   FROM information_schema.columns
+   WHERE table_name = 'species'
+   ORDER BY ordinal_position;" > species_columns.txt
+```
+
+### When to Regenerate Schema Documentation
+
+Regenerate the schema documentation after:
+- Running any migration scripts
+- Adding new tables or columns
+- Importing new datasets that create tables
+- Major database restructuring
+
+The schema files should be committed to version control to track database evolution over time.
+
 ## Applying Schema Updates
 
 To apply database schema updates:

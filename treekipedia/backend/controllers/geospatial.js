@@ -376,18 +376,36 @@ async function analyzePlot(req, res) {
     const geoJsonString = JSON.stringify(geometry);
     
     const query = `
-      WITH intersecting_tiles AS (
-        SELECT 
+      WITH user_polygon AS (
+        SELECT ST_GeomFromGeoJSON($1) as geom
+      ),
+      intersected_countries AS (
+        SELECT
+          c.admin,
+          CASE
+            WHEN c.admin = 'United States of America' THEN 'United States'
+            WHEN c.admin = 'United Kingdom' THEN 'United Kingdom'
+            ELSE c.admin
+          END as species_search_name,
+          ST_Area(ST_Intersection(c.geom, up.geom)) / ST_Area(up.geom) as area_fraction
+        FROM countries c, user_polygon up
+        WHERE ST_Intersects(c.geom, up.geom)
+      ),
+      primary_country AS (
+        SELECT admin, species_search_name
+        FROM intersected_countries
+        ORDER BY area_fraction DESC
+        LIMIT 1
+      ),
+      intersecting_tiles AS (
+        SELECT
           species_data,
           geohash_l7
-        FROM geohash_species_tiles
-        WHERE ST_Intersects(
-          geometry,
-          ST_GeomFromGeoJSON($1)
-        )
+        FROM geohash_species_tiles gst, user_polygon up
+        WHERE ST_Intersects(gst.geometry, up.geom)
       ),
       species_aggregated AS (
-        SELECT 
+        SELECT
           key as taxon_id,
           SUM(value::int) as total_occurrences,
           COUNT(DISTINCT geohash_l7) as tile_count
@@ -395,29 +413,130 @@ async function analyzePlot(req, res) {
         LATERAL jsonb_each_text(species_data)
         GROUP BY key
       )
-      SELECT 
+      SELECT
         sa.taxon_id,
         sa.total_occurrences,
         sa.tile_count,
         COALESCE(s.species_scientific_name, s.accepted_scientific_name) as scientific_name,
         s.common_name,
         s.family,
-        s.genus
+        s.genus,
+
+        -- Country detection (primary country for display)
+        pc.admin as country_name,
+        pc.species_search_name,
+
+        -- Native status analysis (check ALL intersected countries)
+        CASE
+          WHEN EXISTS (
+            SELECT 1 FROM intersected_countries ic
+            WHERE s.countries_native LIKE '%' || ic.species_search_name || '%'
+          ) THEN 'native'
+          WHEN EXISTS (
+            SELECT 1 FROM intersected_countries ic
+            WHERE s.countries_introduced LIKE '%' || ic.species_search_name || '%'
+          ) THEN 'introduced'
+          ELSE 'unknown'
+        END as native_status,
+
+        -- Calculate native percentage across all intersected countries
+        COALESCE((
+          SELECT
+            ROUND(
+              SUM(
+                CASE
+                  WHEN s.countries_native LIKE '%' || ic.species_search_name || '%' THEN ic.area_fraction * 100
+                  ELSE 0
+                END
+              )
+            )
+          FROM intersected_countries ic
+        ), 0) as native_percentage,
+
+        -- Intact forest analysis
+        CASE
+          WHEN s.present_intact_forest LIKE '%YES%' THEN 'present'
+          WHEN s.present_intact_forest = 'NO' THEN 'absent'
+          ELSE 'unknown'
+        END as intact_forest_status,
+
+        -- Commercial status
+        CASE WHEN s.comercialspecies_lower = 'YES' THEN true ELSE false END as is_commercial
+
       FROM species_aggregated sa
       LEFT JOIN species s ON s.taxon_id = sa.taxon_id
+      LEFT JOIN primary_country pc ON true
       ORDER BY sa.total_occurrences DESC;
     `;
     
     const result = await pool.query(query, [geoJsonString]);
-    
+
     const totalOccurrences = result.rows.reduce(
-      (sum, row) => sum + parseInt(row.total_occurrences), 
+      (sum, row) => sum + parseInt(row.total_occurrences),
       0
     );
-    
+
+    // Calculate cross-analysis statistics
+    let crossAnalysis = null;
+    if (result.rows.length > 0) {
+      const firstRow = result.rows[0];
+      const countryDetected = firstRow.country_name != null;
+
+      // Get all intersected countries for display
+      const countriesQuery = `
+        WITH user_polygon AS (
+          SELECT ST_GeomFromGeoJSON($1) as geom
+        ),
+        intersected_countries AS (
+          SELECT
+            c.admin,
+            ST_Area(ST_Intersection(c.geom, up.geom)) / ST_Area(up.geom) as area_fraction
+          FROM countries c, user_polygon up
+          WHERE ST_Intersects(c.geom, up.geom)
+          ORDER BY area_fraction DESC
+        )
+        SELECT admin, ROUND(area_fraction * 100) as percentage
+        FROM intersected_countries
+        WHERE area_fraction > 0.01;  -- Only show countries with >1% overlap
+      `;
+
+      const countriesResult = await pool.query(countriesQuery, [geoJsonString]);
+      const countryList = countriesResult.rows.map(r =>
+        `${r.admin} (${r.percentage}%)`
+      ).join(', ');
+
+      // Count native status categories
+      const nativeSpecies = result.rows.filter(row => row.native_status === 'native').length;
+      const introducedSpecies = result.rows.filter(row => row.native_status === 'introduced').length;
+      const unknownNativeStatus = result.rows.filter(row => row.native_status === 'unknown').length;
+
+      // Count intact forest status categories
+      const intactForestSpecies = result.rows.filter(row => row.intact_forest_status === 'present').length;
+      const nonIntactForestSpecies = result.rows.filter(row => row.intact_forest_status === 'absent').length;
+      const unknownForestStatus = result.rows.filter(row => row.intact_forest_status === 'unknown').length;
+
+      // Count commercial species
+      const commercialSpecies = result.rows.filter(row => row.is_commercial === true).length;
+      const nonCommercialSpecies = result.rows.filter(row => row.is_commercial === false).length;
+
+      crossAnalysis = {
+        country: countryList || null,
+        countryDetected: countryDetected,
+        nativeSpecies,
+        introducedSpecies,
+        unknownNativeStatus,
+        intactForestSpecies,
+        nonIntactForestSpecies,
+        unknownForestStatus,
+        commercialSpecies,
+        nonCommercialSpecies
+      };
+    }
+
     res.json({
       totalSpecies: result.rows.length,
       totalOccurrences: totalOccurrences,
+      crossAnalysis: crossAnalysis,
       species: result.rows.map(row => ({
         taxon_id: row.taxon_id,
         scientific_name: row.scientific_name || `Unknown (${row.taxon_id})`,
@@ -425,7 +544,11 @@ async function analyzePlot(req, res) {
         family: row.family || null,
         genus: row.genus || null,
         occurrences: parseInt(row.total_occurrences),
-        tile_count: parseInt(row.tile_count)
+        tile_count: parseInt(row.tile_count),
+        nativeStatus: row.native_status || 'unknown',
+        nativePercentage: parseInt(row.native_percentage) || 0,
+        intactForestStatus: row.intact_forest_status || 'unknown',
+        isCommercial: row.is_commercial || false
       }))
     });
     

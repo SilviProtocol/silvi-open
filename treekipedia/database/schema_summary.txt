@@ -1,0 +1,410 @@
+Treekipedia Database Schema Summary
+==================================
+
+TABLE OVERVIEW:
+===============
+ schemaname |            tablename            |                      count_query                      
+------------+---------------------------------+-------------------------------------------------------
+ public     | contreebution_nfts              | SELECT COUNT(*) FROM contreebution_nfts;
+ public     | countries                       | SELECT COUNT(*) FROM countries;
+ public     | ecoregion_assignments_backup    | SELECT COUNT(*) FROM ecoregion_assignments_backup;
+ public     | ecoregion_assignments_preserve  | SELECT COUNT(*) FROM ecoregion_assignments_preserve;
+ public     | ecoregions                      | SELECT COUNT(*) FROM ecoregions;
+ public     | geohash_species_tiles           | SELECT COUNT(*) FROM geohash_species_tiles;
+ public     | geohash_species_tiles_v7_backup | SELECT COUNT(*) FROM geohash_species_tiles_v7_backup;
+ public     | geohash_taxon_id_mapping        | SELECT COUNT(*) FROM geohash_taxon_id_mapping;
+ public     | images                          | SELECT COUNT(*) FROM images;
+ public     | images_backup                   | SELECT COUNT(*) FROM images_backup;
+ public     | researched_species_preserve     | SELECT COUNT(*) FROM researched_species_preserve;
+ public     | spatial_ref_sys                 | SELECT COUNT(*) FROM spatial_ref_sys;
+ public     | species                         | SELECT COUNT(*) FROM species;
+ public     | species_backup_20250420_065358  | SELECT COUNT(*) FROM species_backup_20250420_065358;
+ public     | species_import_temp             | SELECT COUNT(*) FROM species_import_temp;
+ public     | species_research_queue          | SELECT COUNT(*) FROM species_research_queue;
+ public     | species_taxon_id_backup         | SELECT COUNT(*) FROM species_taxon_id_backup;
+ public     | species_v7_backup               | SELECT COUNT(*) FROM species_v7_backup;
+ public     | species_v8                      | SELECT COUNT(*) FROM species_v8;
+ public     | sponsorship_items               | SELECT COUNT(*) FROM sponsorship_items;
+ public     | sponsorships                    | SELECT COUNT(*) FROM sponsorships;
+ public     | taxon_id_direct_mapping         | SELECT COUNT(*) FROM taxon_id_direct_mapping;
+ public     | taxon_id_final_mapping          | SELECT COUNT(*) FROM taxon_id_final_mapping;
+ public     | taxon_id_mapping                | SELECT COUNT(*) FROM taxon_id_mapping;
+ public     | taxon_mapping_new_to_final      | SELECT COUNT(*) FROM taxon_mapping_new_to_final;
+ public     | users                           | SELECT COUNT(*) FROM users;
+(26 rows)
+
+
+DETAILED TABLE INFORMATION:
+==========================
+
+SPECIES TABLE COLUMNS:
+--------------------
+           column_name            |     data_type     | character_maximum_length | is_nullable | column_default 
+----------------------------------+-------------------+--------------------------+-------------+----------------
+ species_scientific_name          | character varying |                      500 | YES         | 
+ taxon_full                       | text              |                          | YES         | 
+ family                           | character varying |                      500 | YES         | 
+ genus                            | character varying |                      500 | YES         | 
+ common_name                      | text              |                          | YES         | 
+ common_countries                 | text              |                          | YES         | 
+ accepted_scientific_name         | text              |                          | YES         | 
+ taxon_id                         | text              |                          | YES         | 
+ class                            | character varying |                      500 | YES         | 
+ taxonomic_order                  | character varying |                      500 | YES         | 
+ ecoregions                       | text              |                          | YES         | 
+ biomes                           | text              |                          | YES         | 
+ general_description_human        | text              |                          | YES         | 
+ ecological_function_human        | text              |                          | YES         | 
+ elevation_ranges_human           | text              |                          | YES         | 
+ compatible_soil_types_human      | text              |                          | YES         | 
+ comercialspecies_upper           | text              |                          | YES         | 
+ default_image                    | character varying |                      500 | YES         | 
+ habitat_human                    | text              |                          | YES         | 
+ total_occurrences                | text              |                          | YES         | 
+ specific_epithet                 | character varying |                      500 | YES         | 
+ conservation_status_ai           | character varying |                      500 | YES         | 
+ general_description_ai           | text              |                          | YES         | 
+ ecological_function_ai           | text              |                          | YES         | 
+ elevation_ranges_ai              | text              |                          | YES         | 
+ compatible_soil_types_ai         | text              |                          | YES         | 
+ habitat_ai                       | text              |                          | YES         | 
+ synonyms                         | text              |                          | YES         | 
+ forest_type                      | text              |                          | YES         | 
+ wetland_type                     | text              |                          | YES         | 
+ urban_setting                    | text              |                          | YES         | 
+ climate_change_vulnerability     | character varying |                      500 | YES         | 
+ associated_species               | text              |                          | YES         | 
+ native_adapted_habitats_ai       | text              |                          | YES         | 
+ native_adapted_habitats_human    | text              |                          | YES         | 
+ agroforestry_use_cases_ai        | text              |                          | YES         | 
+ agroforestry_use_cases_human     | text              |                          | YES         | 
+ successional_stage               | character varying |                      500 | YES         | 
+ tolerances                       | text              |                          | YES         | 
+ forest_layers                    | text              |                          | YES         | 
+ growth_form_ai                   | character varying |                      500 | YES         | 
+ growth_form_human                | character varying |                      500 | YES         | 
+ leaf_type_ai                     | character varying |                      500 | YES         | 
+ leaf_type_human                  | character varying |                      500 | YES         | 
+ deciduous_evergreen_ai           | character varying |                      500 | YES         | 
+ deciduous_evergreen_human        | character varying |                      500 | YES         | 
+ flower_color_ai                  | character varying |                      500 | YES         | 
+ flower_color_human               | character varying |                      500 | YES         | 
+ fruit_type_ai                    | character varying |                      500 | YES         | 
+ fruit_type_human                 | character varying |                      500 | YES         | 
+ bark_characteristics_ai          | text              |                          | YES         | 
+ bark_characteristics_human       | text              |                          | YES         | 
+ maximum_height_ai                | text              |                          | YES         | 
+ maximum_height_human             | text              |                          | YES         | 
+ maximum_diameter_ai              | text              |                          | YES         | 
+ maximum_diameter_human           | text              |                          | YES         | 
+ lifespan_ai                      | character varying |                      500 | YES         | 
+ lifespan_human                   | character varying |                      500 | YES         | 
+ maximum_tree_age_ai              | text              |                          | YES         | 
+ maximum_tree_age_human           | text              |                          | YES         | 
+ allometric_models                | text              |                          | YES         | 
+ allometric_curve                 | text              |                          | YES         | 
+ national_conservation_status     | text              |                          | YES         | 
+ verification_status              | character varying |                      500 | YES         | 
+ threats                          | text              |                          | YES         | 
+ timber_value                     | text              |                          | YES         | 
+ non_timber_products              | text              |                          | YES         | 
+ cultural_significance_ai         | text              |                          | YES         | 
+ cultural_significance_human      | text              |                          | YES         | 
+ cultivars                        | text              |                          | YES         | 
+ nutritional_caloric_value        | text              |                          | YES         | 
+ cultivation_details              | text              |                          | YES         | 
+ stewardship_best_practices_ai    | text              |                          | YES         | 
+ stewardship_best_practices_human | text              |                          | YES         | 
+ planting_recipes_ai              | text              |                          | YES         | 
+ planting_recipes_human           | text              |                          | YES         | 
+ pruning_maintenance_ai           | text              |                          | YES         | 
+ pruning_maintenance_human        | text              |                          | YES         | 
+ disease_pest_management_ai       | text              |                          | YES         | 
+ disease_pest_management_human    | text              |                          | YES         | 
+ fire_management_ai               | text              |                          | YES         | 
+ fire_management_human            | text              |                          | YES         | 
+ reference_list                   | text              |                          | YES         | 
+ data_sources                     | text              |                          | YES         | 
+ ipfs_cid                         | character varying |                      500 | YES         | 
+ last_updated_date                | text              |                          | YES         | 
+ researched                       | text              |                          | YES         | 
+ associated_media                 | text              |                          | YES         | 
+ bioregions                       | text              |                          | YES         | 
+ conservation_status_human        | character varying |                      500 | YES         | 
+ soil_texture_all                 | text              |                          | YES         | 
+ soil_texture_dominant            | text              |                          | YES         | 
+ soil_texture_prefered            | text              |                          | YES         | 
+ soil_texture_tolerated           | text              |                          | YES         | 
+ ph_all                           | text              |                          | YES         | 
+ ph_dominant                      | text              |                          | YES         | 
+ ph_prefered                      | text              |                          | YES         | 
+ ph_tolerated                     | text              |                          | YES         | 
+ oc_all                           | text              |                          | YES         | 
+ oc_dominant                      | text              |                          | YES         | 
+ oc_prefered                      | text              |                          | YES         | 
+ oc_tolerated                     | text              |                          | YES         | 
+ countries_native                 | text              |                          | YES         | 
+ countries_invasive               | text              |                          | YES         | 
+ countries_introduced             | text              |                          | YES         | 
+ present_intact_forest            | text              |                          | YES         | 
+ functional_ecosystem_groups      | text              |                          | YES         | 
+ vegetationtype                   | text              |                          | YES         | 
+ comercialspecies_lower           | text              |                          | YES         | 
+ taxon_id_new                     | text              |                          | YES         | 
+ subspecies                       | text              |                          | YES         | 
+(111 rows)
+
+
+GEOHASH_SPECIES_TILES TABLE COLUMNS:
+-----------------------------------
+      column_name       |          data_type          | is_nullable 
+------------------------+-----------------------------+-------------
+ geohash_l7             | character varying           | NO
+ species_data           | jsonb                       | NO
+ total_occurrences      | integer                     | YES
+ species_count          | integer                     | YES
+ datetime               | timestamp without time zone | YES
+ geometry               | USER-DEFINED                | YES
+ center_point           | USER-DEFINED                | YES
+ data_source            | character varying           | YES
+ processing_date        | timestamp without time zone | YES
+ observation_start_date | date                        | YES
+ observation_end_date   | date                        | YES
+ created_at             | timestamp without time zone | YES
+ updated_at             | timestamp without time zone | YES
+ eco_id                 | integer                     | YES
+ eco_name               | character varying           | YES
+ biome_name             | character varying           | YES
+ realm                  | character varying           | YES
+(17 rows)
+
+
+COUNTRIES TABLE COLUMNS:
+----------------------
+ column_name |     data_type     | is_nullable 
+-------------+-------------------+-------------
+ gid         | integer           | NO
+ featurecla  | character varying | YES
+ scalerank   | smallint          | YES
+ labelrank   | smallint          | YES
+ sovereignt  | character varying | YES
+ sov_a3      | character varying | YES
+ adm0_dif    | smallint          | YES
+ level       | smallint          | YES
+ type        | character varying | YES
+ tlc         | character varying | YES
+ admin       | character varying | YES
+ adm0_a3     | character varying | YES
+ geou_dif    | smallint          | YES
+ geounit     | character varying | YES
+ gu_a3       | character varying | YES
+ su_dif      | smallint          | YES
+ subunit     | character varying | YES
+ su_a3       | character varying | YES
+ brk_diff    | smallint          | YES
+ name        | character varying | YES
+ name_long   | character varying | YES
+ brk_a3      | character varying | YES
+ brk_name    | character varying | YES
+ brk_group   | character varying | YES
+ abbrev      | character varying | YES
+ postal      | character varying | YES
+ formal_en   | character varying | YES
+ formal_fr   | character varying | YES
+ name_ciawf  | character varying | YES
+ note_adm0   | character varying | YES
+ note_brk    | character varying | YES
+ name_sort   | character varying | YES
+ name_alt    | character varying | YES
+ mapcolor7   | smallint          | YES
+ mapcolor8   | smallint          | YES
+ mapcolor9   | smallint          | YES
+ mapcolor13  | smallint          | YES
+ pop_est     | double precision  | YES
+ pop_rank    | smallint          | YES
+ pop_year    | smallint          | YES
+ gdp_md      | integer           | YES
+ gdp_year    | smallint          | YES
+ economy     | character varying | YES
+ income_grp  | character varying | YES
+ fips_10     | character varying | YES
+ iso_a2      | character varying | YES
+ iso_a2_eh   | character varying | YES
+ iso_a3      | character varying | YES
+ iso_a3_eh   | character varying | YES
+ iso_n3      | character varying | YES
+ iso_n3_eh   | character varying | YES
+ un_a3       | character varying | YES
+ wb_a2       | character varying | YES
+ wb_a3       | character varying | YES
+ woe_id      | integer           | YES
+ woe_id_eh   | integer           | YES
+ woe_note    | character varying | YES
+ adm0_iso    | character varying | YES
+ adm0_diff   | character varying | YES
+ adm0_tlc    | character varying | YES
+ adm0_a3_us  | character varying | YES
+ adm0_a3_fr  | character varying | YES
+ adm0_a3_ru  | character varying | YES
+ adm0_a3_es  | character varying | YES
+ adm0_a3_cn  | character varying | YES
+ adm0_a3_tw  | character varying | YES
+ adm0_a3_in  | character varying | YES
+ adm0_a3_np  | character varying | YES
+ adm0_a3_pk  | character varying | YES
+ adm0_a3_de  | character varying | YES
+ adm0_a3_gb  | character varying | YES
+ adm0_a3_br  | character varying | YES
+ adm0_a3_il  | character varying | YES
+ adm0_a3_ps  | character varying | YES
+ adm0_a3_sa  | character varying | YES
+ adm0_a3_eg  | character varying | YES
+ adm0_a3_ma  | character varying | YES
+ adm0_a3_pt  | character varying | YES
+ adm0_a3_ar  | character varying | YES
+ adm0_a3_jp  | character varying | YES
+ adm0_a3_ko  | character varying | YES
+ adm0_a3_vn  | character varying | YES
+ adm0_a3_tr  | character varying | YES
+ adm0_a3_id  | character varying | YES
+ adm0_a3_pl  | character varying | YES
+ adm0_a3_gr  | character varying | YES
+ adm0_a3_it  | character varying | YES
+ adm0_a3_nl  | character varying | YES
+ adm0_a3_se  | character varying | YES
+ adm0_a3_bd  | character varying | YES
+ adm0_a3_ua  | character varying | YES
+ adm0_a3_un  | smallint          | YES
+ adm0_a3_wb  | smallint          | YES
+ continent   | character varying | YES
+ region_un   | character varying | YES
+ subregion   | character varying | YES
+ region_wb   | character varying | YES
+ name_len    | smallint          | YES
+ long_len    | smallint          | YES
+ abbrev_len  | smallint          | YES
+ tiny        | smallint          | YES
+ homepart    | smallint          | YES
+ min_zoom    | double precision  | YES
+ min_label   | double precision  | YES
+ max_label   | double precision  | YES
+ label_x     | double precision  | YES
+ label_y     | double precision  | YES
+ ne_id       | double precision  | YES
+ wikidataid  | character varying | YES
+ name_ar     | character varying | YES
+ name_bn     | character varying | YES
+ name_de     | character varying | YES
+ name_en     | character varying | YES
+ name_es     | character varying | YES
+ name_fa     | character varying | YES
+ name_fr     | character varying | YES
+ name_el     | character varying | YES
+ name_he     | character varying | YES
+ name_hi     | character varying | YES
+ name_hu     | character varying | YES
+ name_id     | character varying | YES
+ name_it     | character varying | YES
+ name_ja     | character varying | YES
+ name_ko     | character varying | YES
+ name_nl     | character varying | YES
+ name_pl     | character varying | YES
+ name_pt     | character varying | YES
+ name_ru     | character varying | YES
+ name_sv     | character varying | YES
+ name_tr     | character varying | YES
+ name_uk     | character varying | YES
+ name_ur     | character varying | YES
+ name_vi     | character varying | YES
+ name_zh     | character varying | YES
+ name_zht    | character varying | YES
+ fclass_iso  | character varying | YES
+ tlc_diff    | character varying | YES
+ fclass_tlc  | character varying | YES
+ fclass_us   | character varying | YES
+ fclass_fr   | character varying | YES
+ fclass_ru   | character varying | YES
+ fclass_es   | character varying | YES
+ fclass_cn   | character varying | YES
+ fclass_tw   | character varying | YES
+ fclass_in   | character varying | YES
+ fclass_np   | character varying | YES
+ fclass_pk   | character varying | YES
+ fclass_de   | character varying | YES
+ fclass_gb   | character varying | YES
+ fclass_br   | character varying | YES
+ fclass_il   | character varying | YES
+ fclass_ps   | character varying | YES
+ fclass_sa   | character varying | YES
+ fclass_eg   | character varying | YES
+ fclass_ma   | character varying | YES
+ fclass_pt   | character varying | YES
+ fclass_ar   | character varying | YES
+ fclass_jp   | character varying | YES
+ fclass_ko   | character varying | YES
+ fclass_vn   | character varying | YES
+ fclass_tr   | character varying | YES
+ fclass_id   | character varying | YES
+ fclass_pl   | character varying | YES
+ fclass_gr   | character varying | YES
+ fclass_it   | character varying | YES
+ fclass_nl   | character varying | YES
+ fclass_se   | character varying | YES
+ fclass_bd   | character varying | YES
+ fclass_ua   | character varying | YES
+ geom        | USER-DEFINED      | YES
+(170 rows)
+
+
+INDEXES:
+========
+         tablename          |                   indexname                   |                                                               indexdef                                                               
+----------------------------+-----------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------
+ contreebution_nfts         | contreebution_nfts_global_id_key              | CREATE UNIQUE INDEX contreebution_nfts_global_id_key ON public.contreebution_nfts USING btree (global_id)
+ contreebution_nfts         | contreebution_nfts_pkey                       | CREATE UNIQUE INDEX contreebution_nfts_pkey ON public.contreebution_nfts USING btree (id)
+ contreebution_nfts         | idx_contreebution_nfts_taxon_id               | CREATE INDEX idx_contreebution_nfts_taxon_id ON public.contreebution_nfts USING btree (taxon_id)
+ contreebution_nfts         | idx_contreebution_nfts_wallet_address         | CREATE INDEX idx_contreebution_nfts_wallet_address ON public.contreebution_nfts USING btree (wallet_address)
+ countries                  | countries_geom_idx                            | CREATE INDEX countries_geom_idx ON public.countries USING gist (geom)
+ countries                  | countries_pkey                                | CREATE UNIQUE INDEX countries_pkey ON public.countries USING btree (gid)
+ ecoregions                 | ecoregions_geom_geom_idx                      | CREATE INDEX ecoregions_geom_geom_idx ON public.ecoregions USING gist (geom)
+ ecoregions                 | ecoregions_pkey                               | CREATE UNIQUE INDEX ecoregions_pkey ON public.ecoregions USING btree (ogc_fid)
+ ecoregions                 | idx_ecoregions_biome_name                     | CREATE INDEX idx_ecoregions_biome_name ON public.ecoregions USING btree (biome_name)
+ ecoregions                 | idx_ecoregions_eco_id                         | CREATE INDEX idx_ecoregions_eco_id ON public.ecoregions USING btree (eco_id)
+ ecoregions                 | idx_ecoregions_eco_name                       | CREATE INDEX idx_ecoregions_eco_name ON public.ecoregions USING btree (eco_name)
+ ecoregions                 | idx_ecoregions_realm                          | CREATE INDEX idx_ecoregions_realm ON public.ecoregions USING btree (realm)
+ geohash_species_tiles      | idx_geohash_l7                                | CREATE INDEX idx_geohash_l7 ON public.geohash_species_tiles USING btree (geohash_l7)
+ geohash_taxon_id_mapping   | geohash_taxon_id_mapping_pkey                 | CREATE UNIQUE INDEX geohash_taxon_id_mapping_pkey ON public.geohash_taxon_id_mapping USING btree (geohash_taxon_id)
+ images                     | idx_images_primary                            | CREATE INDEX idx_images_primary ON public.images USING btree (is_primary) WHERE (is_primary = true)
+ images                     | idx_images_source                             | CREATE INDEX idx_images_source ON public.images USING btree (source)
+ images                     | idx_images_taxon_id                           | CREATE INDEX idx_images_taxon_id ON public.images USING btree (taxon_id)
+ images                     | idx_images_unique_primary_per_species         | CREATE UNIQUE INDEX idx_images_unique_primary_per_species ON public.images USING btree (taxon_id) WHERE (is_primary = true)
+ images                     | images_pkey                                   | CREATE UNIQUE INDEX images_pkey ON public.images USING btree (id)
+ spatial_ref_sys            | spatial_ref_sys_pkey                          | CREATE UNIQUE INDEX spatial_ref_sys_pkey ON public.spatial_ref_sys USING btree (srid)
+ species                    | idx_species_scientific_name                   | CREATE INDEX idx_species_scientific_name ON public.species USING btree (species_scientific_name)
+ species                    | idx_species_taxon_id                          | CREATE INDEX idx_species_taxon_id ON public.species USING btree (taxon_id)
+ species_research_queue     | idx_research_queue_status                     | CREATE INDEX idx_research_queue_status ON public.species_research_queue USING btree (research_status)
+ species_research_queue     | idx_research_queue_wallet                     | CREATE INDEX idx_research_queue_wallet ON public.species_research_queue USING btree (wallet_address)
+ species_research_queue     | species_research_queue_pkey                   | CREATE UNIQUE INDEX species_research_queue_pkey ON public.species_research_queue USING btree (taxon_id)
+ species_v8                 | species_v8_accepted_scientific_name_idx       | CREATE INDEX species_v8_accepted_scientific_name_idx ON public.species_v8 USING btree (accepted_scientific_name)
+ species_v8                 | species_v8_common_name_idx                    | CREATE INDEX species_v8_common_name_idx ON public.species_v8 USING btree (common_name)
+ species_v8                 | species_v8_researched_idx                     | CREATE INDEX species_v8_researched_idx ON public.species_v8 USING btree (researched)
+ species_v8                 | species_v8_species_scientific_name_idx        | CREATE INDEX species_v8_species_scientific_name_idx ON public.species_v8 USING btree (species_scientific_name)
+ species_v8                 | species_v8_taxon_id_idx                       | CREATE INDEX species_v8_taxon_id_idx ON public.species_v8 USING btree (taxon_id)
+ sponsorship_items          | idx_sponsorship_items_sponsorship_id          | CREATE INDEX idx_sponsorship_items_sponsorship_id ON public.sponsorship_items USING btree (sponsorship_id)
+ sponsorship_items          | idx_sponsorship_items_taxon_id                | CREATE INDEX idx_sponsorship_items_taxon_id ON public.sponsorship_items USING btree (taxon_id)
+ sponsorship_items          | sponsorship_items_pkey                        | CREATE UNIQUE INDEX sponsorship_items_pkey ON public.sponsorship_items USING btree (id)
+ sponsorship_items          | sponsorship_items_sponsorship_id_taxon_id_key | CREATE UNIQUE INDEX sponsorship_items_sponsorship_id_taxon_id_key ON public.sponsorship_items USING btree (sponsorship_id, taxon_id)
+ sponsorships               | idx_sponsorships_transaction_hash             | CREATE INDEX idx_sponsorships_transaction_hash ON public.sponsorships USING btree (transaction_hash)
+ sponsorships               | idx_sponsorships_wallet_address               | CREATE INDEX idx_sponsorships_wallet_address ON public.sponsorships USING btree (wallet_address)
+ sponsorships               | sponsorships_pkey                             | CREATE UNIQUE INDEX sponsorships_pkey ON public.sponsorships USING btree (id)
+ sponsorships               | sponsorships_transaction_hash_key             | CREATE UNIQUE INDEX sponsorships_transaction_hash_key ON public.sponsorships USING btree (transaction_hash)
+ taxon_id_direct_mapping    | idx_direct_mapping_old                        | CREATE INDEX idx_direct_mapping_old ON public.taxon_id_direct_mapping USING btree (old_taxon_id)
+ taxon_id_final_mapping     | idx_final_mapping_new                         | CREATE INDEX idx_final_mapping_new ON public.taxon_id_final_mapping USING btree (new_taxon_id)
+ taxon_id_final_mapping     | taxon_id_final_mapping_pkey                   | CREATE UNIQUE INDEX taxon_id_final_mapping_pkey ON public.taxon_id_final_mapping USING btree (old_taxon_id)
+ taxon_mapping_new_to_final | taxon_mapping_new_to_final_pkey               | CREATE UNIQUE INDEX taxon_mapping_new_to_final_pkey ON public.taxon_mapping_new_to_final USING btree (new_taxon_id)
+ users                      | idx_users_wallet_address                      | CREATE INDEX idx_users_wallet_address ON public.users USING btree (wallet_address)
+ users                      | unique_wallet_address                         | CREATE UNIQUE INDEX unique_wallet_address ON public.users USING btree (wallet_address)
+ users                      | users_pkey                                    | CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id)
+ users                      | users_wallet_address_key                      | CREATE UNIQUE INDEX users_wallet_address_key ON public.users USING btree (wallet_address)
+(46 rows)
+
