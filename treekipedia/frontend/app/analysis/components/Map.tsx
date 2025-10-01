@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet-draw';
 import { analyzePlot } from '@/lib/api';
 import { PlotAnalysisResponse, GeoJSONPolygon } from '@/lib/types';
+import { Layers } from 'lucide-react';
 
 // Fix Leaflet icon issues with webpack
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -142,6 +143,86 @@ function DrawControl({ onAnalysisComplete, onAnalysisError, onLoadingChange, onC
   return null;
 }
 
+// Ecoregion layer component
+function EcoregionLayer({ visible }: { visible: boolean }) {
+  const map = useMap();
+  const layerRef = useRef<L.GeoJSON | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useMapEvents({
+    moveend: () => {
+      if (visible) {
+        loadEcoregions();
+      }
+    }
+  });
+
+  const loadEcoregions = async () => {
+    if (!visible || loading) return;
+
+    const bounds = map.getBounds();
+    const bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+
+    // Adjust simplification based on zoom level
+    const zoom = map.getZoom();
+    const simplify = zoom < 5 ? 0.1 : zoom < 8 ? 0.05 : 0.01;
+
+    try {
+      setLoading(true);
+      const response = await fetch(`https://treekipedia-api.silvi.earth/api/geospatial/ecoregions/boundaries?bbox=${bbox}&simplify=${simplify}`);
+      const data = await response.json();
+
+      // Remove old layer
+      if (layerRef.current) {
+        map.removeLayer(layerRef.current);
+      }
+
+      // Add new layer
+      layerRef.current = L.geoJSON(data, {
+        style: (feature) => ({
+          color: feature?.properties?.color || '#00ff00',
+          weight: 1,
+          opacity: 0.6,
+          fillOpacity: 0.1,
+          fillColor: feature?.properties?.color_bio || '#00ff00'
+        }),
+        onEachFeature: (feature, layer) => {
+          layer.bindPopup(`
+            <div class="p-2">
+              <h3 class="font-semibold">${feature.properties.eco_name}</h3>
+              <p class="text-sm">${feature.properties.biome_name}</p>
+              <p class="text-xs text-gray-500">${feature.properties.realm}</p>
+            </div>
+          `);
+        }
+      });
+
+      layerRef.current.addTo(map);
+    } catch (error) {
+      console.error('Error loading ecoregions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (visible) {
+      loadEcoregions();
+    } else if (layerRef.current) {
+      map.removeLayer(layerRef.current);
+      layerRef.current = null;
+    }
+
+    return () => {
+      if (layerRef.current) {
+        map.removeLayer(layerRef.current);
+      }
+    };
+  }, [visible]);
+
+  return null;
+}
+
 // External polygon display component
 function ExternalPolygonLayer({ geometry }: { geometry: GeoJSONPolygon | null }) {
   const map = useMap();
@@ -187,6 +268,7 @@ function ExternalPolygonLayer({ geometry }: { geometry: GeoJSONPolygon | null })
 export default function Map({ onAnalysisComplete, onAnalysisError, onLoadingChange, onClear }: MapProps) {
   const [externalGeometry, setExternalGeometry] = useState<GeoJSONPolygon | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [showEcoregions, setShowEcoregions] = useState(false);
 
   // Function to handle externally provided geometry (from KML upload)
   const handleExternalGeometry = async (geometry: GeoJSONPolygon) => {
@@ -225,10 +307,28 @@ export default function Map({ onAnalysisComplete, onAnalysisError, onLoadingChan
           onLoadingChange={onLoadingChange}
           onClear={onClear}
         />
-        
+
         <ExternalPolygonLayer geometry={externalGeometry} />
+
+        <EcoregionLayer visible={showEcoregions} />
       </MapContainer>
       
+      {/* Ecoregion toggle button */}
+      <div className="absolute top-4 right-4 z-10">
+        <button
+          onClick={() => setShowEcoregions(!showEcoregions)}
+          className={`bg-black/80 backdrop-blur-md border ${
+            showEcoregions ? 'border-emerald-500 text-emerald-300' : 'border-white/20 text-white/80'
+          } rounded-xl shadow-lg p-3 transition-all hover:scale-105 flex items-center gap-2`}
+          aria-label="Toggle ecoregion boundaries"
+        >
+          <Layers className="w-5 h-5" />
+          <span className="text-sm font-medium">
+            {showEcoregions ? 'Hide' : 'Show'} Ecoregions
+          </span>
+        </button>
+      </div>
+
       {/* Collapsible instructions overlay */}
       <div className="absolute bottom-4 left-4 z-10">
         {showInstructions ? (

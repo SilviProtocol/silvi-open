@@ -11,14 +11,15 @@
 - **IPFS**: Lighthouse integration for decentralized storage
 
 ### Core Working Features ✅
-1. **Species Search & Browse** - Users can search and view species details
-2. **Species Images System** - Complete image carousel with 31,796 images across 13,609 species  
-3. **AI Research Process** - Research generation, IPFS storage, NFT minting
-4. **User Registration** - Wallet-based user creation
-5. **Treederboard** - Leaderboard showing contributor rankings
-6. **Research Data Display** - Species pages show AI vs human data with visual indicators
-7. **Geospatial Analysis** - Full interactive map-based species analysis with polygon drawing and KML upload
-8. **Spatial Species Queries** - PostGIS-powered location-based species search with 5.3M geohash tiles
+1. **Species Search & Browse** - Users can search and view species details with subspecies support
+2. **Subspecies Management** - Species-level search with automatic subspecies discovery on detail pages
+3. **Species Images System** - Complete image carousel with 31,796 images across 13,609 species
+4. **AI Research Process** - Research generation, IPFS storage, NFT minting
+5. **User Registration** - Wallet-based user creation
+6. **Treederboard** - Leaderboard showing contributor rankings
+7. **Research Data Display** - Species pages show AI vs human data with visual indicators
+8. **Geospatial Analysis** - Full interactive map-based species analysis with polygon drawing and KML upload
+9. **Spatial Species Queries** - PostGIS-powered location-based species search with 5.3M geohash tiles
 
 ## 🏗 Current Architecture
 
@@ -40,7 +41,9 @@
 - **State**: React Query for server state, custom hooks for complex logic
 
 ### Database Schema
-- **Species table**: 61,455 species with taxonomic and research fields (v8 import completed)
+- **Species table**: 67,743 species with taxonomic and research fields (v9 import completed)
+  - Includes 50,797 species-level records and 16,946 subspecies/variety records
+  - Each record has `subspecies`, `taxon_full`, and `species_scientific_name` fields for hierarchical taxonomy
 - **Images table**: 31,796 images across 13,609 species with full attribution and primary image designation
 - **Users table**: Wallet addresses with points/contributions
 - **Research NFTs table**: Minted NFT records with IPFS links
@@ -50,10 +53,11 @@
 ## 🔄 Current User Flows
 
 ### Working Flows:
-1. **Search Species** → View details → See research data (if available)
-2. **Connect Wallet** → Fund research → AI generates data → NFT minted → Points awarded
-3. **View Treederboard** → See contributors and their points
-4. **View Profile** → See personal NFTs and contribution history
+1. **Search Species** → View details → See research data (if available) → Explore subspecies
+2. **Subspecies Discovery** → Search returns species-level records → Click to species page → View "Subspecies & Varieties" section → Click subspecies to view detailed page
+3. **Connect Wallet** → Fund research → AI generates data → NFT minted → Points awarded
+4. **View Treederboard** → See contributors and their points
+5. **View Profile** → See personal NFTs and contribution history
 
 ### Payment System:
 - **Current**: Direct USDC transfers (3 USDC per species research)
@@ -144,6 +148,11 @@ cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
 ## 🚧 Upcoming Development Priorities
 
 ### Recently Completed Major Features:
+- **✅ Subspecies & Taxonomy System** (October 2025): Complete implementation of subspecies management
+  - Backend: New `/species/:taxon_id/subspecies` endpoint
+  - Search optimization: `DISTINCT ON` query returns only species-level records
+  - Frontend: Subspecies section on species detail pages with clickable navigation
+  - Database: 50,797 species + 16,946 subspecies/varieties properly indexed
 - **✅ Data Attribution & References**: Added comprehensive citation list to site footer with all 12+ data sources
 - **✅ Species Images Database Integration**: Complete implementation with 4,024 images across 1,576 species
 - **✅ API Endpoints for Images**: Full backend API support for image data and attribution
@@ -283,11 +292,23 @@ cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
 
 ---
 
-**Last Updated**: September 16, 2025
-**Next Review**: After native status frontend integration and ecoregion mapping completion
+**Last Updated**: October 1, 2025
+**Next Review**: After search optimization deployment and subspecies system testing
 **Maintainer**: Update this doc whenever major changes are made
 
-### Latest Completed Work (September 16, 2025):
+### Latest Completed Work (October 1, 2025):
+
+#### **Subspecies & Taxonomy Management System:**
+- **Search Deduplication**: Fixed duplicate subspecies appearing in search results (Pinus ponderosa: 7 results → 1 result)
+- **DISTINCT ON Query**: Implemented PostgreSQL `DISTINCT ON (species_scientific_name)` with subspecies prioritization
+- **New API Endpoint**: `GET /species/:taxon_id/subspecies` returns all subspecies/varieties for a species
+- **Frontend Component**: Created `SubspeciesSection.tsx` with clickable subspecies cards showing `taxon_full` names
+- **Integration Complete**: Added subspecies section to species Overview tab between taxonomy and research status
+- **User Flow**: Search shows species-level records → Species page lists subspecies → Click to explore individual subspecies
+- **Database Structure**: 50,797 species-level (`subspecies = 'NA'`) + 16,946 subspecies/variety records
+- **Query Performance**: Search prioritizes species-level using CASE statement, then applies name matching logic
+
+### Previous Completed Work (September 16, 2025):
 
 #### **Major Species Analysis Infrastructure Complete:**
 - **v9 Species Data**: Successfully imported 67,743 species (up from 61,455) with corrected taxon_id mappings
@@ -573,3 +594,9 @@ System Overview
    are found in tropical rainforest ecoregions?" or "How does species diversity compare
   between the Neotropical and Palearctic realms?"
 
+
+
+
+intact forest
+
+ecological function group

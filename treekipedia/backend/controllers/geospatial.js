@@ -922,6 +922,75 @@ async function exportEcoregion(req, res) {
   }
 }
 
+// Get ecoregion boundaries for map display
+async function getEcoregionBoundaries(req, res) {
+  try {
+    const { bbox, simplify = 0.01 } = req.query;
+
+    let query;
+    let params = [];
+
+    if (bbox) {
+      // Parse bbox: minLng,minLat,maxLng,maxLat
+      const [minLng, minLat, maxLng, maxLat] = bbox.split(',').map(Number);
+
+      query = `
+        SELECT
+          eco_id,
+          eco_name,
+          biome_name,
+          realm,
+          color,
+          color_bio,
+          ST_AsGeoJSON(ST_Simplify(geom, $5))::json as geometry
+        FROM ecoregions
+        WHERE ST_Intersects(
+          geom,
+          ST_MakeEnvelope($1, $2, $3, $4, 4326)
+        )
+      `;
+      params = [minLng, minLat, maxLng, maxLat, simplify];
+    } else {
+      // Return all ecoregions (simplified for performance)
+      query = `
+        SELECT
+          eco_id,
+          eco_name,
+          biome_name,
+          realm,
+          color,
+          color_bio,
+          ST_AsGeoJSON(ST_Simplify(geom, $1))::json as geometry
+        FROM ecoregions
+      `;
+      params = [simplify];
+    }
+
+    const result = await pool.query(query, params);
+
+    // Return as GeoJSON FeatureCollection
+    res.json({
+      type: 'FeatureCollection',
+      features: result.rows.map(row => ({
+        type: 'Feature',
+        properties: {
+          eco_id: row.eco_id,
+          eco_name: row.eco_name,
+          biome_name: row.biome_name,
+          realm: row.realm,
+          color: row.color,
+          color_bio: row.color_bio
+        },
+        geometry: row.geometry
+      }))
+    });
+
+  } catch (error) {
+    console.error('Error in getEcoregionBoundaries:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 return {
   findSpeciesNearby,
   getSpeciesDistribution,
@@ -934,7 +1003,8 @@ return {
   getEcoregionAtPoint,
   getEcoregionsIntersecting,
   getEcoregionStats,
-  exportEcoregion
+  exportEcoregion,
+  getEcoregionBoundaries
 };
 
 };

@@ -5,6 +5,7 @@ import { DataField } from "../DataField";
 import { FieldDefinition } from "../../hooks/useFieldDefinitions";
 import { Button } from "@/components/ui/button";
 import { ImageCarousel } from "../ImageCarousel";
+import { SubspeciesSection } from "../SubspeciesSection";
 
 interface OverviewTabProps {
   species: TreeSpecies;
@@ -102,6 +103,9 @@ export function OverviewTab({ species, isResearched, getFieldValue, fields }: Ov
             ))}
           </div>
         </div>
+
+        {/* Subspecies & Varieties Section */}
+        <SubspeciesSection taxonId={species.taxon_id} />
 
         {/* Research Status Card */}
         {!isResearched && (

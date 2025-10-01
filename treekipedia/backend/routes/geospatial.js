@@ -57,5 +57,9 @@ router.get('/ecoregions/stats', geospatialController.getEcoregionStats);
 // GET /api/geospatial/ecoregions/:ecoregion_id/export?format=kml
 router.get('/ecoregions/:ecoregion_id/export', geospatialController.exportEcoregion);
 
+// Get ecoregion boundaries for map display
+// GET /api/geospatial/ecoregions/boundaries?bbox=-180,-90,180,90&simplify=0.01
+router.get('/ecoregions/boundaries', geospatialController.getEcoregionBoundaries);
+
 return router;
 };

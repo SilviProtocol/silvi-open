@@ -92,18 +92,25 @@ module.exports = (pool) => {
         queryParams = [`%${query}%`, `${query}%`];
       } else {
         // Search in all name fields (default behavior)
+        // Use DISTINCT ON to show only one result per species (prioritizing species-level records)
         searchQuery = `
-          SELECT taxon_id, common_name, species_scientific_name as species, species_scientific_name, accepted_scientific_name
+          SELECT DISTINCT ON (species_scientific_name)
+            taxon_id, common_name, species_scientific_name as species,
+            species_scientific_name, accepted_scientific_name, subspecies
           FROM species
           WHERE common_name ILIKE $1
-          OR species_scientific_name ILIKE $1
-          ORDER BY
+            OR species_scientific_name ILIKE $1
+          ORDER BY species_scientific_name,
+            CASE
+              WHEN subspecies = 'NA' THEN 0
+              ELSE 1
+            END,
             CASE
               WHEN common_name ILIKE $2 THEN 0
               WHEN species_scientific_name ILIKE $2 THEN 1
               ELSE 2
             END,
-            common_name, species_scientific_name
+            common_name
           LIMIT 10
         `;
         // Multiple parameters: first for contains anywhere, second for starts with (for ordering)
@@ -191,27 +198,27 @@ module.exports = (pool) => {
   router.get('/:taxon_id/images', async (req, res) => {
     try {
       const { taxon_id } = req.params;
-      
+
       // First check if species exists
       const speciesCheck = `SELECT taxon_id FROM species WHERE taxon_id = $1`;
       const speciesResult = await pool.query(speciesCheck, [taxon_id]);
-      
+
       if (speciesResult.rows.length === 0) {
         return res.status(404).json({ error: 'Species not found' });
       }
-      
+
       // Get all images for this species, with primary image first
       const imagesQuery = `
         SELECT id, taxon_id, image_url, license, photographer, page_url, source, is_primary, created_at
-        FROM images 
+        FROM images
         WHERE taxon_id = $1
         ORDER BY is_primary DESC, id ASC
       `;
-      
+
       const result = await pool.query(imagesQuery, [taxon_id]);
-      
+
       console.log(`GET /species/${taxon_id}/images returned ${result.rowCount} images`);
-      
+
       res.json({
         taxon_id: taxon_id,
         image_count: result.rowCount,
@@ -219,6 +226,50 @@ module.exports = (pool) => {
       });
     } catch (error) {
       console.error(`Error fetching images for species "${req.params.taxon_id}":`, error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  /**
+   * GET /:taxon_id/subspecies
+   * Get all subspecies and varieties for a specific species
+   * Route params: taxon_id - The unique identifier for the species
+   */
+  router.get('/:taxon_id/subspecies', async (req, res) => {
+    try {
+      const { taxon_id } = req.params;
+
+      // First get the species to find its scientific name
+      const speciesCheck = `SELECT species_scientific_name FROM species WHERE taxon_id = $1`;
+      const speciesResult = await pool.query(speciesCheck, [taxon_id]);
+
+      if (speciesResult.rows.length === 0) {
+        return res.status(404).json({ error: 'Species not found' });
+      }
+
+      const speciesScientificName = speciesResult.rows[0].species_scientific_name;
+
+      // Get all subspecies/varieties for this species (excluding the species-level record)
+      const subspeciesQuery = `
+        SELECT taxon_id, taxon_full, subspecies, common_name, species_scientific_name
+        FROM species
+        WHERE species_scientific_name = $1
+          AND subspecies != 'NA'
+        ORDER BY taxon_full
+      `;
+
+      const result = await pool.query(subspeciesQuery, [speciesScientificName]);
+
+      console.log(`GET /species/${taxon_id}/subspecies returned ${result.rowCount} subspecies for ${speciesScientificName}`);
+
+      res.json({
+        taxon_id: taxon_id,
+        species_scientific_name: speciesScientificName,
+        subspecies_count: result.rowCount,
+        subspecies: result.rows
+      });
+    } catch (error) {
+      console.error(`Error fetching subspecies for species "${req.params.taxon_id}":`, error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
