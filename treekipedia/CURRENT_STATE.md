@@ -1,11 +1,11 @@
-# Treekipedia Current State (Updated: August 2025)
+# Treekipedia Current State (Updated: October 2025)
 
 ## 🚀 What's Live and Working
 
 ### Deployment Status
 - **Backend API**: Running at `https://treekipedia-api.silvi.earth` (PM2 managed, port 3000)
 - **Frontend**: Deployed on Vercel at `https://treekipedia.silvi.earth`
-- **Database**: PostgreSQL with 61,455 species, 19 researched, 8 users, 20 NFTs minted
+- **Database**: PostgreSQL with 67,743 species (50,797 species + 16,946 subspecies), 19 researched, 8 users, 20 NFTs minted
 - **PostGIS**: Spatial database extension enabled for geospatial queries
 - **Blazegraph**: Knowledge graph running on port 9999
 - **IPFS**: Lighthouse integration for decentralized storage
@@ -13,7 +13,7 @@
 ### Core Working Features ✅
 1. **Species Search & Browse** - Users can search and view species details with subspecies support
 2. **Subspecies Management** - Species-level search with automatic subspecies discovery on detail pages
-3. **Species Images System** - Complete image carousel with 31,796 images across 13,609 species
+3. **Species Images System** - Image carousel with 31,796 images (17,276 successfully linked, 54.3% coverage after v9 migration)
 4. **AI Research Process** - Research generation, IPFS storage, NFT minting
 5. **User Registration** - Wallet-based user creation
 6. **Treederboard** - Leaderboard showing contributor rankings
@@ -292,11 +292,28 @@ cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
 
 ---
 
-**Last Updated**: October 1, 2025
-**Next Review**: After search optimization deployment and subspecies system testing
+**Last Updated**: October 2, 2025
+**Next Review**: After image re-linking improvements and remaining unlinked images analysis
 **Maintainer**: Update this doc whenever major changes are made
 
-### Latest Completed Work (October 1, 2025):
+### Latest Completed Work (October 2, 2025):
+
+#### **Image Re-linking After v9 Migration:**
+- **Problem**: v9 species import changed taxon_id structure, breaking all 31,796 image links (0% matched)
+- **Solution**: URL-based species name extraction and re-linking to current taxon_ids
+- **Species Name Extraction**: Parsed Wikimedia Commons URLs to extract scientific names from filenames
+- **Extraction Success**: 20,145 images (63.4%) had valid species names extracted from URLs
+- **Database Matching**: 8,564 unique species names matched to current species table
+- **Re-linking Results**: 17,276 images (54.3%) successfully re-linked to current species
+- **Technical Approach**:
+  - Added `species_scientific_name` column to images table
+  - Extracted genus + species epithet from URL filenames (e.g., "Eucalyptus_spathulata.JPG" → "Eucalyptus spathulata")
+  - Matched to species table (species-level only, `subspecies = 'NA'`)
+  - Handled duplicate primary images constraint by temporarily dropping/recreating index
+- **Remaining Issues**: 14,520 images (45.7%) still unlinked due to non-standard URLs or species not in database
+- **Script Location**: `/scripts/relink_images_from_urls.js`
+
+### Previous Completed Work (October 1, 2025):
 
 #### **Subspecies & Taxonomy Management System:**
 - **Search Deduplication**: Fixed duplicate subspecies appearing in search results (Pinus ponderosa: 7 results → 1 result)
@@ -307,6 +324,8 @@ cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
 - **User Flow**: Search shows species-level records → Species page lists subspecies → Click to explore individual subspecies
 - **Database Structure**: 50,797 species-level (`subspecies = 'NA'`) + 16,946 subspecies/variety records
 - **Query Performance**: Search prioritizes species-level using CASE statement, then applies name matching logic
+- **Null Safety**: Fixed search form to handle 47,788 species with NULL common names
+- **Search Placeholder**: Updated to "Search 67,743 tree species & subspecies..."
 
 ### Previous Completed Work (September 16, 2025):
 

@@ -85,6 +85,7 @@ blazegraph/blazegraph.jnl
 /v8.csv
 /geohash.csv
 /images.json
+/Treekipedia_V6_countriesOK_bioregionsOK_wikimideaOK_ColumnsOK_April17d.csv
 
 # Database backups
 database/backups/

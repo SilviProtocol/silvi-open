@@ -22,7 +22,7 @@ interface SearchFormProps {
   placeholder?: string;
 }
 
-export function SearchForm({ placeholder = "Search over 50,000 tree species..." }: SearchFormProps) {
+export function SearchForm({ placeholder = "Search 67,743 tree species & subspecies..." }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
@@ -177,15 +177,18 @@ export function SearchForm({ placeholder = "Search over 50,000 tree species..." 
   // Separate common name and scientific name matches
   const commonNameMatches = validSuggestions.filter(item => {
     if (!item || !item.common_name) return false;
-    
+
+    // Ensure common_name is a string before calling string methods
+    const commonName = String(item.common_name);
+
     // If we have multiple common names (separated by semicolons), check each one
-    if (item.common_name.includes(';')) {
-      const names = item.common_name.split(';').map(n => n.trim().toLowerCase());
+    if (commonName.includes(';')) {
+      const names = commonName.split(';').map(n => n.trim().toLowerCase());
       return names.some(name => name.includes(query.toLowerCase()));
     }
-    
+
     // Otherwise just check the single common name
-    return item.common_name.toLowerCase().includes(query.toLowerCase());
+    return commonName.toLowerCase().includes(query.toLowerCase());
   });
   
   // Use species_scientific_name field as primary scientific name with fallback to species
@@ -295,10 +298,11 @@ export function SearchForm({ placeholder = "Search over 50,000 tree species..." 
                           {commonNameMatches.map((suggestion, index) => {
                             const cardKey = `common-${index}`;
                             const isExpanded = expandedCards[cardKey] || false;
-                            const hasMultipleNames = suggestion.common_name.includes(';');
-                            const allCommonNames = hasMultipleNames ? 
-                              getAllCommonNames(suggestion.common_name, query) : 
-                              [suggestion.common_name];
+                            const commonName = suggestion.common_name || '';
+                            const hasMultipleNames = commonName.includes(';');
+                            const allCommonNames = hasMultipleNames ?
+                              getAllCommonNames(commonName, query) :
+                              [commonName];
                             
                             return (
                               <div 
@@ -309,7 +313,7 @@ export function SearchForm({ placeholder = "Search over 50,000 tree species..." 
                                 <div className="flex justify-between items-start">
                                   <div className="font-medium text-white group-hover:text-emerald-300 transition-colors">
                                     {/* Show prioritized matching name */}
-                                    {hasMultipleNames ? formatCommonNames(suggestion.common_name, query) : suggestion.common_name}
+                                    {hasMultipleNames ? formatCommonNames(commonName, query) : commonName}
                                   </div>
                                   <div className="flex items-center">
                                     {/* Expand/collapse button - only show if multiple names */}
@@ -382,10 +386,11 @@ export function SearchForm({ placeholder = "Search over 50,000 tree species..." 
                           {scientificNameMatches.map((suggestion, index) => {
                             const cardKey = `scientific-${index}`;
                             const isExpanded = expandedCards[cardKey] || false;
-                            const hasMultipleNames = suggestion.common_name.includes(';');
-                            const allCommonNames = hasMultipleNames ? 
-                              getAllCommonNames(suggestion.common_name, query) : 
-                              [suggestion.common_name];
+                            const commonName = suggestion.common_name || '';
+                            const hasMultipleNames = commonName.includes(';');
+                            const allCommonNames = hasMultipleNames ?
+                              getAllCommonNames(commonName, query) :
+                              [commonName];
                             
                             return (
                               <div 
@@ -423,7 +428,7 @@ export function SearchForm({ placeholder = "Search over 50,000 tree species..." 
                                 
                                 {/* Common name preview */}
                                 <div className="text-xs text-white/70 mt-1">
-                                  {hasMultipleNames ? formatCommonNames(suggestion.common_name, query) : suggestion.common_name}
+                                  {hasMultipleNames ? formatCommonNames(commonName, query) : commonName}
                                 </div>
                                 
                                 {/* Expanded view of all common names */}
