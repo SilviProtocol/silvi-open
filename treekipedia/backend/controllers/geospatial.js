@@ -991,6 +991,107 @@ async function getEcoregionBoundaries(req, res) {
   }
 }
 
+// Get native species for an ecoregion by name
+// Uses species.ecoregions field and filters by native status
+async function getNativeSpeciesByEcoregionName(req, res) {
+  try {
+    const { ecoregion_name } = req.params;
+    const { native_only = 'true', exclude_invasive = 'true', limit = 1000 } = req.query;
+
+    if (!ecoregion_name) {
+      return res.status(400).json({
+        error: 'Missing required parameter: ecoregion_name'
+      });
+    }
+
+    // Get countries that intersect this ecoregion
+    const countriesQuery = `
+      SELECT array_agg(DISTINCT
+        CASE
+          WHEN name_en = 'United States of America' THEN 'United States'
+          WHEN name_en = 'United Kingdom' THEN 'United Kingdom'
+          ELSE name_en
+        END
+      ) as country_list
+      FROM ecoregions e
+      JOIN countries c ON ST_Intersects(e.geom, c.geom)
+      WHERE e.eco_name = $1;
+    `;
+
+    const countriesResult = await pool.query(countriesQuery, [ecoregion_name]);
+
+    if (countriesResult.rows.length === 0 || !countriesResult.rows[0].country_list) {
+      return res.status(404).json({
+        error: 'Ecoregion not found or no countries intersect this ecoregion'
+      });
+    }
+
+    const countries = countriesResult.rows[0].country_list;
+
+    // Build SQL pattern matching for countries
+    const countryPatterns = countries.map(c => `countries_native LIKE '%${c}%'`).join(' OR ');
+
+    const query = `
+      SELECT
+        taxon_id,
+        taxon_full,
+        species_scientific_name,
+        common_name,
+        family,
+        genus,
+        countries_native,
+        countries_invasive,
+        countries_introduced
+      FROM species
+      WHERE ecoregions LIKE $1
+        AND ecoregions != 'NA'
+        ${native_only === 'true' ? `AND (${countryPatterns})` : ''}
+        ${exclude_invasive === 'true' ? `AND (countries_invasive = 'NA' OR countries_invasive NOT LIKE ANY($2))` : ''}
+      ORDER BY species_scientific_name
+      LIMIT $3;
+    `;
+
+    const invasivePatterns = countries.map(c => `%${c}%`);
+    const result = await pool.query(query, [
+      `%${ecoregion_name}%`,
+      invasivePatterns,
+      limit
+    ]);
+
+    // Get ecoregion metadata
+    const ecoregionInfoQuery = `
+      SELECT eco_id, eco_name, biome_name, realm,
+             ST_Area(geom::geography) / 1000000 as area_km2
+      FROM ecoregions
+      WHERE eco_name = $1;
+    `;
+
+    const ecoregionInfo = await pool.query(ecoregionInfoQuery, [ecoregion_name]);
+
+    res.json({
+      ecoregion: ecoregionInfo.rows[0] || { eco_name: ecoregion_name },
+      countries_in_ecoregion: countries,
+      filters_applied: {
+        native_only: native_only === 'true',
+        exclude_invasive: exclude_invasive === 'true'
+      },
+      species_count: result.rows.length,
+      species: result.rows.map(row => ({
+        taxon_id: row.taxon_id,
+        taxon_full: row.taxon_full,
+        scientific_name: row.species_scientific_name,
+        common_name: row.common_name || null,
+        family: row.family || null,
+        genus: row.genus || null
+      }))
+    });
+
+  } catch (error) {
+    console.error('Error in getNativeSpeciesByEcoregionName:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+}
+
 return {
   findSpeciesNearby,
   getSpeciesDistribution,
@@ -1004,7 +1105,8 @@ return {
   getEcoregionsIntersecting,
   getEcoregionStats,
   exportEcoregion,
-  getEcoregionBoundaries
+  getEcoregionBoundaries,
+  getNativeSpeciesByEcoregionName
 };
 
 };

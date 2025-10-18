@@ -61,5 +61,9 @@ router.get('/ecoregions/:ecoregion_id/export', geospatialController.exportEcoreg
 // GET /api/geospatial/ecoregions/boundaries?bbox=-180,-90,180,90&simplify=0.01
 router.get('/ecoregions/boundaries', geospatialController.getEcoregionBoundaries);
 
+// Get native species by ecoregion name
+// GET /api/geospatial/ecoregions/native-species/:ecoregion_name?native_only=true&exclude_invasive=true
+router.get('/ecoregions/native-species/:ecoregion_name', geospatialController.getNativeSpeciesByEcoregionName);
+
 return router;
 };
