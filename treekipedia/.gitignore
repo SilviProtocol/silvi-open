@@ -87,5 +87,10 @@ blazegraph/blazegraph.jnl
 /images.json
 /Treekipedia_V6_countriesOK_bioregionsOK_wikimideaOK_ColumnsOK_April17d.csv
 
+# Large GeoJSON files
+/scripts/*.geojson
+/scripts/*.svg
+*.geojson
+
 # Database backups
 database/backups/
