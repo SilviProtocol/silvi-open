@@ -1,0 +1,85 @@
+{
+  "species": {
+    "taxon_id": "test_2",
+    "species_scientific_name": "Plumeria rubra",
+    "common_name": "Red frangipani, temple tree",
+    "description": "Tropical ornamental with moderate documentation",
+    "complexity": "moderate"
+  },
+  "strategy": "focused_4group",
+  "strategy_name": "Focused 4-Group (Habitat, Physical, Management, Cultural)",
+  "timestamp": "2025-06-16T13:54:39.467Z",
+  "groups": [
+    {
+      "group_number": 1,
+      "group_name": "Group 1",
+      "fields": [
+        "habitat_ai",
+        "elevation_ranges_ai",
+        "native_adapted_habitats_ai",
+        "conservation_status_ai"
+      ],
+      "error": "Request failed with status code 400",
+      "raw_response": null,
+      "citations": [],
+      "parsed_data": null
+    },
+    {
+      "group_number": 2,
+      "group_name": "Group 2",
+      "fields": [
+        "growth_form_ai",
+        "leaf_type_ai",
+        "deciduous_evergreen_ai",
+        "flower_color_ai",
+        "fruit_type_ai",
+        "bark_characteristics_ai",
+        "maximum_height_ai",
+        "maximum_diameter_ai",
+        "lifespan_ai",
+        "maximum_tree_age_ai",
+        "compatible_soil_types_ai"
+      ],
+      "error": "Request failed with status code 400",
+      "raw_response": null,
+      "citations": [],
+      "parsed_data": null
+    },
+    {
+      "group_number": 3,
+      "group_name": "Group 3",
+      "fields": [
+        "stewardship_best_practices_ai",
+        "planting_recipes_ai",
+        "pruning_maintenance_ai",
+        "disease_pest_management_ai",
+        "fire_management_ai"
+      ],
+      "error": "Request failed with status code 400",
+      "raw_response": null,
+      "citations": [],
+      "parsed_data": null
+    },
+    {
+      "group_number": 4,
+      "group_name": "Group 4",
+      "fields": [
+        "cultural_significance_ai",
+        "agroforestry_use_cases_ai",
+        "ecological_function_ai",
+        "general_description_ai"
+      ],
+      "error": "Request failed with status code 400",
+      "raw_response": null,
+      "citations": [],
+      "parsed_data": null
+    }
+  ],
+  "aggregated_data": {},
+  "errors": [
+    "Group 1: Request failed with status code 400",
+    "Group 2: Request failed with status code 400",
+    "Group 3: Request failed with status code 400",
+    "Group 4: Request failed with status code 400"
+  ]
+}

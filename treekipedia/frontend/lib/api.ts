@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TreeSpecies, ResearchData } from './types';
+import { TreeSpecies, ResearchData, SpeciesImagesResponse, GeoJSONPolygon, PlotAnalysisResponse } from './types';
 
 // Set base URL for API - use the confirmed HTTPS endpoint
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://treekipedia-api.silvi.earth';
@@ -48,6 +48,30 @@ export const getSpeciesById = async (taxon_id: string): Promise<TreeSpecies> => 
   }
   
   return data;
+};
+
+/**
+ * Get all images for a specific species by taxon_id
+ */
+export const getSpeciesImages = async (taxon_id: string): Promise<SpeciesImagesResponse> => {
+  try {
+    // Add cache busting parameter to avoid browser caching
+    const { data } = await apiClient.get(`/species/${taxon_id}/images?_=${Date.now()}`);
+    return data;
+  } catch (error) {
+    // If we get a 404, it means species not found or has no images
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      console.log(`No images available for taxon_id: ${taxon_id}`);
+      // Return empty response structure
+      return {
+        taxon_id,
+        image_count: 0,
+        images: []
+      };
+    }
+    // Re-throw other errors
+    throw error;
+  }
 };
 
 /**
@@ -341,4 +365,19 @@ export async function getErrorLogs() {
     throw error;
   }
 }
+
+/**
+ * Geospatial API endpoints
+ */
+
+// Analyze species within a polygon plot
+export const analyzePlot = async (geometry: GeoJSONPolygon): Promise<PlotAnalysisResponse> => {
+  try {
+    const { data } = await apiClient.post('/api/geospatial/analyze-plot', { geometry });
+    return data;
+  } catch (error) {
+    console.error('Error analyzing plot:', error);
+    throw error;
+  }
+};
 

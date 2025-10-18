@@ -109,6 +109,15 @@ export interface TreeSpecies {
   cultivation_details: string;
   associated_media: string;
   default_image: string;
+  
+  // Image-related fields from API
+  image_count: number;
+  primary_image_url: string | null;
+  primary_image_license: string | null;
+  primary_image_photographer: string | null;
+  primary_image_page_url: string | null;
+  primary_image_source: string | null;
+  
   total_occurrences: number | null;
   allometric_models: string;
   allometric_curve: string;
@@ -126,6 +135,26 @@ export interface TreeSpecies {
   last_updated_date: string;
   created_at: string;
   updated_at: string;
+}
+
+// Species image data structure
+export interface SpeciesImage {
+  id: number;
+  taxon_id: string;
+  image_url: string;
+  license: string | null;
+  photographer: string | null;
+  page_url: string | null;
+  source: string;
+  is_primary: boolean;
+  created_at: string;
+}
+
+// Response structure for species images endpoint
+export interface SpeciesImagesResponse {
+  taxon_id: string;
+  image_count: number;
+  images: SpeciesImage[];
 }
 
 // Legacy interface for backward compatibility with existing components
@@ -243,4 +272,57 @@ export interface Chain {
     };
   };
   testnet: boolean;
+}
+
+// GeoJSON types for geospatial analysis
+export interface GeoJSONPolygon {
+  type: 'Polygon';
+  coordinates: number[][][];
+}
+
+// Plot analysis request/response types
+export interface PlotAnalysisRequest {
+  geometry: GeoJSONPolygon;
+}
+
+export interface PlotAnalysisResponse {
+  totalSpecies: number;
+  totalOccurrences: number;
+  crossAnalysis?: CrossAnalysisData;
+  species: PlotSpeciesResult[];
+}
+
+export interface CrossAnalysisData {
+  country: string | null;
+  countryDetected: boolean;
+
+  // Native status breakdown
+  nativeSpecies: number;
+  introducedSpecies: number;
+  unknownNativeStatus: number;
+
+  // Intact forest breakdown
+  intactForestSpecies: number;
+  nonIntactForestSpecies: number;
+  unknownForestStatus: number;
+
+  // Commercial breakdown
+  commercialSpecies: number;
+  nonCommercialSpecies: number;
+}
+
+export interface PlotSpeciesResult {
+  taxon_id: string;
+  scientific_name: string;
+  common_name: string | null;
+  family?: string | null;
+  genus?: string | null;
+  occurrences: number;
+  tile_count?: number;
+
+  // Enhanced analysis fields
+  nativeStatus?: 'native' | 'introduced' | 'unknown';
+  nativePercentage?: number; // Percentage of analysis zone where species is native (0-100)
+  intactForestStatus?: 'present' | 'absent' | 'unknown';
+  isCommercial?: boolean;
 }

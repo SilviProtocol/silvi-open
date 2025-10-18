@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "model": "grok-3-mini",
+    "species_scientific_name": "Ginkgo biloba",
+    "common_names": "Ginkgo, maidenhair tree",
+    "taxon_id": "AngGiGiGN21141-00",
+    "timestamp": "2025-06-30T09:24:49.900Z",
+    "api_calls": 3,
+    "total_tokens": 24893,
+    "duration_ms": 24726,
+    "errors": null
+  },
+  "research_data": {
+    "habitat_ai": "Ginkgo biloba naturally occurs in mixed broad-leaved deciduous forests in China, often in temperate regions with historical cultivation in temple gardens.",
+    "elevation_ranges_ai": "Data not available",
+    "ecological_function_ai": "Data not available",
+    "native_adapted_habitats_ai": "Original native range is East Asia, specifically China, adapted to temperate forest ecosystems.",
+    "agroforestry_use_cases_ai": "Data not available",
+    "conservation_status_ai": "Endangered in its native habitat according to IUCN and other conservation authorities.",
+    "general_description_ai": "Ginkgo biloba is a deciduous gymnosperm tree, characterized by fan-shaped leaves with two lobes, dioecious reproduction, capability for clonal growth, and striking yellow autumn foliage. It is considered a living fossil with fossils dating back approximately 170 million years to the Jurassic period, and it exhibits high resilience to diseases and disturbed environments.",
+    "compatible_soil_types_ai": "Data not available",
+    "growth_form_ai": "Deciduous tree with a spreading or pyramidal crown",
+    "leaf_type_ai": "Fan-shaped, bilobed leaves with dichotomous venation",
+    "deciduous_evergreen_ai": "Deciduous",
+    "flower_color_ai": "Data not available",
+    "fruit_type_ai": "Fleshy, drupe-like seed with foul odor, produced on female trees",
+    "bark_characteristics_ai": "Data not available",
+    "maximum_height_ai": 24,
+    "maximum_diameter_ai": null,
+    "lifespan_ai": "Data not available",
+    "maximum_tree_age_ai": null,
+    "stewardship_best_practices_ai": "Ginkgo biloba is a low-maintenance tree that thrives in full sun with well-draining soil. Practical advice from gardening forums and nursery guides emphasizes planting male cultivars to avoid the messy, foul-smelling fruits from female trees. It is drought-tolerant once established, with sources indicating it can tolerate a wide range of soil pH (5.0-8.0) and urban conditions. Regular watering is needed during establishment, and mulching helps retain moisture and suppress weeds, based on grower experiences and extension services.",
+    "planting_recipes_ai": "Plant in full sun with well-drained soil, avoiding wet or compacted sites. Sources recommend a planting depth equal to the root ball, spacing of 30-40 feet apart for mature trees (height range 50-80 feet). Best planted in spring or fall for root establishment, with practical tips from forums suggesting amending soil with organic matter if poor drainage is an issue.",
+    "pruning_maintenance_ai": "Minimal pruning is typically required; prune only to remove dead, damaged, or crossing branches to maintain shape. Some nursery guides note that young trees can be pruned for form, but no specific timing or frequency is commonly detailed in available sources. Data not available for detailed maintenance schedules.",
+    "disease_pest_management_ai": "Ginkgo biloba is often described as highly resistant to pests and diseases in scientific databases and grower communities. Common issues are rare, but potential pests include aphids or scale insects, with management strategies involving monitoring and using horticultural oils or insecticides if needed. No specific diseases are frequently reported; practical advice from forums emphasizes good air circulation and avoiding stress to prevent problems.",
+    "fire_management_ai": "Anecdotal evidence from historical accounts suggests high fire tolerance, such as surviving extreme events, but specific scientific data on fire resistance or management practices is not available in reviewed sources. Data not available for detailed fire management considerations.",
+    "cultural_significance_ai": "Ginkgo biloba holds cultural importance in East Asia, particularly China, where it is used in traditional medicine for cognitive and circulatory health, and symbolizes longevity and resilience. It is often planted in temples and gardens for its aesthetic and spiritual value, with ethnobotanical sources noting its role in folklore and ceremonies. Modern cultural significance includes its status as a 'living fossil' and use in herbal supplements, based on historical and community resources."
+  },
+  "group_responses": {
+    "ecological_general": {
+      "success": true,
+      "data": {
+        "habitat_ai": "Ginkgo biloba naturally occurs in mixed broad-leaved deciduous forests in China, often in temperate regions with historical cultivation in temple gardens.",
+        "elevation_ranges_ai": "Data not available",
+        "ecological_function_ai": "Data not available",
+        "native_adapted_habitats_ai": "Original native range is East Asia, specifically China, adapted to temperate forest ecosystems.",
+        "agroforestry_use_cases_ai": "Data not available",
+        "conservation_status_ai": "Endangered in its native habitat according to IUCN and other conservation authorities.",
+        "general_description_ai": "Ginkgo biloba is a deciduous gymnosperm tree, characterized by fan-shaped leaves with two lobes, dioecious reproduction, capability for clonal growth, and striking yellow autumn foliage. It is considered a living fossil with fossils dating back approximately 170 million years to the Jurassic period, and it exhibits high resilience to diseases and disturbed environments.",
+        "compatible_soil_types_ai": "Data not available"
+      },
+      "raw_response": "{\n  \"habitat_ai\": \"Ginkgo biloba naturally occurs in mixed broad-leaved deciduous forests in China, often in temperate regions with historical cultivation in temple gardens.\",\n  \"elevation_ranges_ai\": \"Data not available\",\n  \"ecological_function_ai\": \"Data not available\",\n  \"native_adapted_habitats_ai\": \"Original native range is East Asia, specifically China, adapted to temperate forest ecosystems.\",\n  \"agroforestry_use_cases_ai\": \"Data not available\",\n  \"conservation_status_ai\": \"Endangered in its native habitat according to IUCN and other conservation authorities.\",\n  \"general_description_ai\": \"Ginkgo biloba is a deciduous gymnosperm tree, characterized by fan-shaped leaves with two lobes, dioecious reproduction, capability for clonal growth, and striking yellow autumn foliage. It is considered a living fossil with fossils dating back approximately 170 million years to the Jurassic period, and it exhibits high resilience to diseases and disturbed environments.\",\n  \"compatible_soil_types_ai\": \"Data not available\"\n}",
+      "usage": {
+        "prompt_tokens": 6163,
+        "completion_tokens": 210,
+        "total_tokens": 8121,
+        "prompt_tokens_details": {
+          "text_tokens": 6163,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 327
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1748,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    },
+    "morphological": {
+      "success": true,
+      "data": {
+        "growth_form_ai": "Deciduous tree with a spreading or pyramidal crown",
+        "leaf_type_ai": "Fan-shaped, bilobed leaves with dichotomous venation",
+        "deciduous_evergreen_ai": "Deciduous",
+        "flower_color_ai": "Data not available",
+        "fruit_type_ai": "Fleshy, drupe-like seed with foul odor, produced on female trees",
+        "bark_characteristics_ai": "Data not available",
+        "maximum_height_ai": 24,
+        "maximum_diameter_ai": "Data not available",
+        "lifespan_ai": "Data not available",
+        "maximum_tree_age_ai": "Data not available"
+      },
+      "raw_response": "{\n  \"growth_form_ai\": \"Deciduous tree with a spreading or pyramidal crown\",\n  \"leaf_type_ai\": \"Fan-shaped, bilobed leaves with dichotomous venation\",\n  \"deciduous_evergreen_ai\": \"Deciduous\",\n  \"flower_color_ai\": \"Data not available\",\n  \"fruit_type_ai\": \"Fleshy, drupe-like seed with foul odor, produced on female trees\",\n  \"bark_characteristics_ai\": \"Data not available\",\n  \"maximum_height_ai\": 24,\n  \"maximum_diameter_ai\": \"Data not available\",\n  \"lifespan_ai\": \"Data not available\",\n  \"maximum_tree_age_ai\": \"Data not available\"\n}",
+      "usage": {
+        "prompt_tokens": 5765,
+        "completion_tokens": 144,
+        "total_tokens": 8519,
+        "prompt_tokens_details": {
+          "text_tokens": 5765,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 333
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 2610,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    },
+    "stewardship": {
+      "success": true,
+      "data": {
+        "stewardship_best_practices_ai": "Ginkgo biloba is a low-maintenance tree that thrives in full sun with well-draining soil. Practical advice from gardening forums and nursery guides emphasizes planting male cultivars to avoid the messy, foul-smelling fruits from female trees. It is drought-tolerant once established, with sources indicating it can tolerate a wide range of soil pH (5.0-8.0) and urban conditions. Regular watering is needed during establishment, and mulching helps retain moisture and suppress weeds, based on grower experiences and extension services.",
+        "planting_recipes_ai": "Plant in full sun with well-drained soil, avoiding wet or compacted sites. Sources recommend a planting depth equal to the root ball, spacing of 30-40 feet apart for mature trees (height range 50-80 feet). Best planted in spring or fall for root establishment, with practical tips from forums suggesting amending soil with organic matter if poor drainage is an issue.",
+        "pruning_maintenance_ai": "Minimal pruning is typically required; prune only to remove dead, damaged, or crossing branches to maintain shape. Some nursery guides note that young trees can be pruned for form, but no specific timing or frequency is commonly detailed in available sources. Data not available for detailed maintenance schedules.",
+        "disease_pest_management_ai": "Ginkgo biloba is often described as highly resistant to pests and diseases in scientific databases and grower communities. Common issues are rare, but potential pests include aphids or scale insects, with management strategies involving monitoring and using horticultural oils or insecticides if needed. No specific diseases are frequently reported; practical advice from forums emphasizes good air circulation and avoiding stress to prevent problems.",
+        "fire_management_ai": "Anecdotal evidence from historical accounts suggests high fire tolerance, such as surviving extreme events, but specific scientific data on fire resistance or management practices is not available in reviewed sources. Data not available for detailed fire management considerations.",
+        "cultural_significance_ai": "Ginkgo biloba holds cultural importance in East Asia, particularly China, where it is used in traditional medicine for cognitive and circulatory health, and symbolizes longevity and resilience. It is often planted in temples and gardens for its aesthetic and spiritual value, with ethnobotanical sources noting its role in folklore and ceremonies. Modern cultural significance includes its status as a 'living fossil' and use in herbal supplements, based on historical and community resources."
+      },
+      "raw_response": "{\n  \"stewardship_best_practices_ai\": \"Ginkgo biloba is a low-maintenance tree that thrives in full sun with well-draining soil. Practical advice from gardening forums and nursery guides emphasizes planting male cultivars to avoid the messy, foul-smelling fruits from female trees. It is drought-tolerant once established, with sources indicating it can tolerate a wide range of soil pH (5.0-8.0) and urban conditions. Regular watering is needed during establishment, and mulching helps retain moisture and suppress weeds, based on grower experiences and extension services.\",\n  \"planting_recipes_ai\": \"Plant in full sun with well-drained soil, avoiding wet or compacted sites. Sources recommend a planting depth equal to the root ball, spacing of 30-40 feet apart for mature trees (height range 50-80 feet). Best planted in spring or fall for root establishment, with practical tips from forums suggesting amending soil with organic matter if poor drainage is an issue.\",\n  \"pruning_maintenance_ai\": \"Minimal pruning is typically required; prune only to remove dead, damaged, or crossing branches to maintain shape. Some nursery guides note that young trees can be pruned for form, but no specific timing or frequency is commonly detailed in available sources. Data not available for detailed maintenance schedules.\",\n  \"disease_pest_management_ai\": \"Ginkgo biloba is often described as highly resistant to pests and diseases in scientific databases and grower communities. Common issues are rare, but potential pests include aphids or scale insects, with management strategies involving monitoring and using horticultural oils or insecticides if needed. No specific diseases are frequently reported; practical advice from forums emphasizes good air circulation and avoiding stress to prevent problems.\",\n  \"fire_management_ai\": \"Anecdotal evidence from historical accounts suggests high fire tolerance, such as surviving extreme events, but specific scientific data on fire resistance or management practices is not available in reviewed sources. Data not available for detailed fire management considerations.\",\n  \"cultural_significance_ai\": \"Ginkgo biloba holds cultural importance in East Asia, particularly China, where it is used in traditional medicine for cognitive and circulatory health, and symbolizes longevity and resilience. It is often planted in temples and gardens for its aesthetic and spiritual value, with ethnobotanical sources noting its role in folklore and ceremonies. Modern cultural significance includes its status as a 'living fossil' and use in herbal supplements, based on historical and community resources.\"\n}",
+      "usage": {
+        "prompt_tokens": 5761,
+        "completion_tokens": 492,
+        "total_tokens": 8253,
+        "prompt_tokens_details": {
+          "text_tokens": 5761,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 331
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 2000,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    }
+  }
+}

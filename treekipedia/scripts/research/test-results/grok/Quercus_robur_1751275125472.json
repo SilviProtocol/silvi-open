@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "model": "grok-3-mini",
+    "species_scientific_name": "Quercus robur",
+    "common_names": "English oak",
+    "taxon_id": null,
+    "timestamp": "2025-06-30T09:18:45.471Z",
+    "api_calls": 3,
+    "total_tokens": 14316,
+    "duration_ms": 23388,
+    "errors": null
+  },
+  "research_data": {
+    "habitat_ai": "Quercus robur naturally occurs in temperate deciduous forests and woodlands across Europe, often in mixed stands with other species.",
+    "elevation_ranges_ai": "Data not available",
+    "ecological_function_ai": "Acts as a keystone species supporting high biodiversity, including hosting numerous lichens, fungi, invertebrates, and wildlife, based on scientific and community reports; contributes to ecosystem stability and nutrient cycling in temperate forests.",
+    "native_adapted_habitats_ai": "Native to Europe, adapted to temperate climates with habitats including deciduous forests and woodlands.",
+    "agroforestry_use_cases_ai": "Data not available",
+    "conservation_status_ai": "Data not available",
+    "general_description_ai": "A large, long-lived deciduous tree species, widely distributed in Europe, and recognized as one of the most economically and ecologically important oak species.",
+    "compatible_soil_types_ai": "Data not available",
+    "growth_form_ai": "Large deciduous tree",
+    "leaf_type_ai": "Leaves with abaxial laminar pubescence",
+    "deciduous_evergreen_ai": "Deciduous",
+    "flower_color_ai": "Data not available",
+    "fruit_type_ai": "Acorns borne on long peduncles",
+    "bark_characteristics_ai": "Data not available",
+    "maximum_height_ai": null,
+    "maximum_diameter_ai": null,
+    "lifespan_ai": "Data not available",
+    "maximum_tree_age_ai": null,
+    "stewardship_best_practices_ai": "Based on nursery guides and scientific studies, stewardship for Quercus robur involves planting in full sun with well-draining soil to promote healthy growth. Practical advice from grower communities emphasizes selecting high-quality acorns or saplings and ensuring adequate watering during establishment. Scientific research indicates that root pruning can alter biomass allocation, potentially increasing susceptibility to stress, so it should be done cautiously in nursery settings.",
+    "planting_recipes_ai": "Nursery resources recommend planting bareroot Quercus robur trees in autumn or early spring in well-drained, fertile soil with full sun exposure. Grower forums suggest for acorn propagation: harvest green acorns, discard any with visible damage or that float in water to ensure viability, and plant at a depth of about 2-3 cm in prepared soil. Planting density studies show that wider spacing (e.g., 2-4 meters apart) can enhance growth in forestry contexts.",
+    "pruning_maintenance_ai": "Scientific studies on Quercus robur indicate that taproot pruning in seedlings can enhance stem biomass but may reduce root mass, potentially increasing vulnerability to environmental stress; this should be limited to nursery stages. Practical maintenance advice from gardening communities is limited, but general consensus suggests minimal pruning during dormancy to maintain natural form, with no specific timing or methods widely documented for this species.",
+    "disease_pest_management_ai": "Data not available",
+    "fire_management_ai": "Data not available",
+    "cultural_significance_ai": "Anecdotal posts from social media and cultural resources highlight Quercus robur's role in supporting high biodiversity, with over 2300 associated species, symbolizing community and ecological importance in literature and folklore. Limited information found on specific traditional or ceremonial uses, with no verified ethnobotanical data available from the searched sources."
+  },
+  "group_responses": {
+    "ecological_general": {
+      "success": true,
+      "data": {
+        "habitat_ai": "Quercus robur naturally occurs in temperate deciduous forests and woodlands across Europe, often in mixed stands with other species.",
+        "elevation_ranges_ai": "Data not available",
+        "ecological_function_ai": "Acts as a keystone species supporting high biodiversity, including hosting numerous lichens, fungi, invertebrates, and wildlife, based on scientific and community reports; contributes to ecosystem stability and nutrient cycling in temperate forests.",
+        "native_adapted_habitats_ai": "Native to Europe, adapted to temperate climates with habitats including deciduous forests and woodlands.",
+        "agroforestry_use_cases_ai": "Data not available",
+        "conservation_status_ai": "Data not available",
+        "general_description_ai": "A large, long-lived deciduous tree species, widely distributed in Europe, and recognized as one of the most economically and ecologically important oak species.",
+        "compatible_soil_types_ai": "Data not available"
+      },
+      "raw_response": "{\n  \"habitat_ai\": \"Quercus robur naturally occurs in temperate deciduous forests and woodlands across Europe, often in mixed stands with other species.\",\n  \"elevation_ranges_ai\": \"Data not available\",\n  \"ecological_function_ai\": \"Acts as a keystone species supporting high biodiversity, including hosting numerous lichens, fungi, invertebrates, and wildlife, based on scientific and community reports; contributes to ecosystem stability and nutrient cycling in temperate forests.\",\n  \"native_adapted_habitats_ai\": \"Native to Europe, adapted to temperate climates with habitats including deciduous forests and woodlands.\",\n  \"agroforestry_use_cases_ai\": \"Data not available\",\n  \"conservation_status_ai\": \"Data not available\",\n  \"general_description_ai\": \"A large, long-lived deciduous tree species, widely distributed in Europe, and recognized as one of the most economically and ecologically important oak species.\",\n  \"compatible_soil_types_ai\": \"Data not available\"\n}",
+      "usage": {
+        "prompt_tokens": 2394,
+        "completion_tokens": 193,
+        "total_tokens": 4186,
+        "prompt_tokens_details": {
+          "text_tokens": 2394,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 327
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1599,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    },
+    "morphological": {
+      "success": true,
+      "data": {
+        "growth_form_ai": "Large deciduous tree",
+        "leaf_type_ai": "Leaves with abaxial laminar pubescence",
+        "deciduous_evergreen_ai": "Deciduous",
+        "flower_color_ai": "Data not available",
+        "fruit_type_ai": "Acorns borne on long peduncles",
+        "bark_characteristics_ai": "Data not available",
+        "maximum_height_ai": "Data not available",
+        "maximum_diameter_ai": "Data not available",
+        "lifespan_ai": "Data not available",
+        "maximum_tree_age_ai": "Data not available"
+      },
+      "raw_response": "{\n  \"growth_form_ai\": \"Large deciduous tree\",\n  \"leaf_type_ai\": \"Leaves with abaxial laminar pubescence\",\n  \"deciduous_evergreen_ai\": \"Deciduous\",\n  \"flower_color_ai\": \"Data not available\",\n  \"fruit_type_ai\": \"Acorns borne on long peduncles\",\n  \"bark_characteristics_ai\": \"Data not available\",\n  \"maximum_height_ai\": \"Data not available\",\n  \"maximum_diameter_ai\": \"Data not available\",\n  \"lifespan_ai\": \"Data not available\",\n  \"maximum_tree_age_ai\": \"Data not available\"\n}",
+      "usage": {
+        "prompt_tokens": 2880,
+        "completion_tokens": 128,
+        "total_tokens": 5457,
+        "prompt_tokens_details": {
+          "text_tokens": 2880,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 339
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 2449,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    },
+    "stewardship": {
+      "success": true,
+      "data": {
+        "stewardship_best_practices_ai": "Based on nursery guides and scientific studies, stewardship for Quercus robur involves planting in full sun with well-draining soil to promote healthy growth. Practical advice from grower communities emphasizes selecting high-quality acorns or saplings and ensuring adequate watering during establishment. Scientific research indicates that root pruning can alter biomass allocation, potentially increasing susceptibility to stress, so it should be done cautiously in nursery settings.",
+        "planting_recipes_ai": "Nursery resources recommend planting bareroot Quercus robur trees in autumn or early spring in well-drained, fertile soil with full sun exposure. Grower forums suggest for acorn propagation: harvest green acorns, discard any with visible damage or that float in water to ensure viability, and plant at a depth of about 2-3 cm in prepared soil. Planting density studies show that wider spacing (e.g., 2-4 meters apart) can enhance growth in forestry contexts.",
+        "pruning_maintenance_ai": "Scientific studies on Quercus robur indicate that taproot pruning in seedlings can enhance stem biomass but may reduce root mass, potentially increasing vulnerability to environmental stress; this should be limited to nursery stages. Practical maintenance advice from gardening communities is limited, but general consensus suggests minimal pruning during dormancy to maintain natural form, with no specific timing or methods widely documented for this species.",
+        "disease_pest_management_ai": "Data not available",
+        "fire_management_ai": "Data not available",
+        "cultural_significance_ai": "Anecdotal posts from social media and cultural resources highlight Quercus robur's role in supporting high biodiversity, with over 2300 associated species, symbolizing community and ecological importance in literature and folklore. Limited information found on specific traditional or ceremonial uses, with no verified ethnobotanical data available from the searched sources."
+      },
+      "raw_response": "{\n  \"stewardship_best_practices_ai\": \"Based on nursery guides and scientific studies, stewardship for Quercus robur involves planting in full sun with well-draining soil to promote healthy growth. Practical advice from grower communities emphasizes selecting high-quality acorns or saplings and ensuring adequate watering during establishment. Scientific research indicates that root pruning can alter biomass allocation, potentially increasing susceptibility to stress, so it should be done cautiously in nursery settings.\",\n  \"planting_recipes_ai\": \"Nursery resources recommend planting bareroot Quercus robur trees in autumn or early spring in well-drained, fertile soil with full sun exposure. Grower forums suggest for acorn propagation: harvest green acorns, discard any with visible damage or that float in water to ensure viability, and plant at a depth of about 2-3 cm in prepared soil. Planting density studies show that wider spacing (e.g., 2-4 meters apart) can enhance growth in forestry contexts.\",\n  \"pruning_maintenance_ai\": \"Scientific studies on Quercus robur indicate that taproot pruning in seedlings can enhance stem biomass but may reduce root mass, potentially increasing vulnerability to environmental stress; this should be limited to nursery stages. Practical maintenance advice from gardening communities is limited, but general consensus suggests minimal pruning during dormancy to maintain natural form, with no specific timing or methods widely documented for this species.\",\n  \"disease_pest_management_ai\": \"Data not available\",\n  \"fire_management_ai\": \"Data not available\",\n  \"cultural_significance_ai\": \"Anecdotal posts from social media and cultural resources highlight Quercus robur's role in supporting high biodiversity, with over 2300 associated species, symbolizing community and ecological importance in literature and folklore. Limited information found on specific traditional or ceremonial uses, with no verified ethnobotanical data available from the searched sources.\"\n}",
+      "usage": {
+        "prompt_tokens": 2840,
+        "completion_tokens": 379,
+        "total_tokens": 4673,
+        "prompt_tokens_details": {
+          "text_tokens": 2840,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 331
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1454,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    }
+  }
+}

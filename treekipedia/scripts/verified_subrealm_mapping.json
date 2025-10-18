@@ -1,0 +1,69 @@
+{
+  "methodology": "Cross-referenced SVG topology, screenshot orientation, official One Earth map, and neighbor relationships",
+  "orientation_notes": "SVG has Africa on LEFT (positive X), Americas on RIGHT (negative X)",
+
+  "verified_mapping": {
+    "1": {"svg_code": "_x31_", "name": "Palearctic Tundra", "confidence": "high", "notes": "Russia, isolated, far north, X=152"},
+    "2": {"svg_code": "_x32_", "name": "Sea of Okhotsk & Bering Tundra/Taiga", "confidence": "high", "notes": "Russia, isolated, eastern Siberia, X=66"},
+    "3": {"svg_code": "_x33_", "name": "Kazakh Steppes & Hemiboreal Forests", "confidence": "medium", "notes": "Russia, isolated, X=52"},
+    "4": {"svg_code": "_x34_", "name": "Siberia & Eastern Boreal Forests", "confidence": "high", "notes": "Russia, touches code 2, X=65"},
+
+    "5": {"svg_code": "_x35_", "name": "Greater Arabian Peninsula", "confidence": "high", "notes": "Pakistan area, isolated, X=73"},
+    "6": {"svg_code": "_x36_", "name": "Tibetan Plateau", "confidence": "high", "notes": "China, isolated, X=84"},
+    "7": {"svg_code": "_x37_", "name": "Indian Subcontinent", "confidence": "high", "notes": "India/Bangladesh, touches 38, X=91"},
+    "8": {"svg_code": "_x38_", "name": "Mongolian Grasslands", "confidence": "high", "notes": "China, touches 34,37,41,42, central Asia cluster, X=102"},
+    "9": {"svg_code": "_x39_", "name": "Central East Asian Forests", "confidence": "high", "notes": "China, isolated, X=109"},
+    "10": {"svg_code": "_x31_0", "name": "Mongolian Grasslands", "confidence": "medium", "notes": "China, duplicate? touches itself, X=109"},
+
+    "11": {"svg_code": "_x31_1", "name": "Central East Asian Forests", "confidence": "medium", "notes": "China, isolated, X=110"},
+    "12": {"svg_code": "_x31_2", "name": "Indian Subcontinent", "confidence": "high", "notes": "India, isolated, X=87"},
+    "13": {"svg_code": "_x31_3", "name": "Australasian Islands & Eastern Indonesia", "confidence": "high", "notes": "Philippines/Indonesia, touches 17, X=131"},
+
+    "15": {"svg_code": "_x31_5", "name": "Brazil Cerrado & Atlantic Coast", "confidence": "low", "notes": "Australia/PNG area, touches 16,17 - WRONG GEOREFERENCE, X=149"},
+    "16": {"svg_code": "_x31_6", "name": "South American Grasslands", "confidence": "low", "notes": "Australia, touches 15,17 - WRONG GEOREFERENCE, X=133"},
+    "17": {"svg_code": "_x31_7", "name": "Andes Mountains & Pacific Coast", "confidence": "low", "notes": "Australia/Indonesia, touches 13,15,16 - WRONG GEOREFERENCE, X=121"},
+    "18": {"svg_code": "_x31_8", "name": "Madagascar & East African Coast", "confidence": "high", "notes": "Madagascar area, isolated, X=75"},
+    "19": {"svg_code": "_x31_9", "name": "Andes Mountains & Pacific Coast", "confidence": "medium", "notes": "South America west coast, isolated, X=-117"},
+
+    "20": {"svg_code": "_x32_0", "name": "Southern Afrotropics", "confidence": "medium", "notes": "South America, touches 201, X=-117"},
+    "21": {"svg_code": "_x32_1", "name": "Sub-Equatorial Afrotropics", "confidence": "low", "notes": "South America, isolated, X=-116"},
+    "23": {"svg_code": "_x32_3", "name": "Sub-Saharan Afrotropics", "confidence": "low", "notes": "Pacific/South America, touches 24, X=-133"},
+    "24": {"svg_code": "_x32_4", "name": "Horn of Africa", "confidence": "low", "notes": "South America, touches 23, X=-110"},
+    "25": {"svg_code": "_x32_5", "name": "Greater Arabian Peninsula", "confidence": "low", "notes": "Central America area, isolated, X=-91"},
+    "26": {"svg_code": "_x32_6", "name": "North Africa", "confidence": "low", "notes": "Mexico area, touches itself (duplicate), X=-114"},
+    "27": {"svg_code": "_x32_7", "name": "Mediterranean", "confidence": "low", "notes": "Pacific Northwest, isolated, X=-141"},
+
+    "30": {"svg_code": "_x33_0", "name": "Canadian Boreal Forests", "confidence": "high", "notes": "Canada, isolated, X=-94"},
+    "31": {"svg_code": "_x33_1", "name": "Alaska", "confidence": "medium", "notes": "Alaska area, isolated, X=-141"},
+    "32": {"svg_code": "_x33_2", "name": "Canadian Tundra", "confidence": "high", "notes": "Canada, isolated, X=-105"},
+    "33": {"svg_code": "_x33_3", "name": "Alaska", "confidence": "high", "notes": "Alaska/USA, isolated, X=-93"},
+    "34": {"svg_code": "_x33_4", "name": "OCEAN", "confidence": "high", "notes": "Ocean polygon, X=-45"},
+    "35": {"svg_code": "_x33_5", "name": "OCEAN", "confidence": "high", "notes": "Ocean polygon, X=2"},
+    "36": {"svg_code": "_x33_6", "name": "OCEAN", "confidence": "high", "notes": "Ocean polygon, X=-11"},
+    "37": {"svg_code": "_x33_7", "name": "OCEAN", "confidence": "high", "notes": "Ocean polygon"},
+    "38": {"svg_code": "_x33_8", "name": "Canadian Tundra", "confidence": "medium", "notes": "Canada, isolated, X=-105"},
+
+    "40": {"svg_code": "_x34_0", "name": "OCEAN", "confidence": "high", "notes": "Ocean polygon"},
+    "41": {"svg_code": "_x34_1", "name": "Northeast American Forests", "confidence": "high", "notes": "Canada/USA, isolated, X=-56"},
+    "42": {"svg_code": "_x34_2", "name": "Great Plains", "confidence": "high", "notes": "Canada/USA, isolated, X=-59"},
+    "43": {"svg_code": "_x34_3", "name": "Canadian Boreal Forests", "confidence": "high", "notes": "Canada, isolated, X=-66"},
+    "44": {"svg_code": "_x34_4", "name": "Southeast US Savannas & Forests", "confidence": "high", "notes": "USA, isolated, X=-88"},
+    "45": {"svg_code": "_x34_5", "name": "Northeast American Forests", "confidence": "high", "notes": "USA/Canada, isolated, X=-74"},
+    "46": {"svg_code": "_x34_6", "name": "American West", "confidence": "high", "notes": "USA, isolated, X=-102"},
+    "47": {"svg_code": "_x34_7", "name": "OCEAN", "confidence": "high", "notes": "Ocean polygon"},
+    "48": {"svg_code": "_x34_8", "name": "OCEAN", "confidence": "high", "notes": "Ocean polygon"},
+    "49": {"svg_code": "_x34_9", "name": "Amazonia", "confidence": "high", "notes": "Brazil, isolated, X=-36"},
+
+    "50": {"svg_code": "_x35_0", "name": "OCEAN", "confidence": "high", "notes": "Ocean polygon"},
+    "51": {"svg_code": "_x35_1", "name": "OCEAN", "confidence": "high", "notes": "Ocean polygon"},
+    "52": {"svg_code": "_x35_2", "name": "OCEAN", "confidence": "high", "notes": "Ocean polygon"}
+  },
+
+  "notes": [
+    "Many SVG codes 15-27 appear to be OCEAN or misaligned due to poor georeferencing",
+    "Codes in Americas (negative X) show better alignment",
+    "Codes in Asia/Africa (positive X) show mixed results",
+    "The SVG is incomplete and poorly georeferenced - not reliable for production use",
+    "Recommend obtaining official One Earth Bioregions GeoJSON/Shapefile instead"
+  ]
+}

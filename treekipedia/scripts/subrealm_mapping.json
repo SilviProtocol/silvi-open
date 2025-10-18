@@ -1,0 +1,275 @@
+{
+  "matches": {
+    "_x35_2": {
+      "suggested_name": "Southern Afrotropics",
+      "confidence": "medium",
+      "distance": 27.310719846746032
+    },
+    "_x35_1": {
+      "suggested_name": "Brazil Cerrado & Atlantic Coast",
+      "confidence": "low",
+      "distance": 34.79967027316462
+    },
+    "_x35_0": {
+      "suggested_name": "Brazil Cerrado & Atlantic Coast",
+      "confidence": "medium",
+      "distance": 10.42272985654311
+    },
+    "_x34_9": {
+      "suggested_name": "Brazil Cerrado & Atlantic Coast",
+      "confidence": "medium",
+      "distance": 12.75099662132909
+    },
+    "_x34_8": {
+      "suggested_name": "Caribbean",
+      "confidence": "medium",
+      "distance": 28.60316897738245
+    },
+    "_x34_7": {
+      "suggested_name": "Caribbean",
+      "confidence": "medium",
+      "distance": 19.977143136055194
+    },
+    "_x34_6": {
+      "suggested_name": "Mexican Drylands",
+      "confidence": "high",
+      "distance": 5.783620710485386
+    },
+    "_x34_5": {
+      "suggested_name": "Northeast American Forests",
+      "confidence": "high",
+      "distance": 2.1296707262324084
+    },
+    "_x34_4": {
+      "suggested_name": "Southeast US Savannas & Forests",
+      "confidence": "high",
+      "distance": 5.759356104424769
+    },
+    "_x34_3": {
+      "suggested_name": "Northeast American Forests",
+      "confidence": "medium",
+      "distance": 13.151640847436292
+    },
+    "_x34_2": {
+      "suggested_name": "Northeast American Forests",
+      "confidence": "medium",
+      "distance": 17.877120333220894
+    },
+    "_x34_1": {
+      "suggested_name": "Northeast American Forests",
+      "confidence": "medium",
+      "distance": 18.788585484495364
+    },
+    "_x34_0": {
+      "suggested_name": "Northeast American Forests",
+      "confidence": "high",
+      "distance": 7.2655271834981185
+    },
+    "_x33_8": {
+      "suggested_name": "Greenland",
+      "confidence": "medium",
+      "distance": 26.48735067948073
+    },
+    "_x33_7": {
+      "suggested_name": "Greenland",
+      "confidence": "medium",
+      "distance": 27.035178984817637
+    },
+    "_x33_6": {
+      "suggested_name": "North Africa",
+      "confidence": "medium",
+      "distance": 19.070506532968857
+    },
+    "_x33_5": {
+      "suggested_name": "Anglo-Celtic Isles",
+      "confidence": "high",
+      "distance": 9.234048655302798
+    },
+    "_x33_4": {
+      "suggested_name": "Greenland",
+      "confidence": "medium",
+      "distance": 21.42372832466745
+    },
+    "_x33_3": {
+      "suggested_name": "Canadian Tundra",
+      "confidence": "high",
+      "distance": 5.9990036102064765
+    },
+    "_x33_2": {
+      "suggested_name": "Canadian Tundra",
+      "confidence": "medium",
+      "distance": 13.113240962502
+    },
+    "_x33_1": {
+      "suggested_name": "Alaska",
+      "confidence": "medium",
+      "distance": 13.908089487114255
+    },
+    "_x33_0": {
+      "suggested_name": "Canadian Boreal Forests",
+      "confidence": "high",
+      "distance": 5.711041249755033
+    },
+    "_x32_7": {
+      "suggested_name": "North Pacific Coast",
+      "confidence": "medium",
+      "distance": 18.52297041270951
+    },
+    "_x32_6": {
+      "suggested_name": "Mexican Drylands",
+      "confidence": "high",
+      "distance": 9.614988329790854
+    },
+    "Layer_26": {
+      "suggested_name": "Mexican Drylands",
+      "confidence": "high",
+      "distance": 9.614988329790854
+    },
+    "_x32_5": {
+      "suggested_name": "Central America",
+      "confidence": "high",
+      "distance": 4.311280579324755
+    },
+    "_x32_4": {
+      "suggested_name": "Central America",
+      "confidence": "medium",
+      "distance": 24.574324607678403
+    },
+    "_x32_3": {
+      "suggested_name": "Mexican Drylands",
+      "confidence": "low",
+      "distance": 32.52401731683263
+    },
+    "_x32_21": {
+      "suggested_name": "Central America",
+      "confidence": "low",
+      "distance": 35.246333180561386
+    },
+    "_x32_1": {
+      "suggested_name": "Central America",
+      "confidence": "low",
+      "distance": 35.82924986069983
+    },
+    "_x32_0": {
+      "suggested_name": "Andes Mountains & Pacific Coast",
+      "confidence": "low",
+      "distance": 46.272488728318734
+    },
+    "_x32_01": {
+      "suggested_name": "Andes Mountains & Pacific Coast",
+      "confidence": "low",
+      "distance": 46.272488728318734
+    },
+    "_x31_9": {
+      "suggested_name": "Andes Mountains & Pacific Coast",
+      "confidence": "low",
+      "distance": 49.4961510227166
+    },
+    "_x31_8": {
+      "suggested_name": "Madagascar & East African Coast",
+      "confidence": "low",
+      "distance": 32.780373833568234
+    },
+    "_x31_7": {
+      "suggested_name": "Australia",
+      "confidence": "medium",
+      "distance": 16.607048163030882
+    },
+    "_x31_6": {
+      "suggested_name": "Australia",
+      "confidence": "medium",
+      "distance": 19.643837054356066
+    },
+    "_x31_5": {
+      "suggested_name": "Australia",
+      "confidence": "medium",
+      "distance": 15.405915159322571
+    },
+    "_x31_3": {
+      "suggested_name": "Australasian Islands & Eastern Indonesia",
+      "confidence": "medium",
+      "distance": 10.135553865736536
+    },
+    "_x31_2": {
+      "suggested_name": "Indian Subcontinent",
+      "confidence": "high",
+      "distance": 9.227860410298163
+    },
+    "_x31_1": {
+      "suggested_name": "Southeast Asian Forests",
+      "confidence": "medium",
+      "distance": 12.745089392073323
+    },
+    "_x31_0": {
+      "suggested_name": "Mongolian Grasslands",
+      "confidence": "high",
+      "distance": 9.676739195577033
+    },
+    "Southeast_US_and_Savanna_Forests": {
+      "suggested_name": "Mongolian Grasslands",
+      "confidence": "high",
+      "distance": 9.676739195577033
+    },
+    "_x39_": {
+      "suggested_name": "Mongolian Grasslands",
+      "confidence": "medium",
+      "distance": 13.87618000452023
+    },
+    "_x38_": {
+      "suggested_name": "Mongolian Grasslands",
+      "confidence": "medium",
+      "distance": 12.22297423746466
+    },
+    "_x37_": {
+      "suggested_name": "Tibetan Plateau",
+      "confidence": "high",
+      "distance": 9.274707425193236
+    },
+    "_x36_": {
+      "suggested_name": "Tibetan Plateau",
+      "confidence": "high",
+      "distance": 6.288054482837848
+    },
+    "_x35_": {
+      "suggested_name": "Indian Subcontinent",
+      "confidence": "medium",
+      "distance": 13.948507522997406
+    },
+    "_x34_": {
+      "suggested_name": "Palearctic Tundra",
+      "confidence": "medium",
+      "distance": 29.837867371773307
+    },
+    "_x33_": {
+      "suggested_name": "Greater Arabian Peninsula",
+      "confidence": "low",
+      "distance": 31.683488189339734
+    },
+    "_x32_": {
+      "suggested_name": "Palearctic Tundra",
+      "confidence": "medium",
+      "distance": 28.72128596919142
+    },
+    "_x31_": {
+      "suggested_name": "Northeast Asian Forests",
+      "confidence": "low",
+      "distance": 41.484031583642455
+    }
+  },
+  "unmapped_references": [
+    "Upper South America",
+    "Oceanic Islands",
+    "Sub-Equatorial Afrotropics",
+    "Sub-Saharan Afrotropics",
+    "Black Sea Forests & Steppe",
+    "Sea of Okhotsk & Bering Tundra/Taiga",
+    "Central East Asian Forests",
+    "East Asian Deserts",
+    "Kazakh Steppes & Hemiboreal Forests",
+    "Caspian Sea & Central Asian Deserts",
+    "Tien Shan Mountains",
+    "Persian Deserts & Forests",
+    "Altai-Sayan Mountains",
+    "Antarctic Continent & Islands"
+  ]
+}

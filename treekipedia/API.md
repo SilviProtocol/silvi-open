@@ -70,7 +70,7 @@ Used for autocomplete functionality in search inputs.
 
 ### Get Species Details
 
-Retrieve comprehensive information about a specific tree species.
+Retrieve comprehensive information about a specific tree species with image data.
 
 **Endpoint:** `GET /species/:taxon_id`
 
@@ -88,17 +88,67 @@ Retrieve comprehensive information about a specific tree species.
   "genus": "string",
   "general_description": "string",
   "habitat": "string",
-  // All species fields
+  "image_count": "number",
+  "primary_image_url": "string",
+  "primary_image_license": "string", 
+  "primary_image_photographer": "string",
+  "primary_image_page_url": "string",
+  "primary_image_source": "string",
+  // All other species fields
 }
 ```
 
-**Usage:** Display detailed species information on the Species Page.
+**Usage:** Display detailed species information on the Species Page with primary image.
 
 **Note:** The `common_name` field may contain very long strings with many names in different languages. When displaying common names in the UI, it's recommended to use the `getTopCommonNames` utility function (located in `/frontend/utils/commonNames.ts` and `/backend/utils/commonNames.js`) to optimize the display. This utility:
 1. Properly splits the names by semicolons and commas
 2. Prioritizes names based on their position in the list (first names are most important)
 3. Ensures linguistic diversity in the displayed names
 4. Limits the total character count for API calls and UI display
+
+---
+
+### Get Species Images
+
+Retrieve all images for a specific species (used for image carousel display).
+
+**Endpoint:** `GET /species/:taxon_id/images`
+
+**URL Parameters:**
+- `taxon_id` (required): Unique identifier for the species
+
+**Response:**
+```json
+{
+  "taxon_id": "string",
+  "image_count": "number",
+  "images": [
+    {
+      "id": "number",
+      "taxon_id": "string",
+      "image_url": "string",
+      "license": "string",
+      "photographer": "string",
+      "page_url": "string", 
+      "source": "string",
+      "is_primary": "boolean",
+      "created_at": "string"
+    }
+  ]
+}
+```
+
+**Usage:** 
+- Power image carousels on species pages
+- Display image attribution information
+- Handle multiple images per species
+- Images are ordered with primary image first
+
+**Notes:**
+- Returns empty `images` array if species has no images
+- `photographer` field may contain HTML formatting for links
+- `page_url` should be used for click-through to original image source
+- All images are sourced from Wikimedia Commons with proper licensing
 
 ---
 
@@ -521,6 +571,242 @@ Retrieve all sponsorships for a specific species.
 ```
 
 **Usage:** Show who has sponsored a particular species on the species details page.
+
+---
+
+## Geospatial API Endpoints
+
+The geospatial API provides location-based queries using PostGIS and level 7 geohash tiles containing compressed species occurrence data.
+
+### Find Species Near Location
+
+Find species occurring within a specified radius of a geographic point.
+
+**Endpoint:** `GET /api/geospatial/species/nearby`
+
+**Query Parameters:**
+- `lat` (required): Latitude of the center point
+- `lng` (required): Longitude of the center point
+- `radius` (optional): Search radius in kilometers (default: 5)
+
+**Response:**
+```json
+{
+  "location": {
+    "lat": 37.7749,
+    "lng": -122.4194
+  },
+  "radius_km": 5,
+  "species_count": 23,
+  "species": [
+    {
+      "taxon_id": "12345",
+      "scientific_name": "Quercus agrifolia",
+      "common_name": "Coast Live Oak"
+    }
+  ]
+}
+```
+
+**Usage:** Display species found near a user's location or a clicked map point.
+
+---
+
+### Get Species Distribution
+
+Retrieve the geographic distribution of a species as geohash tiles.
+
+**Endpoint:** `GET /api/geospatial/species/:taxon_id/distribution`
+
+**URL Parameters:**
+- `taxon_id` (required): Species identifier
+
+**Response:**
+```json
+{
+  "taxon_id": "12345",
+  "tile_count": 150,
+  "total_occurrences": 3420,
+  "distribution": [
+    {
+      "type": "Feature",
+      "properties": {
+        "geohash": "dr5ru6j",
+        "occurrences": 45,
+        "datetime": "2024-12-31T23:59:59Z",
+        "data_source": "gbif"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[...]]]
+      }
+    }
+  ]
+}
+```
+
+**Usage:** Create distribution maps for species pages.
+
+---
+
+### Get Occurrence Heatmap
+
+Get a heatmap of species occurrences within a bounding box.
+
+**Endpoint:** `GET /api/geospatial/heatmap`
+
+**Query Parameters:**
+- `minLat` (required): Minimum latitude
+- `minLng` (required): Minimum longitude
+- `maxLat` (required): Maximum latitude
+- `maxLng` (required): Maximum longitude
+
+**Response:**
+```json
+{
+  "bbox": {
+    "min": [-123, 37],
+    "max": [-122, 38]
+  },
+  "tile_count": 85,
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "geohash": "dr5ru6j",
+        "total_occurrences": 234,
+        "species_count": 15,
+        "datetime": "2024-12-31T23:59:59Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[...]]]
+      }
+    }
+  ]
+}
+```
+
+**Usage:** Generate biodiversity heatmaps for visualization.
+
+---
+
+### Get Species in Tile
+
+Get all species occurring in a specific geohash tile.
+
+**Endpoint:** `GET /api/geospatial/tiles/:geohash`
+
+**URL Parameters:**
+- `geohash` (required): Level 7 geohash (exactly 7 characters)
+
+**Response:**
+```json
+{
+  "geohash": "dr5ru6j",
+  "tile_info": {
+    "total_occurrences": 234,
+    "species_count": 15,
+    "datetime": "2024-12-31T23:59:59Z",
+    "data_source": "gbif",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[[...]]]
+    }
+  },
+  "species": [
+    {
+      "taxon_id": "12345",
+      "scientific_name": "Quercus agrifolia",
+      "common_name": "Coast Live Oak",
+      "occurrence_count": 45
+    }
+  ]
+}
+```
+
+**Usage:** Show species details when clicking on a map tile.
+
+---
+
+### Get Tiles by Time Range
+
+STAC-compliant temporal query for geohash tiles.
+
+**Endpoint:** `GET /api/geospatial/tiles`
+
+**Query Parameters:**
+- `start` (required): Start date (ISO 8601 format)
+- `end` (required): End date (ISO 8601 format)
+- `bbox` (optional): Bounding box as "minLng,minLat,maxLng,maxLat"
+
+**Response:**
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "id": "dr5ru6j",
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[...]]]
+      },
+      "properties": {
+        "datetime": "2024-12-31T23:59:59Z",
+        "species_count": 15,
+        "total_occurrences": 234,
+        "data_source": "gbif"
+      }
+    }
+  ],
+  "numberReturned": 42,
+  "timeRange": {
+    "start": "2024-01-01T00:00:00Z",
+    "end": "2024-12-31T23:59:59Z"
+  }
+}
+```
+
+**Usage:** Temporal analysis and STAC-compliant data access.
+
+---
+
+### Get Geospatial Statistics
+
+Get overall statistics about the geospatial data.
+
+**Endpoint:** `GET /api/geospatial/stats`
+
+**Response:**
+```json
+{
+  "tiles": {
+    "total": 150000,
+    "tile_size_m": 150
+  },
+  "species": {
+    "unique_count": 12500
+  },
+  "occurrences": {
+    "total": 4500000
+  },
+  "temporal": {
+    "earliest": "2020-01-01T00:00:00Z",
+    "latest": "2024-12-31T23:59:59Z"
+  },
+  "spatial": {
+    "coverage_km2": 520000,
+    "bounding_box": {
+      "type": "Polygon",
+      "coordinates": [[[...]]]
+    }
+  },
+  "data_sources": ["gbif", "inaturalist", "mixed"]
+}
+```
+
+**Usage:** Display data coverage and statistics on an about page.
 
 ---
 

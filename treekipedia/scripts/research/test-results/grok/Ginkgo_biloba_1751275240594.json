@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "model": "grok-3-mini",
+    "species_scientific_name": "Ginkgo biloba",
+    "common_names": "Ginkgo, maidenhair tree",
+    "taxon_id": "AngGiGiGN21141-00",
+    "timestamp": "2025-06-30T09:20:40.593Z",
+    "api_calls": 3,
+    "total_tokens": 17389,
+    "duration_ms": 40288,
+    "errors": null
+  },
+  "research_data": {
+    "habitat_ai": "Natural habitat includes temperate regions of East Asia, particularly China, with occurrences in forested areas as indicated by historical and cultivation records.",
+    "elevation_ranges_ai": "Data not available",
+    "ecological_function_ai": "Data not available",
+    "native_adapted_habitats_ai": "Original native range is East Asia, specifically China.",
+    "agroforestry_use_cases_ai": "Data not available",
+    "conservation_status_ai": "Endangered according to IUCN in its native habitat.",
+    "general_description_ai": "Ginkgo biloba is a deciduous gymnosperm tree, the last living species in the order Ginkgoales, characterized by fan-shaped leaves, dioecious reproduction, long lifespan, disease resistance, and striking yellow autumn foliage.",
+    "compatible_soil_types_ai": "Data not available",
+    "growth_form_ai": "Tree",
+    "leaf_type_ai": "Fan-shaped leaves",
+    "deciduous_evergreen_ai": "Deciduous",
+    "flower_color_ai": "Data not available",
+    "fruit_type_ai": "Fleshy fruit",
+    "bark_characteristics_ai": "Data not available",
+    "maximum_height_ai": null,
+    "maximum_diameter_ai": null,
+    "lifespan_ai": "Long-lived",
+    "maximum_tree_age_ai": null,
+    "stewardship_best_practices_ai": "Ginkgo biloba should be planted in full sun with well-draining soil, as it tolerates a wide range of soil types but prefers neutral to slightly acidic conditions. Select male cultivars to avoid the malodorous fruit produced by females. It is drought-tolerant once established and requires minimal watering after the first few years, based on practical advice from gardening resources and grower communities.",
+    "planting_recipes_ai": "Plant in spring or fall in a site with full sun and well-drained soil. Dig a hole twice the width of the root ball and at the same depth, ensuring the root flare is level with the soil surface. Space trees 6-9 meters (20-30 feet) apart to allow for mature spread, according to cultivation guides and nursery recommendations.",
+    "pruning_maintenance_ai": "Pruning is minimal and typically only necessary to remove dead, damaged, or crossing branches. It is often done in late winter or early spring to maintain shape, with no regular pruning required as the tree has a naturally attractive form. Limited information available from practical sources on specific timing or techniques.",
+    "disease_pest_management_ai": "Ginkgo biloba is highly resistant to most pests and diseases, but may occasionally face issues with aphids, scale insects, or fungal diseases like leaf spot. Management involves monitoring and using horticultural oils or insecticidal soaps for pests, and improving air circulation for diseases. No chemical treatments are usually needed due to its resilience, based on gardening forums and biological flora resources.",
+    "fire_management_ai": "Data not available",
+    "cultural_significance_ai": "Ginkgo biloba is revered as a 'living fossil' and holds cultural importance in East Asia, particularly in China and Japan, where it is often planted in temples and gardens symbolizing longevity and resilience. It is used in traditional medicine for cognitive health and has ceremonial roles in Buddhism, with historical documentation from ethnobotanical sources and cultural narratives."
+  },
+  "group_responses": {
+    "ecological_general": {
+      "success": true,
+      "data": {
+        "habitat_ai": "Natural habitat includes temperate regions of East Asia, particularly China, with occurrences in forested areas as indicated by historical and cultivation records.",
+        "elevation_ranges_ai": "Data not available",
+        "ecological_function_ai": "Data not available",
+        "native_adapted_habitats_ai": "Original native range is East Asia, specifically China.",
+        "agroforestry_use_cases_ai": "Data not available",
+        "conservation_status_ai": "Endangered according to IUCN in its native habitat.",
+        "general_description_ai": "Ginkgo biloba is a deciduous gymnosperm tree, the last living species in the order Ginkgoales, characterized by fan-shaped leaves, dioecious reproduction, long lifespan, disease resistance, and striking yellow autumn foliage.",
+        "compatible_soil_types_ai": "Data not available"
+      },
+      "raw_response": "{\n  \"habitat_ai\": \"Natural habitat includes temperate regions of East Asia, particularly China, with occurrences in forested areas as indicated by historical and cultivation records.\",\n  \"elevation_ranges_ai\": \"Data not available\",\n  \"ecological_function_ai\": \"Data not available\",\n  \"native_adapted_habitats_ai\": \"Original native range is East Asia, specifically China.\",\n  \"agroforestry_use_cases_ai\": \"Data not available\",\n  \"conservation_status_ai\": \"Endangered according to IUCN in its native habitat.\",\n  \"general_description_ai\": \"Ginkgo biloba is a deciduous gymnosperm tree, the last living species in the order Ginkgoales, characterized by fan-shaped leaves, dioecious reproduction, long lifespan, disease resistance, and striking yellow autumn foliage.\",\n  \"compatible_soil_types_ai\": \"Data not available\"\n}",
+      "usage": {
+        "prompt_tokens": 2754,
+        "completion_tokens": 176,
+        "total_tokens": 5368,
+        "prompt_tokens_details": {
+          "text_tokens": 2754,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 330
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 2438,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    },
+    "morphological": {
+      "success": true,
+      "data": {
+        "growth_form_ai": "Tree",
+        "leaf_type_ai": "Fan-shaped leaves",
+        "deciduous_evergreen_ai": "Deciduous",
+        "flower_color_ai": "Data not available",
+        "fruit_type_ai": "Fleshy fruit",
+        "bark_characteristics_ai": "Data not available",
+        "maximum_height_ai": "Data not available",
+        "maximum_diameter_ai": "Data not available",
+        "lifespan_ai": "Long-lived",
+        "maximum_tree_age_ai": "Data not available"
+      },
+      "raw_response": "{\n  \"growth_form_ai\": \"Tree\",\n  \"leaf_type_ai\": \"Fan-shaped leaves\",\n  \"deciduous_evergreen_ai\": \"Deciduous\",\n  \"flower_color_ai\": \"Data not available\",\n  \"fruit_type_ai\": \"Fleshy fruit\",\n  \"bark_characteristics_ai\": \"Data not available\",\n  \"maximum_height_ai\": \"Data not available\",\n  \"maximum_diameter_ai\": \"Data not available\",\n  \"lifespan_ai\": \"Long-lived\",\n  \"maximum_tree_age_ai\": \"Data not available\"\n}",
+      "usage": {
+        "prompt_tokens": 2830,
+        "completion_tokens": 117,
+        "total_tokens": 6893,
+        "prompt_tokens_details": {
+          "text_tokens": 2830,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 333
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 3946,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    },
+    "stewardship": {
+      "success": true,
+      "data": {
+        "stewardship_best_practices_ai": "Ginkgo biloba should be planted in full sun with well-draining soil, as it tolerates a wide range of soil types but prefers neutral to slightly acidic conditions. Select male cultivars to avoid the malodorous fruit produced by females. It is drought-tolerant once established and requires minimal watering after the first few years, based on practical advice from gardening resources and grower communities.",
+        "planting_recipes_ai": "Plant in spring or fall in a site with full sun and well-drained soil. Dig a hole twice the width of the root ball and at the same depth, ensuring the root flare is level with the soil surface. Space trees 6-9 meters (20-30 feet) apart to allow for mature spread, according to cultivation guides and nursery recommendations.",
+        "pruning_maintenance_ai": "Pruning is minimal and typically only necessary to remove dead, damaged, or crossing branches. It is often done in late winter or early spring to maintain shape, with no regular pruning required as the tree has a naturally attractive form. Limited information available from practical sources on specific timing or techniques.",
+        "disease_pest_management_ai": "Ginkgo biloba is highly resistant to most pests and diseases, but may occasionally face issues with aphids, scale insects, or fungal diseases like leaf spot. Management involves monitoring and using horticultural oils or insecticidal soaps for pests, and improving air circulation for diseases. No chemical treatments are usually needed due to its resilience, based on gardening forums and biological flora resources.",
+        "fire_management_ai": "Data not available",
+        "cultural_significance_ai": "Ginkgo biloba is revered as a 'living fossil' and holds cultural importance in East Asia, particularly in China and Japan, where it is often planted in temples and gardens symbolizing longevity and resilience. It is used in traditional medicine for cognitive health and has ceremonial roles in Buddhism, with historical documentation from ethnobotanical sources and cultural narratives."
+      },
+      "raw_response": "{\n  \"stewardship_best_practices_ai\": \"Ginkgo biloba should be planted in full sun with well-draining soil, as it tolerates a wide range of soil types but prefers neutral to slightly acidic conditions. Select male cultivars to avoid the malodorous fruit produced by females. It is drought-tolerant once established and requires minimal watering after the first few years, based on practical advice from gardening resources and grower communities.\",\n  \"planting_recipes_ai\": \"Plant in spring or fall in a site with full sun and well-drained soil. Dig a hole twice the width of the root ball and at the same depth, ensuring the root flare is level with the soil surface. Space trees 6-9 meters (20-30 feet) apart to allow for mature spread, according to cultivation guides and nursery recommendations.\",\n  \"pruning_maintenance_ai\": \"Pruning is minimal and typically only necessary to remove dead, damaged, or crossing branches. It is often done in late winter or early spring to maintain shape, with no regular pruning required as the tree has a naturally attractive form. Limited information available from practical sources on specific timing or techniques.\",\n  \"disease_pest_management_ai\": \"Ginkgo biloba is highly resistant to most pests and diseases, but may occasionally face issues with aphids, scale insects, or fungal diseases like leaf spot. Management involves monitoring and using horticultural oils or insecticidal soaps for pests, and improving air circulation for diseases. No chemical treatments are usually needed due to its resilience, based on gardening forums and biological flora resources.\",\n  \"fire_management_ai\": \"Data not available\",\n  \"cultural_significance_ai\": \"Ginkgo biloba is revered as a 'living fossil' and holds cultural importance in East Asia, particularly in China and Japan, where it is often planted in temples and gardens symbolizing longevity and resilience. It is used in traditional medicine for cognitive health and has ceremonial roles in Buddhism, with historical documentation from ethnobotanical sources and cultural narratives.\"\n}",
+      "usage": {
+        "prompt_tokens": 2654,
+        "completion_tokens": 406,
+        "total_tokens": 5128,
+        "prompt_tokens_details": {
+          "text_tokens": 2654,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 328
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 2068,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 3
+      }
+    }
+  }
+}

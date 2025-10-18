@@ -64,87 +64,141 @@ export function Footer() {
           </div>
           
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Powered By</h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className="text-lg font-semibold">Data Sources</h3>
+            <p className="text-xs text-white/60 mb-2">
+              Treekipedia aggregates data from 13+ major biodiversity databases:
+            </p>
+            <div className="grid grid-cols-2 gap-1 text-xs">
               <a 
-                href="https://ethereum.org" 
+                href="https://www.gbif.org/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
+                className="text-white/70 hover:text-white transition-colors"
               >
-                Ethereum
+                GBIF
               </a>
               <a 
-                href="https://base.org" 
+                href="https://www.inaturalist.org/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
+                className="text-white/70 hover:text-white transition-colors"
               >
-                Base
+                iNaturalist
               </a>
               <a 
-                href="https://celo.org" 
+                href="https://www.idigbio.org/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
+                className="text-white/70 hover:text-white transition-colors"
               >
-                Celo
+                iDigBio
               </a>
               <a 
-                href="https://optimism.io" 
+                href="https://nbnatlas.org/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
+                className="text-white/70 hover:text-white transition-colors"
               >
-                Optimism
+                NBN Atlas
               </a>
               <a 
-                href="https://arbitrum.io" 
+                href="https://www.sibbr.gov.br/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
+                className="text-white/70 hover:text-white transition-colors"
               >
-                Arbitrum
+                SiBBr
               </a>
               <a 
-                href="https://attestationstation.xyz" 
+                href="https://specieslink.net/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
+                className="text-white/70 hover:text-white transition-colors"
               >
-                EAS
+                SpeciesLink
               </a>
               <a 
-                href="https://ipfs.tech" 
+                href="https://data.nhm.ac.uk/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-3 py-1 text-xs rounded-full bg-black/30 hover:bg-black/40 transition-colors"
+                className="text-white/70 hover:text-white transition-colors"
               >
-                IPFS
+                NHM Portal
+              </a>
+              <a 
+                href="https://biorepo.neonscience.org/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-white/70 hover:text-white transition-colors"
+              >
+                NEON
+              </a>
+              <a 
+                href="https://obis.org/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-white/70 hover:text-white transition-colors"
+              >
+                OBIS
+              </a>
+              <a 
+                href="https://jabot.jbrj.gov.br/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-white/70 hover:text-white transition-colors"
+              >
+                Jabot
+              </a>
+              <a 
+                href="https://floradobrasil.jbrj.gov.br/reflora/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-white/70 hover:text-white transition-colors"
+              >
+                Reflora
+              </a>
+              <a 
+                href="https://research.fs.usda.gov/programs/fia" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-white/70 hover:text-white transition-colors"
+              >
+                FIA-USDA
               </a>
             </div>
           </div>
         </div>
         
-        <div className="mt-8 pt-4 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-sm text-white/50">
-          <p>© {new Date().getFullYear()} Silvi Earth. All rights reserved.</p>
-          <div className="flex space-x-4 mt-4 md:mt-0">
-            <a 
-              href="https://silvi.earth/terms" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hover:text-white/80 transition-colors"
-            >
-              Terms of Service
-            </a>
-            <a 
-              href="https://silvi.earth/privacy" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hover:text-white/80 transition-colors"
-            >
-              Privacy Policy
-            </a>
+        <div className="mt-6 pt-4 border-t border-white/10">
+          <div className="flex flex-wrap gap-2 mb-4">
+            <span className="text-xs text-white/60">Powered by:</span>
+            <a href="https://base.org" target="_blank" rel="noopener noreferrer" className="px-2 py-1 text-xs rounded bg-black/30 hover:bg-black/40 transition-colors">Base</a>
+            <a href="https://celo.org" target="_blank" rel="noopener noreferrer" className="px-2 py-1 text-xs rounded bg-black/30 hover:bg-black/40 transition-colors">Celo</a>
+            <a href="https://optimism.io" target="_blank" rel="noopener noreferrer" className="px-2 py-1 text-xs rounded bg-black/30 hover:bg-black/40 transition-colors">Optimism</a>
+            <a href="https://arbitrum.io" target="_blank" rel="noopener noreferrer" className="px-2 py-1 text-xs rounded bg-black/30 hover:bg-black/40 transition-colors">Arbitrum</a>
+            <a href="https://attestationstation.xyz" target="_blank" rel="noopener noreferrer" className="px-2 py-1 text-xs rounded bg-black/30 hover:bg-black/40 transition-colors">EAS</a>
+            <a href="https://ipfs.tech" target="_blank" rel="noopener noreferrer" className="px-2 py-1 text-xs rounded bg-black/30 hover:bg-black/40 transition-colors">IPFS</a>
+          </div>
+          <div className="flex flex-col md:flex-row justify-between items-center text-sm text-white/50">
+            <p>© {new Date().getFullYear()} Silvi Earth. All rights reserved.</p>
+            <div className="flex space-x-4 mt-4 md:mt-0">
+              <a 
+                href="https://silvi.earth/terms" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-white/80 transition-colors"
+              >
+                Terms of Service
+              </a>
+              <a 
+                href="https://silvi.earth/privacy" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-white/80 transition-colors"
+              >
+                Privacy Policy
+              </a>
+            </div>
           </div>
         </div>
       </div>

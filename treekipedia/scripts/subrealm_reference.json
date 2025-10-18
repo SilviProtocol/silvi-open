@@ -1,0 +1,115 @@
+{
+  "source": "One Earth Bioregions Framework",
+  "total_subrealms": 52,
+  "realms": {
+    "Subarctic America": {
+      "subrealms": [
+        "Greenland",
+        "Canadian Tundra",
+        "Alaska",
+        "Canadian Boreal Forests"
+      ]
+    },
+    "Northern America": {
+      "subrealms": [
+        "North Pacific Coast",
+        "American West",
+        "Great Plains",
+        "Northeast American Forests",
+        "Southeast US Savannas & Forests",
+        "Mexican Drylands"
+      ]
+    },
+    "Central America & Caribbean": {
+      "subrealms": [
+        "Central America",
+        "Caribbean"
+      ]
+    },
+    "Southern America": {
+      "subrealms": [
+        "Upper South America",
+        "Amazonia",
+        "Brazil Cerrado & Atlantic Coast",
+        "South American Grasslands",
+        "Andes Mountains & Pacific Coast"
+      ]
+    },
+    "Oceania": {
+      "subrealms": [
+        "Oceanic Islands"
+      ]
+    },
+    "Afrotropics": {
+      "subrealms": [
+        "Madagascar & East African Coast",
+        "Southern Afrotropics",
+        "Sub-Equatorial Afrotropics",
+        "Equatorial Afrotropics",
+        "Sub-Saharan Afrotropics",
+        "Horn of Africa"
+      ]
+    },
+    "South Eurasia": {
+      "subrealms": [
+        "North Africa",
+        "Greater Arabian Peninsula"
+      ]
+    },
+    "Western Eurasia": {
+      "subrealms": [
+        "Mediterranean",
+        "Black Sea Forests & Steppe",
+        "European Mountain Forests",
+        "Greater European Forests",
+        "Anglo-Celtic Isles"
+      ]
+    },
+    "Subarctic Eurasia": {
+      "subrealms": [
+        "Palearctic Tundra",
+        "Scandinavia & Western Boreal Forests",
+        "Siberia & Eastern Boreal Forests",
+        "Sea of Okhotsk & Bering Tundra/Taiga"
+      ]
+    },
+    "Eastern Eurasia": {
+      "subrealms": [
+        "Japanese Islands",
+        "Northeast Asian Forests",
+        "Mongolian Grasslands",
+        "Central East Asian Forests",
+        "Tibetan Plateau",
+        "East Asian Deserts"
+      ]
+    },
+    "Central Eurasia": {
+      "subrealms": [
+        "Kazakh Steppes & Hemiboreal Forests",
+        "Caspian Sea & Central Asian Deserts",
+        "Tien Shan Mountains",
+        "Persian Deserts & Forests",
+        "Altai-Sayan Mountains"
+      ]
+    },
+    "Indomalaya": {
+      "subrealms": [
+        "Indian Subcontinent",
+        "Southeast Asian Forests",
+        "Malaysia & Western Indonesia"
+      ]
+    },
+    "Australasia": {
+      "subrealms": [
+        "Australasian Islands & Eastern Indonesia",
+        "Australia",
+        "New Zealand"
+      ]
+    },
+    "Antarctica": {
+      "subrealms": [
+        "Antarctic Continent & Islands"
+      ]
+    }
+  }
+}
