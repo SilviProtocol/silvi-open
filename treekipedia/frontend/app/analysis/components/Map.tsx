@@ -181,7 +181,7 @@ function EcoregionLayer({ visible }: { visible: boolean }) {
 
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/geospatial/ecoregions/boundaries?bbox=${bbox}&simplify=${simplify}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://treekipedia-api.silvi.earth'}/api/geospatial/ecoregions/boundaries?bbox=${bbox}&simplify=${simplify}`);
       const data = await response.json();
 
       // Remove old layer
@@ -285,7 +285,7 @@ function IntactForestLayer({ visible, opacity }: { visible: boolean; opacity: nu
     try {
       setLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/geospatial/intact-forests/boundaries?bbox=${bbox}&zoom=${zoom}`
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://treekipedia-api.silvi.earth'}/api/geospatial/intact-forests/boundaries?bbox=${bbox}&zoom=${zoom}`
       );
 
       if (!response.ok) {
@@ -455,7 +455,7 @@ function OccurrenceHeatmapLayer({ visible, opacity, polygon, onHeatmapLoadingCha
       setLoading(true);
       onHeatmapLoadingChange?.(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/geospatial/heatmap?minLat=${minLat}&minLng=${minLng}&maxLat=${maxLat}&maxLng=${maxLng}`
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://treekipedia-api.silvi.earth'}/api/geospatial/heatmap?minLat=${minLat}&minLng=${minLng}&maxLat=${maxLat}&maxLng=${maxLng}`
       );
 
       if (!response.ok) {
