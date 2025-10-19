@@ -131,53 +131,82 @@ async function getSpeciesDistribution(req, res) {
 async function getOccurrenceHeatmap(req, res) {
   try {
     const { minLat, minLng, maxLat, maxLng } = req.query;
-    
+
     if (!minLat || !minLng || !maxLat || !maxLng) {
-      return res.status(400).json({ 
-        error: 'Missing required parameters: minLat, minLng, maxLat, maxLng' 
+      return res.status(400).json({
+        error: 'Missing required parameters: minLat, minLng, maxLat, maxLng'
       });
     }
-    
+
     const query = `
-      SELECT 
+      SELECT
         geohash_l7,
         total_occurrences,
         species_count,
         ST_AsGeoJSON(geometry)::json as geometry,
+        ST_Area(geometry::geography) / 1000000 as area_km2,
         datetime
       FROM geohash_species_tiles
       WHERE ST_Intersects(
         geometry,
         ST_MakeEnvelope($1, $2, $3, $4, 4326)
       )
-      ORDER BY total_occurrences DESC;
+      ORDER BY total_occurrences DESC
+      LIMIT 10000;
     `;
-    
+
     const result = await pool.query(query, [
       parseFloat(minLng),
       parseFloat(minLat),
       parseFloat(maxLng),
       parseFloat(maxLat)
     ]);
-    
+
+    // Calculate density and find min/max for normalization
+    const tilesWithDensity = result.rows.map(row => {
+      const area = parseFloat(row.area_km2) || 1; // Avoid division by zero
+      const density = row.total_occurrences / area; // occurrences per km²
+      return {
+        ...row,
+        density,
+        density_per_km2: Math.round(density * 100) / 100
+      };
+    });
+
+    // Find min/max density for color scale using a loop (to avoid stack overflow with large arrays)
+    let minDensity = Infinity;
+    let maxDensity = -Infinity;
+    for (const tile of tilesWithDensity) {
+      if (tile.density < minDensity) minDensity = tile.density;
+      if (tile.density > maxDensity) maxDensity = tile.density;
+    }
+
     res.json({
       bbox: {
         min: [parseFloat(minLng), parseFloat(minLat)],
         max: [parseFloat(maxLng), parseFloat(maxLat)]
       },
       tile_count: result.rows.length,
-      features: result.rows.map(row => ({
+      density_range: {
+        min: Math.round(minDensity * 100) / 100,
+        max: Math.round(maxDensity * 100) / 100
+      },
+      features: tilesWithDensity.map(row => ({
         type: 'Feature',
         properties: {
           geohash: row.geohash_l7,
           total_occurrences: row.total_occurrences,
           species_count: row.species_count,
-          datetime: row.datetime
+          area_km2: Math.round(parseFloat(row.area_km2) * 100) / 100,
+          density: row.density_per_km2,
+          datetime: row.datetime,
+          // Normalized density for color mapping (0-1 scale)
+          density_normalized: (row.density - minDensity) / (maxDensity - minDensity || 1)
         },
         geometry: row.geometry
       }))
     });
-    
+
   } catch (error) {
     console.error('Error in getOccurrenceHeatmap:', error);
     res.status(500).json({ error: 'Internal server error' });
