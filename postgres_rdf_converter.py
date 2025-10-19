@@ -65,7 +65,7 @@ class PostgreSQLRDFConverter:
                     SELECT * FROM {table_name} 
                     WHERE updated_at > %s 
                     ORDER BY updated_at 
-                    LIMIT 50000
+                    LIMIT 1000
                 """, (last_update,))
             else:
                 # Get all records (limited for testing)

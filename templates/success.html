@@ -16,22 +16,6 @@
             margin: 1.5rem 0;
         }
         
-        .fuseki-status {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-left: 4px solid #4caf50;
-        }
-        
-        .fuseki-status.failed {
-            border-left-color: #f44336;
-        }
-        
-        .fuseki-status.not-attempted {
-            border-left-color: #ff9800;
-        }
-        
         .metric-card {
             background: white;
             border-radius: var(--border-radius);
@@ -54,6 +38,15 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+        
+        .quality-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .quality-excellent { color: #4caf50; }
+        .quality-good { color: #ff9800; }
+        .quality-fair { color: #f44336; }
     </style>
 </head>
 <body>
@@ -63,8 +56,10 @@
                 <i class="fas fa-check"></i>
             </div>
             
-            <h1>Smart Ontology Generated Successfully!</h1>
-            <p class="lead">Your biodiversity ontology has been created and is ready for download.</p>
+            <h1>{% if dynamic_ontology %}Smart {% endif %}Ontology Generated Successfully!</h1>
+            <p class="lead">Your {% if dynamic_ontology %}smart {% endif %}biodiversity ontology has been created and is ready for download.</p>
+            
+
             
             <div class="ontology-info">
                 <h4><i class="fas fa-info-circle"></i> Ontology Details</h4>
@@ -88,10 +83,12 @@
                     <i class="fas fa-database"></i>
                     <span><strong>Source:</strong> {% if source %}{{ source.title() }}{% else %}CSV Upload{% endif %}</span>
                 </div>
+                {% if dynamic_ontology %}
                 <div class="ontology-info-item">
                     <i class="fas fa-magic"></i>
                     <span><strong>Generation:</strong> Smart Dynamic Analysis</span>
                 </div>
+                {% endif %}
                 <div class="ontology-info-item">
                     <i class="fas fa-layer-group"></i>
                     <span><strong>Files Processed:</strong> {{ file_count }}</span>
@@ -109,123 +106,38 @@
                 </div>
             </div>
             
-            <!-- Apache Jena Fuseki Status (replacing Blazegraph) -->
+            <!-- Blazegraph Status -->
             {% if blazegraph_enabled %}
-            <div class="fuseki-status {{ 'success' if 'Success' in blazegraph_status else 'failed' if blazegraph_status == 'Failed' else 'not-attempted' }}">
+            <div class="blazegraph-status {{ 'success' if blazegraph_status == 'Success' else 'failed' if blazegraph_status == 'Failed' else 'not-attempted' }}">
                 <h4>
-                    {% if 'Success' in blazegraph_status %}
-                    <i class="fas fa-check-circle"></i> Apache Jena Fuseki Import Successful
-                    {% elif blazegraph_status == 'Failed' or blazegraph_status == 'Error' %}
-                    <i class="fas fa-times-circle"></i> Apache Jena Fuseki Import Failed
+                    {% if blazegraph_status == 'Success' %}
+                    <i class="fas fa-check-circle"></i> Blazegraph Import Successful
+                    {% elif blazegraph_status == 'Failed' %}
+                    <i class="fas fa-times-circle"></i> Blazegraph Import Failed
                     {% else %}
-                    <i class="fas fa-info-circle"></i> Apache Jena Fuseki Import Not Attempted
+                    <i class="fas fa-info-circle"></i> Blazegraph Import Not Attempted
                     {% endif %}
                 </h4>
                 
-                <div class="fuseki-info">
+                <div class="blazegraph-info">
                     <p><strong>Status:</strong> {{ blazegraph_status }}</p>
                     <p><strong>Details:</strong> {{ blazegraph_message }}</p>
                     {% if graph_uri %}
                     <p><strong>Graph URI:</strong></p>
                     <div class="graph-uri">{{ graph_uri }}</div>
                     {% endif %}
-                    
-                    <!-- Action Buttons for Successful Import -->
-                    {% if 'Success' in blazegraph_status %}
-                    <div class="mt-3">
-                        <a href="http://167.172.143.162:3030/" target="_blank" class="btn btn-primary btn-sm me-2">
-                            <i class="fas fa-external-link-alt"></i> View in Fuseki
-                        </a>
-                        <button class="btn btn-info btn-sm" onclick="showQueryExamples()">
-                            <i class="fas fa-search"></i> Example Queries
-                        </button>
-                    </div>
-                    {% endif %}
-                    
                     <p class="mt-2 mb-0">
                         <small class="text-muted">
                             <i class="fas fa-info-circle"></i> 
-                            {% if 'Success' in blazegraph_status %}
-                            Your ontology has been imported into Apache Jena Fuseki and is now available for SPARQL queries. All existing data was preserved.
-                            {% elif blazegraph_status == 'Failed' or blazegraph_status == 'Error' %}
-                            The ontology could not be imported to Fuseki. You can still download and use the OWL file.
+                            {% if blazegraph_status == 'Success' %}
+                            Your ontology has been imported into Blazegraph and is now available for SPARQL queries.
+                            {% elif blazegraph_status == 'Failed' %}
+                            The ontology could not be imported to Blazegraph. You can still download and use the OWL file.
                             {% else %}
-                            Fuseki import was not attempted. You can still download the OWL file.
+                            Blazegraph import was not attempted. You can still download the OWL file.
                             {% endif %}
                         </small>
                     </p>
-                </div>
-            </div>
-
-            <!-- Updated Query Examples Modal for Fuseki -->
-            <div class="modal fade" id="queryExamplesModal" tabindex="-1" aria-labelledby="queryExamplesModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="queryExamplesModalLabel">
-                                <i class="fas fa-search me-2"></i>Example SPARQL Queries for Fuseki
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="alert alert-info">
-                                <i class="fas fa-lightbulb me-2"></i>
-                                <strong>Tip:</strong> Copy these queries and paste them into the Fuseki SPARQL endpoint to explore your biodiversity ontology.
-                            </div>
-                            
-                            <h6><i class="fas fa-users me-2"></i>1. Count all individuals:</h6>
-                            <div class="bg-light p-3 rounded mb-3">
-                                <pre><code>SELECT (COUNT(?individual) as ?count) WHERE {
-    ?individual a &lt;http://www.w3.org/2002/07/owl#NamedIndividual&gt; .
-}</code></pre>
-                                <button class="btn btn-outline-secondary btn-sm mt-2" onclick="copyQuery(this, 'SELECT (COUNT(?individual) as ?count) WHERE {\n    ?individual a <http://www.w3.org/2002/07/owl#NamedIndividual> .\n}')">
-                                    <i class="fas fa-copy"></i> Copy Query
-                                </button>
-                            </div>
-                            
-                            <h6><i class="fas fa-sitemap me-2"></i>2. List all ontology classes:</h6>
-                            <div class="bg-light p-3 rounded mb-3">
-                                <pre><code>SELECT DISTINCT ?class ?label WHERE {
-    ?class a &lt;http://www.w3.org/2002/07/owl#Class&gt; .
-    OPTIONAL { ?class &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; ?label }
-} ORDER BY ?class</code></pre>
-                                <button class="btn btn-outline-secondary btn-sm mt-2" onclick="copyQuery(this, 'SELECT DISTINCT ?class ?label WHERE {\n    ?class a <http://www.w3.org/2002/07/owl#Class> .\n    OPTIONAL { ?class <http://www.w3.org/2000/01/rdf-schema#label> ?label }\n} ORDER BY ?class')">
-                                    <i class="fas fa-copy"></i> Copy Query
-                                </button>
-                            </div>
-                            
-                            <h6><i class="fas fa-leaf me-2"></i>3. Browse biodiversity data:</h6>
-                            <div class="bg-light p-3 rounded mb-3">
-                                <pre><code>SELECT ?subject ?property ?value WHERE {
-    ?subject ?property ?value .
-    FILTER(CONTAINS(STR(?subject), "biodiversity-ontology"))
-} LIMIT 100</code></pre>
-                                <button class="btn btn-outline-secondary btn-sm mt-2" onclick="copyQuery(this, 'SELECT ?subject ?property ?value WHERE {\n    ?subject ?property ?value .\n    FILTER(CONTAINS(STR(?subject), \"biodiversity-ontology\"))\n} LIMIT 100')">
-                                    <i class="fas fa-copy"></i> Copy Query
-                                </button>
-                            </div>
-                            
-                            <h6><i class="fas fa-tags me-2"></i>4. Show recent additions (your new data):</h6>
-                            <div class="bg-light p-3 rounded mb-3">
-                                <pre><code>SELECT ?individual ?type WHERE {
-    ?individual a &lt;http://www.w3.org/2002/07/owl#NamedIndividual&gt; .
-    ?individual a ?type .
-    FILTER(?type != &lt;http://www.w3.org/2002/07/owl#NamedIndividual&gt;)
-} LIMIT 50</code></pre>
-                                <button class="btn btn-outline-secondary btn-sm mt-2" onclick="copyQuery(this, 'SELECT ?individual ?type WHERE {\n    ?individual a <http://www.w3.org/2002/07/owl#NamedIndividual> .\n    ?individual a ?type .\n    FILTER(?type != <http://www.w3.org/2002/07/owl#NamedIndividual>)\n} LIMIT 50')">
-                                    <i class="fas fa-copy"></i> Copy Query
-                                </button>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <i class="fas fa-times"></i> Close
-                            </button>
-                            <a href="http://167.172.143.162:3030/" target="_blank" class="btn btn-primary">
-                                <i class="fas fa-external-link-alt"></i> Open Fuseki
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
             {% endif %}
@@ -233,7 +145,7 @@
             <!-- Download Button -->
             <a href="{{ url_for('main.download', session_id=session_id, filename=filename) }}" 
                class="btn btn-primary btn-lg btn-download" id="download-btn">
-                <i class="fas fa-download"></i> Download Smart Ontology
+                <i class="fas fa-download"></i> Download {% if dynamic_ontology %}Smart {% endif %}Ontology
             </a>
             
             <div class="mt-3">
@@ -251,40 +163,17 @@
                 <i class="fas fa-exclamation-triangle"></i>
                 <strong>Note:</strong> Your generated ontology will be available for download for {{ expiry_minutes }} minutes, after which it will be automatically deleted for security.
             </div>
+            
+            
         </div>
         
         <div class="footer">
-            <p>Treekipedia GraphFlow - Smart Ontology Generator with Apache Jena Fuseki</p>
+            <p>Treekipedia GraphFlow - {% if dynamic_ontology %}Smart {% endif %}Ontology Generator</p>
         </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Query Examples Modal Functions
-        function showQueryExamples() {
-            const modal = new bootstrap.Modal(document.getElementById('queryExamplesModal'));
-            modal.show();
-        }
-
-        function copyQuery(button, queryText) {
-            navigator.clipboard.writeText(queryText).then(function() {
-                // Show success feedback
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                button.classList.add('btn-success');
-                button.classList.remove('btn-outline-secondary');
-                
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.classList.remove('btn-success');
-                    button.classList.add('btn-outline-secondary');
-                }, 2000);
-            }).catch(function(err) {
-                console.error('Could not copy text: ', err);
-                alert('Query copied to clipboard!');
-            });
-        }
-
         // Countdown timer
         function startCountdown() {
             const countdownEl = document.getElementById('countdown');

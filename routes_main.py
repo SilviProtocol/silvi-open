@@ -132,30 +132,21 @@ def upload_files():
                 }
             }
 
-            # Import to Blazegraph if enabled (INCREMENTAL VERSION)
+            # Import to Blazegraph if enabled
             blazegraph_import_status = "Not attempted"
             blazegraph_message = ""
             graph_uri = ""
-
+            
             if current_app.config['BLAZEGRAPH_ENABLED']:
-                logger.info("Attempting INCREMENTAL import to Blazegraph...")
-                try:
-                    from incremental_ontology_updater import update_ontology_incrementally
-                    blazegraph_endpoint = current_app.config.get('BLAZEGRAPH_ENDPOINT', 
-                                                                "http://167.172.143.162:9999/blazegraph/namespace/kb/sparql")
-                    
-                    result = update_ontology_incrementally(analysis_data, blazegraph_endpoint)
-                    
-                    if result['success']:
-                        blazegraph_import_status = "Success (Incremental)"
-                        blazegraph_message = f"Added {result.get('changes_applied', 0)} new elements, preserved existing data"
-                        graph_uri = f"http://treekipedia.org/ontology/{ontology_name}"
-                    else:
-                        blazegraph_import_status = "Failed"
-                        blazegraph_message = f"Incremental update failed: {result.get('error', 'Unknown error')}"
-                except Exception as e:
-                    blazegraph_import_status = "Error" 
-                    blazegraph_message = f"Incremental update error: {str(e)}"
+                logger.info("Attempting to import multi-sheet ontology to Blazegraph...")
+                success, message, uri = import_to_blazegraph(
+                    download_path, 
+                    ontology_name,
+                    datetime.now().strftime('%Y%m%d_%H%M%S')
+                )
+                blazegraph_import_status = "Success" if success else "Failed"
+                blazegraph_message = message
+                graph_uri = uri or ""
                 
                 metadata['blazegraph_import'] = blazegraph_import_status
                 metadata['blazegraph_message'] = blazegraph_message
@@ -379,79 +370,28 @@ def import_from_sheets():
                     }
                 }
 
-                # Import to Blazegraph if enabled (INCREMENTAL VERSION)
+                # Import to Blazegraph if enabled
                 blazegraph_import_status = "Not attempted"
                 blazegraph_message = ""
                 graph_uri = ""
-
+                
                 if current_app.config['BLAZEGRAPH_ENABLED']:
-                    logger.info("Attempting INCREMENTAL import to Blazegraph...")
-                    try:
-                        from incremental_ontology_updater import update_ontology_incrementally
-                        blazegraph_endpoint = current_app.config.get('BLAZEGRAPH_ENDPOINT', 
-                                                                    "http://167.172.143.162:9999/blazegraph/namespace/kb/sparql")
-                        
-                        result = update_ontology_incrementally(analysis_data, blazegraph_endpoint)
-                        
-                        # FIXED: Determine status based on actual analysis results, not just applied changes
-                        if result['success']:
-                            changes_analyzed = result.get('changes_analyzed', {})
-                            total_new_items = changes_analyzed.get('total_additions', 0)
-                            changes_applied = result.get('changes_applied', 0)
-                            
-                            if changes_applied > 0:
-                                blazegraph_import_status = "Success (Incremental)"
-                                blazegraph_message = f"Added {changes_applied} new elements, preserved existing data"
-                            elif total_new_items > 0:
-                                blazegraph_import_status = "Success (No Changes Needed)" 
-                                blazegraph_message = f"Detected {total_new_items} items but all already exist - data preserved"
-                            else:
-                                blazegraph_import_status = "Success (Up to Date)"
-                                blazegraph_message = "Ontology is already up to date - no changes needed"
-                            
-                            graph_uri = f"http://treekipedia.org/ontology/{ontology_name}"
-                        else:
-                            blazegraph_import_status = "Failed"
-                            blazegraph_message = f"Incremental update failed: {result.get('error', 'Unknown error')}"
-                    except Exception as e:
-                        blazegraph_import_status = "Error" 
-                        blazegraph_message = f"Incremental update error: {str(e)}"
+                    logger.info("Attempting to import multi-sheet ontology to Blazegraph...")
+                    success, message, uri = import_to_blazegraph(
+                        download_path, 
+                        spreadsheet.title,
+                        current_version
+                    )
+                    blazegraph_import_status = "Success" if success else "Failed"
+                    blazegraph_message = message
+                    graph_uri = uri or ""
                     
                     metadata['blazegraph_import'] = blazegraph_import_status
                     metadata['blazegraph_message'] = blazegraph_message
                     metadata['graph_uri'] = graph_uri
-                    metadata['incremental_update'] = True  # Mark as incremental
-                    metadata['data_preserved'] = True      # Data was preserved
-
-                    # FIXED: Update version if import was attempted and changes were detected (regardless of application)
-                    version_update_conditions = [
-                        blazegraph_import_status in ["Success (Incremental)", "Success (No Changes Needed)", "Success (Up to Date)"],
-                        has_changes,
-                        current_app.config.get('USE_GOOGLE_SHEETS', False)
-                    ]
-                    
-                    if all(version_update_conditions):
-                        try:
-                            new_version = increment_version(current_version)
-                            change_summary = f"Generated multi-sheet biodiversity ontology with {len(files_imported)} worksheets."
-                            if detailed_summary:
-                                change_summary += f" Analysis: {detailed_summary['total_fields']} fields, {detailed_summary['option_sets_count']} option sets, {detailed_summary['individuals_count']} individuals."
-                            change_summary += f" Changes: {change_info}"
-                            change_summary += f" Blazegraph: {blazegraph_import_status}"
-                            
-                            sheets_integration.update_spreadsheet_version(
-                                spreadsheet=spreadsheet,
-                                new_version=new_version,
-                                modified_by="Multi-Sheet Biodiversity Ontology Generator v3.0",
-                                changelog=change_summary
-                            )
-                            metadata['version'] = new_version
-                            logger.info(f"Updated spreadsheet version from {current_version} to {new_version}")
-                        except Exception as version_error:
-                            logger.error(f"Error updating version: {version_error}")
 
                     # Update version if import was successful and changes were detected
-                    if blazegraph_import_status == "Success (Incremental)" and has_changes and current_app.config['USE_GOOGLE_SHEETS']:
+                    if success and has_changes and current_app.config['USE_GOOGLE_SHEETS']:
                         try:
                             new_version = increment_version(current_version)
                             change_summary = f"Generated multi-sheet biodiversity ontology with {len(files_imported)} worksheets."

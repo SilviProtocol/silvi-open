@@ -193,17 +193,12 @@ class MultiSheetBiodiversityGenerator:
         
         for file in csv_files:
             file_lower = file.lower()
-            # Check for MVP/field definition files (including species as it contains field definitions)
-            if 'mvp' in file_lower or 'field' in file_lower or 'schema' in file_lower or 'species' in file_lower:
+            if 'mvp' in file_lower or 'field' in file_lower or 'schema' in file_lower:
                 mvp_file = os.path.join(directory_path, file)
                 logger.info(f"Identified MVP file: {file}")
-            # Check for option set files
             elif 'option' in file_lower or 'enum' in file_lower or 'value' in file_lower:
                 option_set_file = os.path.join(directory_path, file)
                 logger.info(f"Identified Option Set file: {file}")
-            # Skip metadata sheets (they contain version info, not field definitions)
-            elif 'metadata' in file_lower:
-                logger.info(f"Skipping metadata sheet: {file} (used for version tracking)")
         
         # If not found by name, use first file as MVP
         if not mvp_file and csv_files:
@@ -215,184 +210,7 @@ class MultiSheetBiodiversityGenerator:
             option_set_file = os.path.join(directory_path, csv_files[1])
             logger.info(f"Using second file as Option Set: {csv_files[1]}")
         
-        # Check if this is a schema definition file or actual data file
-        # by looking at the column names in the first CSV file
-        if mvp_file and os.path.exists(mvp_file):
-            with open(mvp_file, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                first_row = next(reader, None)
-                if first_row:
-                    columns = list(first_row.keys())
-                    # If columns are actual field names (not 'Field', 'Schema', etc.),
-                    # treat them as direct schema
-                    if 'Field' not in columns and 'Schema' not in ' '.join(columns):
-                        logger.info("Detected direct schema format (columns are field names)")
-                        return self.analyze_direct_schema(mvp_file, option_set_file)
-
         return self.analyze_mvp_and_option_sets(mvp_file, option_set_file)
-
-    def analyze_direct_schema(self, schema_file: str, option_set_file: str = None) -> Dict[str, Any]:
-        """
-        Analyze a schema file where column names ARE the field definitions.
-        This handles the case where species sheet has columns like:
-        species_scientific_name, family, genus, etc.
-
-        Also handles transposed format where field names are in rows instead of columns.
-        """
-        logger.info("Analyzing direct schema format...")
-
-        # Read the schema file to get column names
-        field_names = []
-        if schema_file and os.path.exists(schema_file):
-            with open(schema_file, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                field_names = reader.fieldnames or []
-
-                # Check if this is a transposed format (many rows, 1 column)
-                # Read all rows to see if field names are stored vertically
-                rows = list(reader)
-
-                # If we have only 1 column but many rows, it's transposed
-                if len(field_names) == 1 and len(rows) > 10:
-                    logger.info(f"Detected transposed format: {len(rows)} field names in single column")
-                    # Get field names from the first column of all rows
-                    column_name = field_names[0]
-                    field_names = [row[column_name].strip() for row in rows if row.get(column_name, '').strip()]
-                    # Filter out empty values
-                    field_names = [f for f in field_names if f]
-                    logger.info(f"Extracted {len(field_names)} field names from transposed format")
-
-            logger.info(f"Found {len(field_names)} fields in schema: {field_names[:10]}...")
-
-        # Read option sets
-        option_set_data = []
-        option_sets = {}
-        if option_set_file and os.path.exists(option_set_file):
-            logger.info(f"Reading Option Set file: {option_set_file}")
-            with open(option_set_file, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                option_set_data = list(reader)
-
-            # Process option sets - each column is an option set
-            option_sets = self._process_option_sets(option_set_data)
-            logger.info(f"Found {len(option_sets)} option sets")
-
-        # Build analysis structure
-        analysis = {
-            'version': hashlib.md5(''.join(field_names).encode()).hexdigest()[:8],
-            'timestamp': datetime.datetime.now().isoformat(),
-            'field_analysis': {},
-            'ontology_classes': {},
-            'object_properties': [],
-            'data_properties': [],
-            'individuals': [],
-            'hierarchical_relationships': [],
-            'categories': {},
-            'data_quality': {},
-            'option_sets': option_sets
-        }
-
-        # Track fields by category
-        categorized_fields = {class_name: [] for class_name in self.ontology_classes.keys()}
-
-        # Analyze each field (column name)
-        for field_name in field_names:
-            if not field_name or field_name.strip() == '':
-                continue
-
-            # Infer category and type from field name
-            category = self._determine_ontology_class(field_name)
-            data_type = self._infer_data_type_from_name(field_name)
-            property_name = self._generate_property_name(field_name)
-
-            # Check if field has option set
-            has_option_set = field_name in option_sets
-            constraints = []
-            if has_option_set:
-                constraints.append(f"enum: {', '.join(option_sets[field_name]['values'][:5])}")
-
-            # Infer range class for fields with option sets
-            range_class = None
-            if has_option_set:
-                range_class = self._infer_class_from_field(field_name)
-
-            field_info = {
-                'original_field': field_name,
-                'schema_field': field_name,
-                'category': category,
-                'ontology_class': category,  # Add for compatibility with quality assessment
-                'data_type': data_type,
-                'property_name': property_name,
-                'constraints': constraints,
-                'has_option_set': has_option_set,
-                'option_set_name': field_name if has_option_set else None,
-                'option_set_values': option_sets.get(field_name, {}).get('values', []) if has_option_set else None,
-                'range_class': range_class,  # Add for individual generation
-                'description': f"Biodiversity field: {field_name}",
-                'is_required': False,
-                'required': False  # Add for compatibility with quality assessment
-            }
-
-            analysis['field_analysis'][field_name] = field_info
-
-            # Categorize field
-            categorized_fields[category].append(field_name)
-
-            # Add to ontology class
-            if category not in analysis['ontology_classes']:
-                analysis['ontology_classes'][category] = {
-                    'fields': [],
-                    'description': f'{category} related fields'
-                }
-            analysis['ontology_classes'][category]['fields'].append(field_name)
-
-            # Create property
-            if data_type in ['string', 'int', 'float', 'date', 'boolean']:
-                analysis['data_properties'].append({
-                    'name': property_name,
-                    'domain': category,
-                    'range': data_type,
-                    'description': field_info['description']
-                })
-            else:
-                analysis['object_properties'].append({
-                    'name': property_name,
-                    'domain': category,
-                    'range': data_type,
-                    'description': field_info['description']
-                })
-
-        # Generate individuals from option sets
-        analysis['individuals'] = self._generate_individuals_from_option_sets(
-            analysis['field_analysis'], option_sets
-        )
-
-        # Calculate data quality
-        analysis['data_quality'] = self._assess_data_quality_with_option_sets(
-            analysis['field_analysis'], option_sets
-        )
-
-        analysis['categories'] = categorized_fields
-
-        logger.info(f"Direct schema analysis complete: {len(analysis['field_analysis'])} fields")
-        return analysis
-
-    def _infer_data_type_from_name(self, field_name: str) -> str:
-        """Infer data type from field name."""
-        name_lower = field_name.lower()
-
-        if any(x in name_lower for x in ['id', 'code', 'key']):
-            return 'string'
-        elif any(x in name_lower for x in ['count', 'number', 'total', 'occurrences']):
-            return 'int'
-        elif any(x in name_lower for x in ['elevation', 'temperature', 'altitude', 'height']):
-            return 'float'
-        elif any(x in name_lower for x in ['date', 'year', 'time']):
-            return 'date'
-        elif any(x in name_lower for x in ['is_', 'has_', 'can_']):
-            return 'boolean'
-        else:
-            return 'string'
 
     def analyze_mvp_and_option_sets(self, mvp_file: str, option_set_file: str = None) -> Dict[str, Any]:
         """
@@ -911,7 +729,7 @@ class MultiSheetBiodiversityGenerator:
         data_str = json.dumps(data, sort_keys=True)
         return hashlib.md5(data_str.encode()).hexdigest()[:8]
 
-    def create_enhanced_ontology(self, analysis: Dict[str, Any], ontology_name: str = "biodiversity-ontology") -> get_ontology: # type: ignore
+    def create_enhanced_ontology(self, analysis: Dict[str, Any], ontology_name: str = "biodiversity-ontology") -> get_ontology:
         """
         Create comprehensive OWL ontology with XML-safe names and content.
         """

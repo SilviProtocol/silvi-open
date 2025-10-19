@@ -27,12 +27,7 @@ def create_app():
     app.config['RELATIONSHIP_INFERENCE_ENABLED'] = True
     app.config['MAX_FIELDS_FOR_DYNAMIC_ANALYSIS'] = 500  # Performance limit
     
-    # Enable Google Sheets integration
-    app.config['USE_GOOGLE_SHEETS'] = True
-    app.config['GOOGLE_SHEETS_ENABLED'] = True
-    
-    logger.info("✅ Dynamic ontology generation system initialized!")
-    logger.info("✅ Google Sheets integration enabled!")
+    logger.info("✅ Dynamic ontology system initialized!")
     
     # Register blueprints
     app.register_blueprint(main_bp)
@@ -64,11 +59,7 @@ def register_error_handlers(app):
     @app.errorhandler(404)
     def page_not_found(error):
         """Handle 404 errors."""
-        from flask import request
-        # Don't flash messages for common browser/extension requests
-        ignored_paths = ['/favicon.ico', '/.well-known/', '/apple-touch-icon']
-        if not any(ignored in request.path for ignored in ignored_paths):
-            flash('Page not found.', 'error')
+        flash('Page not found.', 'error')
         return redirect(url_for('main.index')), 404
 
     @app.errorhandler(500)
@@ -87,11 +78,6 @@ def register_template_globals(app):
         return True  # Always available now
     
     @app.template_global()
-    def has_google_sheets():
-        """Check if Google Sheets is available"""
-        return app.config.get('USE_GOOGLE_SHEETS', False)
-    
-    @app.template_global()
     def get_app_version():
         """Get application version"""
         return '2.0.0-dynamic'
@@ -104,10 +90,8 @@ def register_context_processors(app):
         """Inject common variables into all templates"""
         return {
             'has_dynamic_ontology': True,
-            'has_google_sheets': app.config.get('USE_GOOGLE_SHEETS', False),
             'app_version': '2.0.0-dynamic',
-            'dynamic_ontology_enabled': True,
-            'google_sheets_enabled': app.config.get('USE_GOOGLE_SHEETS', False)
+            'dynamic_ontology_enabled': True
         }
 
 def register_dynamic_ontology_routes(app):
@@ -117,11 +101,10 @@ def register_dynamic_ontology_routes(app):
     def dynamic_ontology_health():
         """Health check endpoint for dynamic ontology system"""
         from flask import jsonify
+        from enhanced_dynamic_ontology import DynamicOntologyGenerator
         
         try:
-            # Test the ontology generator with a simple analysis
-            from enhance_dynamic_ontology import DynamicOntologyGenerator
-            
+            # Test the generator with a simple analysis
             test_data = [
                 {
                     'Field': 'test_field',
@@ -138,21 +121,14 @@ def register_dynamic_ontology_routes(app):
             
             return jsonify({
                 'status': 'healthy',
-                'message': 'Dynamic ontology generation system operational',
+                'message': 'Dynamic ontology system operational',
                 'enabled': True,
-                'version': analysis.get('version', '2.0.0'),
-                'generator': 'DynamicOntologyGenerator',
-                'underlying_system': 'MultiSheetBiodiversityGenerator',
+                'version': analysis.get('version', 'unknown'),
                 'features': {
                     'field_analysis': True,
                     'categorization': app.config.get('AUTO_CATEGORIZATION_ENABLED', False),
                     'relationship_inference': app.config.get('RELATIONSHIP_INFERENCE_ENABLED', False),
-                    'quality_assessment': True,
-                    'ontology_generation': True,
-                    'biodiversity_expertise': True,
-                    'google_sheets_support': app.config.get('USE_GOOGLE_SHEETS', False),
-                    'csv_upload': True,
-                    'no_config_files': True
+                    'quality_assessment': True
                 }
             }), 200
             
@@ -160,7 +136,7 @@ def register_dynamic_ontology_routes(app):
             logger.error(f"Dynamic ontology health check failed: {str(e)}")
             return jsonify({
                 'status': 'error',
-                'message': f'Ontology generation system error: {str(e)}',
+                'message': f'Dynamic ontology system error: {str(e)}',
                 'enabled': False
             }), 500
 
@@ -175,82 +151,24 @@ def register_dynamic_ontology_routes(app):
                 'google_sheets_import': app.config.get('USE_GOOGLE_SHEETS', False),
                 'blazegraph_integration': app.config.get('BLAZEGRAPH_ENABLED', False),
                 'postgresql_integration': app.config.get('POSTGRESQL_ENABLED', False),
-                'version_management': True,
-                'dynamic_analysis': True
+                'version_management': True
             },
-            'ontology_generation': {
+            'dynamic_ontology': {
                 'enabled': True,
-                'generator': 'DynamicOntologyGenerator',
-                'underlying_system': 'MultiSheetBiodiversityGenerator',
                 'field_detection': True,
                 'auto_categorization': app.config.get('AUTO_CATEGORIZATION_ENABLED', False),
                 'relationship_inference': app.config.get('RELATIONSHIP_INFERENCE_ENABLED', False),
                 'quality_assessment': True,
-                'preview_mode': True,
-                'data_source_support': True,
-                'biodiversity_ontologies': True,
-                'taxonomic_classification': True,
-                'geographic_distribution': True,
-                'conservation_information': True,
-                'ecological_data': True,
-                'no_configuration_files': True
-            },
-            'data_sources': {
-                'csv_files': True,
-                'google_sheets': app.config.get('USE_GOOGLE_SHEETS', False),
-                'manual_entry': True,
-                'batch_processing': True
-            },
-            'output_formats': {
-                'owl_rdf': True,
-                'quality_reports': True,
-                'analysis_summaries': True,
                 'preview_mode': True
             },
             'integrations': {
-                'sheets_status': 'enabled' if app.config.get('USE_GOOGLE_SHEETS') else 'disabled',
+                'sheets_status': 'initialized' if getattr(app, 'sheets_integration', None) else 'not_available',
                 'blazegraph_status': 'enabled' if app.config.get('BLAZEGRAPH_ENABLED') else 'disabled',
                 'postgres_status': 'enabled' if app.config.get('POSTGRESQL_ENABLED') else 'disabled'
-            },
-            'biodiversity_expertise': {
-                'taxonomic_fields': True,
-                'geographic_fields': True,
-                'conservation_fields': True,
-                'ecological_fields': True,
-                'morphological_fields': True,
-                'economic_value_fields': True,
-                'cultural_significance_fields': True,
-                'management_fields': True,
-                'species_count_support': '50000+',
-                'field_patterns': '25+'
             }
         }
         
         return jsonify(features)
-    
-    @app.route('/health')
-    def general_health():
-        """General health check endpoint"""
-        from flask import jsonify
-        
-        health_status = {
-            'status': 'healthy',
-            'timestamp': app.config.get('START_TIME', 'unknown'),
-            'version': '2.0.0-dynamic',
-            'components': {
-                'ontology_generator': True,
-                'google_sheets': app.config.get('USE_GOOGLE_SHEETS', False),
-                'blazegraph': app.config.get('BLAZEGRAPH_ENABLED', False),
-                'postgresql': app.config.get('POSTGRESQL_ENABLED', False)
-            },
-            'data_status': {
-                'species_in_blazegraph': '49000+',
-                'ontology_classes': '8+',
-                'field_patterns': '25+'
-            }
-        }
-        
-        return jsonify(health_status)
 
 # Create the app instance
 app = create_app()
@@ -259,38 +177,29 @@ def print_startup_banner():
     """Print application startup information"""
     port = int(os.environ.get('PORT', 5001))
     
-    print(f"\n{'='*70}")
+    print(f"\n{'='*60}")
     print(f"🌲 Treekipedia GraphFlow - Dynamic Ontology Generator")
-    print(f"✨ Advanced Biodiversity Ontology Generation Platform")
-    print(f"{'='*70}")
+    print(f"✨ Dynamic Ontology System: ENABLED")
+    print(f"{'='*60}")
     print(f"🌐 Server: http://localhost:{port}")
-    print(f"📊 Blazegraph: {app.config.get('BLAZEGRAPH_ENDPOINT', 'Not configured')}")
-    print(f"🗄️  PostgreSQL: {'✅ Enabled' if app.config.get('POSTGRESQL_ENABLED') else '❌ Disabled'}")
-    print(f"")
-    print(f"📋 DATA SOURCES:")
-    print(f"   • CSV File Upload: ✅ Always Available")
-    print(f"   • Google Sheets Import: {'✅ Enabled' if app.config.get('USE_GOOGLE_SHEETS') else '❌ Disabled'}")
-    print(f"   • Manual Data Entry: ✅ Available")
-    print(f"")
-    print(f"🔗 API ENDPOINTS:")
-    print(f"   • Main Interface: http://localhost:{port}")
-    print(f"")
-    print(f"⚡ QUICK START:")
-    print(f"   1. Upload CSV file or connect Google Sheets")
-    print(f"   2. System automatically detects biodiversity fields")
-    print(f"   3. Generate professional OWL ontology")
-    print(f"   4. Review quality assessment and suggestions")
-    print(f"   5. Download or integrate with Blazegraph")
-    print(f"{'='*70}")
-    print(f"🚀 Ready to generate biodiversity ontologies!")
-    print(f"{'='*70}\n")
+    print(f"📊 Blazegraph: {app.config['BLAZEGRAPH_ENDPOINT']}")
+    print(f"📋 Google Sheets: {'✅ Enabled' if app.config['USE_GOOGLE_SHEETS'] else '❌ Disabled'}")
+    print(f"🗄️  PostgreSQL: {'✅ Enabled' if app.config['POSTGRESQL_ENABLED'] else '❌ Disabled'}")
+    print(f"🤖 Dynamic Features:")
+    print(f"   • Field Type Detection: ✅")
+    print(f"   • Auto Categorization: {'✅' if app.config.get('AUTO_CATEGORIZATION_ENABLED') else '❌'}")
+    print(f"   • Relationship Inference: {'✅' if app.config.get('RELATIONSHIP_INFERENCE_ENABLED') else '❌'}")
+    print(f"   • Quality Assessment: ✅")
+    print(f"   • Preview Mode: ✅")
+    print(f"   • No Config Files Needed: ✅")
+    print(f"{'='*60}")
+    print(f"📚 Documentation: http://localhost:{port}/documentation")
+    print(f"🔍 Health Check: http://localhost:{port}/health/dynamic-ontology")
+    print(f"⚙️  Features List: http://localhost:{port}/features")
+    print(f"{'='*60}\n")
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
-    
-    # Store start time for health checks
-    import datetime
-    app.config['START_TIME'] = datetime.datetime.now().isoformat()
     
     # Print startup banner with feature information
     print_startup_banner()
@@ -298,13 +207,7 @@ if __name__ == '__main__':
     # Check if running in production
     if os.environ.get('FLASK_ENV') == 'production':
         print("🚀 Running in PRODUCTION mode")
-        print("   • Debug mode: OFF")
-        print("   • Error handling: Enhanced")
-        print("   • Logging: Production level")
         app.run(host='0.0.0.0', port=port, debug=False)
     else:
         print("🛠️  Running in DEVELOPMENT mode")
-        print("   • Debug mode: ON")
-        print("   • Auto-reload: Enabled")
-        print("   • Logging: Verbose")
         app.run(host='0.0.0.0', port=port, debug=True)

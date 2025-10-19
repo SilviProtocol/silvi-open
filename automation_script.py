@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
-Updated Automated Ontology Generator and Fuseki Import Script
-------------------------------------------------------------
-This script now works with Apache Jena Fuseki instead of Blazegraph:
+Automated Ontology Generator and Blazegraph Import Script
+--------------------------------------------------------
+This script:
 1. Checks for changes in specified Google Sheets
 2. Generates new ontologies when changes are detected
-3. Automatically imports those ontologies into Fuseki
+3. Automatically imports those ontologies into Blazegraph
 4. Updates version information
 5. Sends notifications on completion
+
+Run this script as a scheduled task (e.g., using cron or Windows Task Scheduler)
 """
 
 import os
@@ -38,35 +40,24 @@ logging.basicConfig(
 )
 logger = logging.getLogger("ontology-automation")
 
-# Updated Configuration for Fuseki
+# Configuration
 CONFIG = {
     'service_account_file': 'service_account.json',
-    'spreadsheet_ids': [],
-    'spreadsheet_names': [],
-    'check_interval': 3600,
-    
-    # Updated for Fuseki
-    "triplestore_type": "fuseki",
-    "fuseki_base_url": "http://167.172.143.162:3030",
-    "fuseki_dataset": "treekipedia",
-    "fuseki_sparql_endpoint": "http://167.172.143.162:3030/treekipedia/sparql",
-    "fuseki_update_endpoint": "http://167.172.143.162:3030/treekipedia/update", 
-    "fuseki_data_endpoint": "http://167.172.143.162:3030/treekipedia/data",
-    
-    # Keep for backward compatibility
-    "blazegraph_endpoint": "http://167.172.143.162:3030/treekipedia/sparql",
-    
+    'spreadsheet_ids': [],  # Will be filled from command line or config file
+    'spreadsheet_names': [],  # Will be filled from command line or config file
+    'check_interval': 3600,  # Default: check every hour (in seconds)
+    "blazegraph_endpoint": "http://localhost:9999/blazegraph/namespace/biodiversity/sparql",
     'ontology_output_dir': 'generated_ontologies',
-    'triplestore_update_auth': None,
-    'notify_email': None,
-    'smtp_server': None,
-    'smtp_port': 587,
-    'smtp_username': None,
-    'smtp_password': None,
-    'save_history': True,
+    'blazegraph_update_auth': None,  # Set if Blazegraph requires authentication
+    'notify_email': None,  # Set to enable email notifications
+    'smtp_server': None,  # For email notifications
+    'smtp_port': 587,  # For email notifications
+    'smtp_username': None,  # For email notifications
+    'smtp_password': None,  # For email notifications
+    'save_history': True,  # Keep history of all generated ontologies
     'history_dir': 'ontology_history',
-    'auto_update_version': True,
-    'version_update_user': 'Automation System',
+    'auto_update_version': True,  # Automatically update spreadsheet version
+    'version_update_user': 'Automation System',  # User who makes version updates
 }
 
 def load_config_file(config_path):
@@ -78,28 +69,15 @@ def load_config_file(config_path):
             for key, value in config_data.items():
                 if key in CONFIG:
                     CONFIG[key] = value
-                
-                # Handle legacy Blazegraph config
-                if key == "blazegraph_endpoint":
-                    # Convert Blazegraph endpoint to Fuseki equivalents
-                    blazegraph_url = value
-                    if "167.172.143.162:9999" in blazegraph_url:
-                        # Update to Fuseki endpoints
-                        CONFIG["fuseki_base_url"] = "http://167.172.143.162:3030"
-                        CONFIG["fuseki_sparql_endpoint"] = "http://167.172.143.162:3030/treekipedia/sparql"
-                        CONFIG["fuseki_update_endpoint"] = "http://167.172.143.162:3030/treekipedia/update"
-                        CONFIG["fuseki_data_endpoint"] = "http://167.172.143.162:3030/treekipedia/data"
-                        CONFIG["blazegraph_endpoint"] = CONFIG["fuseki_sparql_endpoint"]  # For compatibility
-                        
             logger.info(f"Loaded configuration from {config_path}")
     except Exception as e:
         logger.error(f"Error loading config file: {e}")
         sys.exit(1)
 
-# Keep all your existing utility functions unchanged
 def calculate_checksum(data):
     """Calculate a checksum for the data to detect changes."""
     if isinstance(data, list):
+        # Convert list of dictionaries to a stable string representation
         data_str = json.dumps(data, sort_keys=True)
     else:
         data_str = str(data)
@@ -151,7 +129,7 @@ def get_spreadsheet_data(sheets_integration, spreadsheet_id=None, spreadsheet_na
                 "title": spreadsheet.title,
                 "id": spreadsheet.id,
                 "version_info": {
-                    "version": "1.0.0"
+                    "version": "1.0.0"  # Default version if not found
                 }
             }
         
@@ -159,7 +137,7 @@ def get_spreadsheet_data(sheets_integration, spreadsheet_id=None, spreadsheet_na
         worksheets_data = {}
         for worksheet in spreadsheet.worksheets():
             try:
-                if worksheet.title != "metadata":
+                if worksheet.title != "metadata":  # Skip metadata sheet
                     data = sheets_integration.get_worksheet_data(spreadsheet, worksheet_name=worksheet.title)
                     worksheets_data[worksheet.title] = data
             except Exception as ws_error:
@@ -170,7 +148,7 @@ def get_spreadsheet_data(sheets_integration, spreadsheet_id=None, spreadsheet_na
             "title": spreadsheet.title,
             "metadata": metadata,
             "worksheets": worksheets_data,
-            "spreadsheet_obj": spreadsheet
+            "spreadsheet_obj": spreadsheet  # Keep the spreadsheet object for later use
         }
     except Exception as e:
         logger.error(f"Error getting spreadsheet data: {e}")
@@ -181,7 +159,7 @@ def process_spreadsheet(sheets_integration, spreadsheet_id=None, spreadsheet_nam
     Process a single spreadsheet:
     1. Check if it has changed since last processing
     2. Generate ontology if changed
-    3. Import to Fuseki if successful
+    3. Import to Blazegraph if successful
     4. Update version information
     """
     logger.info(f"Processing spreadsheet: {spreadsheet_id or spreadsheet_name}")
@@ -194,7 +172,7 @@ def process_spreadsheet(sheets_integration, spreadsheet_id=None, spreadsheet_nam
     
     spreadsheet_id = spreadsheet_data["id"]
     
-    # Calculate checksum of worksheet data
+    # Calculate checksum of worksheet data (excluding metadata sheet)
     checksum = calculate_checksum(spreadsheet_data["worksheets"])
     
     # Get last processed state
@@ -215,7 +193,7 @@ def process_spreadsheet(sheets_integration, spreadsheet_id=None, spreadsheet_nam
         # Save worksheet data as CSV files
         file_paths = []
         for sheet_name, data in spreadsheet_data["worksheets"].items():
-            if data:
+            if data:  # Only process non-empty worksheets
                 file_path = os.path.join(temp_dir, f"{sheet_name}.csv")
                 with open(file_path, 'w', newline='') as f:
                     if data and len(data) > 0:
@@ -273,19 +251,19 @@ def process_spreadsheet(sheets_integration, spreadsheet_id=None, spreadsheet_nam
             # Calculate new version
             new_version = increment_version(current_version)
             
-            # Import to Fuseki (updated function)
-            fuseki_success = True
-            if CONFIG.get('fuseki_sparql_endpoint') or CONFIG.get('blazegraph_endpoint'):
-                fuseki_success = import_to_fuseki(ontology_path, spreadsheet_data['title'], current_version)
-                if fuseki_success:
-                    logger.info(f"Successfully imported to Fuseki: {ontology_file}")
+            # Import to Blazegraph
+            blazegraph_success = True
+            if CONFIG['blazegraph_endpoint']:
+                blazegraph_success = import_to_blazegraph(ontology_path, spreadsheet_data['title'], current_version)
+                if blazegraph_success:
+                    logger.info(f"Successfully imported to Blazegraph: {ontology_file}")
                 else:
-                    logger.error(f"Failed to import to Fuseki: {ontology_file}")
+                    logger.error(f"Failed to import to Blazegraph: {ontology_file}")
             
             # Update spreadsheet version if enabled
-            if CONFIG['auto_update_version'] and fuseki_success:
+            if CONFIG['auto_update_version'] and blazegraph_success:
                 try:
-                    # Get the spreadsheet object
+                    # Get the spreadsheet object - either from data or retrieve again
                     spreadsheet = spreadsheet_data.get("spreadsheet_obj")
                     if not spreadsheet:
                         if spreadsheet_id:
@@ -293,10 +271,11 @@ def process_spreadsheet(sheets_integration, spreadsheet_id=None, spreadsheet_nam
                         else:
                             spreadsheet = sheets_integration.open_spreadsheet(spreadsheet_name=spreadsheet_name)
                     
-                    # Update version using enhanced SheetsIntegration
+                    # Try to update version using enhanced SheetsIntegration
                     try:
-                        changelog_message = f"Automated ontology generation with Fuseki - {len(file_paths)} worksheets processed"
+                        changelog_message = f"Automated ontology generation - {len(file_paths)} worksheets processed"
                         
+                        # First try using the enhanced method
                         if hasattr(sheets_integration, 'update_spreadsheet_version'):
                             sheets_integration.update_spreadsheet_version(
                                 spreadsheet=spreadsheet,
@@ -306,21 +285,24 @@ def process_spreadsheet(sheets_integration, spreadsheet_id=None, spreadsheet_nam
                             )
                             logger.info(f"Updated spreadsheet version to {new_version}")
                         else:
-                            # Fallback method
+                            # Fallback to manual metadata update if enhanced method doesn't exist
                             try:
+                                # Check if metadata worksheet exists
                                 try:
                                     metadata_sheet = spreadsheet.worksheet("metadata")
                                 except:
+                                    # Create metadata sheet if it doesn't exist
                                     metadata_sheet = spreadsheet.add_worksheet(title="metadata", rows=10, cols=2)
                                 
+                                # Current time in ISO format
                                 current_time = datetime.datetime.now().isoformat()
                                 
+                                # Update version info
                                 metadata_sheet.update("A1:B8", [
                                     ["version", new_version],
                                     ["version_date", current_time],
                                     ["last_modified_by", CONFIG['version_update_user']],
                                     ["last_modified_date", current_time],
-                                    ["triplestore", "fuseki"],
                                     ["changelog", f"{current_time} - v{new_version}: {changelog_message}"]
                                 ])
                                 logger.info(f"Updated spreadsheet version to {new_version} using fallback method")
@@ -340,7 +322,7 @@ def process_spreadsheet(sheets_integration, spreadsheet_id=None, spreadsheet_nam
                     spreadsheet_data['title'],
                     new_version,
                     ontology_file,
-                    f"Successfully generated ontology. Fuseki import {'succeeded' if fuseki_success else 'failed'}."
+                    f"Successfully generated ontology. Blazegraph import {'succeeded' if blazegraph_success else 'failed'}."
                 )
             
             return True
@@ -362,6 +344,7 @@ def process_spreadsheet(sheets_integration, spreadsheet_id=None, spreadsheet_nam
 def increment_version(version_str):
     """Increment the patch version number (x.y.z -> x.y.z+1)."""
     try:
+        # Parse version components
         if version_str.startswith('v'):
             version_str = version_str[1:]
         
@@ -369,90 +352,81 @@ def increment_version(version_str):
         if len(components) < 3:
             components = components + ['0'] * (3 - len(components))
         
+        # Increment patch version
         components[2] = str(int(components[2]) + 1)
         
         return '.'.join(components)
     except Exception as e:
         logger.warning(f"Error incrementing version {version_str}: {e}")
-        return "0.0.1"
+        return "0.0.1"  # Default if version can't be parsed
 
-def import_to_fuseki(ontology_path, spreadsheet_title, version):
-    """Import the ontology into Apache Jena Fuseki (updated from Blazegraph)."""
+def import_to_blazegraph(ontology_path, spreadsheet_title, version):
+    """Import the ontology into Blazegraph."""
     try:
-        logger.info("Importing ontology to Apache Jena Fuseki...")
-        
         # Read the ontology file
         with open(ontology_path, 'rb') as f:
             ontology_data = f.read()
         
-        # Get Fuseki endpoints
-        fuseki_data_endpoint = CONFIG.get('fuseki_data_endpoint')
-        fuseki_update_endpoint = CONFIG.get('fuseki_update_endpoint')
-        
-        # Fallback to legacy config
-        if not fuseki_data_endpoint:
-            fuseki_base = CONFIG.get('fuseki_base_url', 'http://167.172.143.162:3030')
-            dataset = CONFIG.get('fuseki_dataset', 'treekipedia')
-            fuseki_data_endpoint = f"{fuseki_base}/{dataset}/data"
-            fuseki_update_endpoint = f"{fuseki_base}/{dataset}/update"
-        
-        # Create a named graph URI
-        safe_title = "".join(c if c.isalnum() or c in "-_" else "_" for c in spreadsheet_title)
-        safe_version = version.replace(".", "_").replace(" ", "")
-        graph_uri = f"http://treekipedia.org/ontology/{safe_title}/version{safe_version}"
+        # Define headers and query parameters
+        headers = {
+            'Content-Type': 'application/rdf+xml'
+        }
         
         # Add authentication if configured
         auth = None
-        if CONFIG.get('triplestore_update_auth'):
-            if isinstance(CONFIG['triplestore_update_auth'], list) and len(CONFIG['triplestore_update_auth']) == 2:
-                auth = tuple(CONFIG['triplestore_update_auth'])
+        if CONFIG['blazegraph_update_auth']:
+            if isinstance(CONFIG['blazegraph_update_auth'], list) and len(CONFIG['blazegraph_update_auth']) == 2:
+                auth = tuple(CONFIG['blazegraph_update_auth'])
         
-        # First, try to clear the existing graph using SPARQL UPDATE
-        if fuseki_update_endpoint:
-            clear_query = f"DROP SILENT GRAPH <{graph_uri}>"
-            try:
-                clear_response = requests.post(
-                    fuseki_update_endpoint,
-                    data=clear_query,
-                    headers={'Content-Type': 'application/sparql-update'},
-                    auth=auth,
-                    timeout=30
-                )
-                if clear_response.status_code in [200, 204]:
-                    logger.info(f"Cleared existing graph: {graph_uri}")
-                else:
-                    logger.warning(f"Failed to clear graph: {clear_response.status_code}")
-            except Exception as e:
-                logger.warning(f"Error clearing graph: {e}")
+        # Construct the endpoint URL
+        endpoint = CONFIG['blazegraph_endpoint']
         
-        # Import using HTTP PUT to data endpoint (Fuseki style)
-        headers = {'Content-Type': 'application/rdf+xml'}
-        params = {'graph': graph_uri}
+        # If the endpoint ends with 'sparql', modify for update
+        if endpoint.endswith('/sparql'):
+            update_endpoint = endpoint
+        else:
+            update_endpoint = endpoint
         
-        response = requests.put(
-            fuseki_data_endpoint,
-            data=ontology_data,
+        # Create a named graph URI based on spreadsheet title and version
+        safe_version = version.replace(" ", "")
+        graph_uri = f"http://example.org/ontology/{safe_title}/version{safe_version}"
+        params = {'context-uri': graph_uri}
+        
+        # First, try to clear the existing graph
+        clear_query = f"CLEAR GRAPH <{graph_uri}>"
+        try:
+            r = requests.post(
+                update_endpoint, 
+                headers={'Content-Type': 'application/sparql-update'},
+                data=clear_query,
+                auth=auth
+            )
+            if r.status_code >= 200 and r.status_code < 300:
+                logger.info(f"Cleared existing graph: {graph_uri}")
+            else:
+                logger.warning(f"Failed to clear graph: {r.status_code} {r.text}")
+        except Exception as e:
+            logger.warning(f"Error clearing graph: {e}")
+        
+        # Now import the new data
+        r = requests.post(
+            update_endpoint,
             headers=headers,
             params=params,
-            auth=auth,
-            timeout=120
+            data=ontology_data,
+            auth=auth
         )
         
-        if response.status_code in [200, 201, 204]:
-            logger.info(f"Successfully imported to Fuseki: {graph_uri}")
+        if r.status_code >= 200 and r.status_code < 300:
+            logger.info(f"Successfully imported to Blazegraph: {graph_uri}")
             return True
         else:
-            logger.error(f"Error importing to Fuseki: {response.status_code} {response.text}")
+            logger.error(f"Error importing to Blazegraph: {r.status_code} {r.text}")
             return False
             
     except Exception as e:
-        logger.error(f"Error importing to Fuseki: {e}", exc_info=True)
+        logger.error(f"Error importing to Blazegraph: {e}", exc_info=True)
         return False
-
-# Keep backward compatibility
-def import_to_blazegraph(ontology_path, spreadsheet_title, version):
-    """Backward compatibility wrapper for Fuseki import."""
-    return import_to_fuseki(ontology_path, spreadsheet_title, version)
 
 def send_notification(spreadsheet_title, version, ontology_file, message):
     """Send a notification email about the processing result."""
@@ -465,7 +439,7 @@ def send_notification(spreadsheet_title, version, ontology_file, message):
         from email.mime.multipart import MIMEMultipart
         
         msg = MIMEMultipart()
-        msg['Subject'] = f"Ontology Generation (Fuseki): {spreadsheet_title} - v{version}"
+        msg['Subject'] = f"Ontology Generation: {spreadsheet_title} - v{version}"
         msg['From'] = CONFIG['smtp_username']
         msg['To'] = CONFIG['notify_email']
         
@@ -475,7 +449,6 @@ def send_notification(spreadsheet_title, version, ontology_file, message):
             <h2>Ontology Generation Report</h2>
             <p><strong>Spreadsheet:</strong> {spreadsheet_title}</p>
             <p><strong>Version:</strong> {version}</p>
-            <p><strong>Triplestore:</strong> Apache Jena Fuseki</p>
             <p><strong>Status:</strong> {message}</p>
             <p><strong>Time:</strong> {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
             {'<p><strong>Ontology File:</strong> ' + ontology_file + '</p>' if ontology_file else ''}
@@ -498,10 +471,9 @@ def send_notification(spreadsheet_title, version, ontology_file, message):
         logger.error(f"Error sending notification: {e}")
         return False
 
-# Keep the main function mostly unchanged
 def main():
     """Main function to process spreadsheets based on configuration."""
-    parser = argparse.ArgumentParser(description='Automated Ontology Generator and Fuseki Importer')
+    parser = argparse.ArgumentParser(description='Automated Ontology Generator and Blazegraph Importer')
     parser.add_argument('--config', help='Path to configuration file')
     parser.add_argument('--spreadsheet-id', help='Specific spreadsheet ID to process')
     parser.add_argument('--spreadsheet-name', help='Specific spreadsheet name to process')
@@ -540,8 +512,6 @@ def main():
     if CONFIG['save_history']:
         os.makedirs(CONFIG['history_dir'], exist_ok=True)
     
-    logger.info("🚀 Starting automation with Apache Jena Fuseki integration")
-    
     # Process spreadsheets once or continuously
     if args.continuous:
         logger.info(f"Starting continuous monitoring. Checking every {CONFIG['check_interval']} seconds")
@@ -563,7 +533,7 @@ def main():
                 break
             except Exception as e:
                 logger.error(f"Error in main loop: {e}", exc_info=True)
-                time.sleep(60)
+                time.sleep(60)  # Short delay before retrying
     else:
         # Process all spreadsheet IDs
         for spreadsheet_id in CONFIG['spreadsheet_ids']:
@@ -573,7 +543,7 @@ def main():
         for spreadsheet_name in CONFIG['spreadsheet_names']:
             process_spreadsheet(sheets_integration, spreadsheet_name=spreadsheet_name, force=args.force)
     
-    logger.info("Processing complete with Apache Jena Fuseki")
+    logger.info("Processing complete")
 
 if __name__ == "__main__":
     main()

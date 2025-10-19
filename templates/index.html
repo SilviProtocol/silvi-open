@@ -61,7 +61,7 @@
         </div>
         <div class="status-grid">
           <div class="status-item">
-            <h6>Apache Fuseki</h6>
+            <h6>Blazegraph</h6>
             <div id="blazegraph-status" class="status-indicator disconnected">
               <i class="fas fa-spinner fa-spin me-1"></i> Checking...
             </div>
@@ -83,6 +83,55 @@
 
       <div class="row">
         <div class="col-lg-8">
+          <!-- File Upload Section -->
+          <div class="file-upload">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3><i class="fas fa-upload"></i> Create Ontology from Files</h3>
+              <button class="btn btn-outline-secondary btn-sm" onclick="showContextualHelp('csv-upload')">
+                <i class="fas fa-question-circle"></i> Help
+              </button>
+            </div>
+            
+            <form action="{{ url_for('main.upload_files') }}" method="post" enctype="multipart/form-data" id="uploadForm">
+              <div class="mb-4">
+                <label for="ontology_name" class="form-label">Ontology Name</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                  <input type="text" class="form-control" id="ontology_name" name="ontology_name" value="biodiversity-ontology" placeholder="Enter ontology name" />
+                </div>
+                <div class="form-text">
+                  The name of your ontology file (without .owl extension)
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label"><i class="fas fa-table"></i> Upload CSV Files</label>
+                <div class="file-input-wrapper">
+                  <div class="file-input-button">
+                    <i class="fas fa-file-csv"></i> Choose Files
+                  </div>
+                  <span class="file-input-text">No files selected</span>
+                  <input type="file" class="form-control" id="files" name="files" accept=".csv" multiple />
+                </div>
+                <div class="selected-files" id="selectedFiles"></div>
+                <div class="form-text">
+                  Upload one or more CSV files for smart ontology generation
+                </div>
+              </div>
+
+              <!-- Hidden input to always use dynamic ontology -->
+              {% if has_dynamic_ontology %}
+              <input type="hidden" name="use_dynamic_ontology" value="true">
+              {% endif %}
+
+              <div class="mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="fas fa-cogs"></i> Generate Smart Ontology
+                </button>
+              </div>
+            </form>
+          </div>
+
           <!-- Integration Options -->
           <div class="integration-options">
             <div class="d-flex justify-content-between align-items-center mb-3">

@@ -79,11 +79,11 @@
                     {% endif %}
                     {% if blazegraph_status %}
                     <span class="status-indicator connected">
-                        <i class="fas fa-database me-1"></i> Apache Online
+                        <i class="fas fa-database me-1"></i> Blazegraph Online
                     </span>
                     {% else %}
                     <span class="status-indicator disconnected">
-                        <i class="fas fa-exclamation-circle me-1"></i> Apache Offline
+                        <i class="fas fa-exclamation-circle me-1"></i> Blazegraph Offline
                     </span>
                     {% endif %}
                 </div>
@@ -309,7 +309,7 @@
             if (spreadsheetId) formData.append('spreadsheet_id', spreadsheetId);
             if (spreadsheetName) formData.append('spreadsheet_name', spreadsheetName);
             
-            fetch('/preview-multi-sheet-ontology', {
+            fetch('/preview-dynamic-ontology', {
                 method: 'POST',
                 body: formData
             })
