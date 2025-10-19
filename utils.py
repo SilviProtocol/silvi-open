@@ -1,5 +1,5 @@
 # =============================================================================
-# Blazegraph Import Fix - Add to your utils.py
+# Apache Jena Fuseki Integration utils.py
 # =============================================================================
 
 import requests
@@ -8,6 +8,7 @@ import logging
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import re
+import json
 from datetime import datetime
 from typing import Dict, Any, Optional, Tuple
 
@@ -116,6 +117,134 @@ def allowed_file(filename: str) -> bool:
     _, ext = os.path.splitext(filename.lower())
     
     return ext in ALLOWED_EXTENSIONS
+
+# Backward compatibility functions
+def test_blazegraph_connection():
+    """Backward compatibility wrapper for Fuseki connection test."""
+    return test_fuseki_connection()
+
+def check_blazegraph_status():
+    """Check if triplestore (Fuseki) is accessible - backward compatibility."""
+    success, _ = test_fuseki_connection()
+    return success
+
+def import_to_blazegraph_enhanced(ontology_file_path, ontology_name, version):
+    """Enhanced import wrapper for backward compatibility."""
+    return import_to_fuseki(ontology_file_path, ontology_name, version)
+
+# Enhanced Fuseki operations
+class FusekiManager:
+    """Manager class for advanced Fuseki operations"""
+    
+    def __init__(self, fuseki_base_url: str, dataset_name: str):
+        self.fuseki_base = fuseki_base_url.rstrip('/')
+        self.dataset = dataset_name
+        self.sparql_endpoint = f"{self.fuseki_base}/{dataset_name}/sparql"
+        self.update_endpoint = f"{self.fuseki_base}/{dataset_name}/update"
+        self.data_endpoint = f"{self.fuseki_base}/{dataset_name}/data"
+    
+    def test_connection(self) -> Tuple[bool, str]:
+        """Test connection to Fuseki"""
+        try:
+            response = requests.get(f"{self.fuseki_base}/$/ping", timeout=10)
+            if response.status_code == 200:
+                return True, "Connection successful"
+            else:
+                return False, f"HTTP {response.status_code}"
+        except Exception as e:
+            return False, str(e)
+    
+    def count_triples(self, graph_uri: str = None) -> int:
+        """Count triples in dataset or specific graph"""
+        try:
+            if graph_uri:
+                query = f"SELECT (COUNT(*) as ?count) WHERE {{ GRAPH <{graph_uri}> {{ ?s ?p ?o }} }}"
+            else:
+                query = "SELECT (COUNT(*) as ?count) WHERE { ?s ?p ?o }"
+            
+            response = requests.post(
+                self.sparql_endpoint,
+                data={'query': query},
+                headers={'Accept': 'application/sparql-results+json'},
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                return int(result['results']['bindings'][0]['count']['value'])
+            
+            return 0
+        except Exception:
+            return 0
+    
+    def list_graphs(self) -> list:
+        """List all named graphs in the dataset"""
+        try:
+            query = "SELECT DISTINCT ?graph WHERE { GRAPH ?graph { ?s ?p ?o } }"
+            
+            response = requests.post(
+                self.sparql_endpoint,
+                data={'query': query},
+                headers={'Accept': 'application/sparql-results+json'},
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                return [binding['graph']['value'] for binding in result['results']['bindings']]
+            
+            return []
+        except Exception:
+            return []
+    
+    def clear_graph(self, graph_uri: str) -> bool:
+        """Clear a specific graph"""
+        try:
+            clear_query = f"DROP SILENT GRAPH <{graph_uri}>"
+            response = requests.post(
+                self.update_endpoint,
+                data=clear_query,
+                headers={'Content-Type': 'application/sparql-update'},
+                timeout=30
+            )
+            return response.status_code in [200, 204]
+        except Exception:
+            return False
+    
+    def upload_rdf_data(self, rdf_content: str, graph_uri: str, content_type: str = 'application/rdf+xml') -> Tuple[bool, str]:
+        """Upload RDF data to a specific graph"""
+        try:
+            headers = {'Content-Type': content_type}
+            params = {'graph': graph_uri}
+            
+            response = requests.put(
+                self.data_endpoint,
+                data=rdf_content.encode('utf-8') if isinstance(rdf_content, str) else rdf_content,
+                headers=headers,
+                params=params,
+                timeout=120
+            )
+            
+            if response.status_code in [200, 201, 204]:
+                return True, f"Upload successful (HTTP {response.status_code})"
+            else:
+                return False, f"Upload failed (HTTP {response.status_code}): {response.text[:200]}"
+                
+        except Exception as e:
+            return False, f"Upload error: {str(e)}"
+
+# Convenience function to get Fuseki manager
+def get_fuseki_manager():
+    """Get configured Fuseki manager instance"""
+    from flask import current_app
+    
+    fuseki_base = current_app.config.get('FUSEKI_BASE_URL')
+    dataset = current_app.config.get('FUSEKI_DATASET', 'treekipedia')
+    
+    if not fuseki_base:
+        raise ValueError("Fuseki base URL not configured")
+    
+    return FusekiManager(fuseki_base, dataset)
 
 def save_metadata(session_id: str, metadata: Dict[str, Any]) -> bool:
     """
@@ -451,255 +580,135 @@ def is_development_mode() -> bool:
     except Exception:
         return False
 
-def import_to_blazegraph_enhanced(ontology_file_path, ontology_name, version):
-    """
-    Enhanced Blazegraph import with better error handling and retry logic.
-    """
-    from flask import current_app
-    
-    if not current_app.config.get('BLAZEGRAPH_ENABLED'):
-        return False, "Blazegraph not enabled", None
-    
-    blazegraph_endpoint = current_app.config['BLAZEGRAPH_ENDPOINT']
-    
+# Fuseki-specific import function (replaces Blazegraph version)
+def import_to_fuseki(ontology_file_path: str, ontology_name: str, version: str) -> Tuple[bool, str, str]:
+    """Import an ontology file to Apache Jena Fuseki triplestore."""
     try:
-        # Validate file exists and is readable
+        from flask import current_app
+        
+        if not current_app.config.get('TRIPLESTORE_ENABLED'):
+            return False, "Triplestore not enabled", ""
+        
+        # Get Fuseki endpoints
+        fuseki_base = current_app.config.get('FUSEKI_BASE_URL')
+        dataset = current_app.config.get('FUSEKI_DATASET', 'treekipedia')
+        data_endpoint = current_app.config.get('FUSEKI_DATA_ENDPOINT')
+        update_endpoint = current_app.config.get('FUSEKI_UPDATE_ENDPOINT')
+        
+        if not fuseki_base or not data_endpoint:
+            return False, "Fuseki endpoints not configured", ""
+        
+        # Check if file exists
         if not os.path.exists(ontology_file_path):
-            return False, f"Ontology file not found: {ontology_file_path}", None
-        
-        file_size = os.path.getsize(ontology_file_path)
-        if file_size == 0:
-            return False, "Ontology file is empty", None
-        
-        logger.info(f"Attempting to import {ontology_file_path} ({file_size} bytes) to Blazegraph")
+            return False, f"Ontology file not found: {ontology_file_path}", ""
         
         # Create graph URI
-        graph_uri = f"http://example.org/ontology/{ontology_name}/version{version}"
+        graph_uri = f"http://treekipedia.org/ontology/{ontology_name}/version{version}"
         
-        # Setup session with retry strategy
-        session = requests.Session()
-        retry_strategy = Retry(
-            total=3,
-            status_forcelist=[429, 500, 502, 503, 504],
-            method_whitelist=["HEAD", "GET", "OPTIONS", "POST"],
-            backoff_factor=1
-        )
-        adapter = HTTPAdapter(max_retries=retry_strategy)
-        session.mount("http://", adapter)
-        session.mount("https://", adapter)
-        
-        # Step 1: Check if Blazegraph is accessible
+        # Test Fuseki connection
         try:
-            health_response = session.get(blazegraph_endpoint, timeout=10)
-            if health_response.status_code != 200:
-                return False, f"Blazegraph not accessible (HTTP {health_response.status_code})", None
+            ping_response = requests.get(f"{fuseki_base}/$/ping", timeout=10)
+            if ping_response.status_code != 200:
+                return False, f"Fuseki not accessible (HTTP {ping_response.status_code})", ""
         except Exception as e:
-            return False, f"Cannot connect to Blazegraph: {str(e)}", None
+            return False, f"Cannot connect to Fuseki: {str(e)}", ""
         
-        # Step 2: Clear existing graph (optional)
+        # Clear existing graph (optional)
         try:
-            clear_url = f"{blazegraph_endpoint}/sparql"
             clear_query = f"DROP SILENT GRAPH <{graph_uri}>"
-            
-            clear_response = session.post(
-                clear_url,
-                data={'update': clear_query},
-                headers={'Content-Type': 'application/x-www-form-urlencoded'},
+            clear_response = requests.post(
+                update_endpoint,
+                data=clear_query,
+                headers={'Content-Type': 'application/sparql-update'},
                 timeout=30
             )
             
             if clear_response.status_code in [200, 204]:
                 logger.info(f"Cleared existing graph: {graph_uri}")
-            else:
-                logger.warning(f"Could not clear graph (HTTP {clear_response.status_code})")
-                
         except Exception as e:
-            logger.warning(f"Error clearing graph: {str(e)}")
+            logger.warning(f"Could not clear existing graph: {str(e)}")
         
-        # Step 3: Import the ontology
+        # Import the ontology using HTTP PUT to data endpoint (Fuseki style)
         try:
-            # Read the ontology file
             with open(ontology_file_path, 'rb') as f:
                 ontology_content = f.read()
             
-            # Validate it's not empty
             if not ontology_content:
-                return False, "Ontology file content is empty", None
+                return False, "Ontology file is empty", ""
             
-            # Try different import approaches
-            import_success = False
-            import_message = ""
+            # Use HTTP PUT to data endpoint with graph parameter
+            headers = {'Content-Type': 'application/rdf+xml'}
+            params = {'graph': graph_uri}
             
-            # Approach 1: Direct POST with RDF/XML
-            try:
-                import_url = f"{blazegraph_endpoint}/sparql"
-                
-                # Prepare the data for POST
-                files = {
-                    'file': ('ontology.owl', ontology_content, 'application/rdf+xml')
-                }
-                
-                data = {
-                    'context-uri': graph_uri,
-                    'format': 'rdfxml'
-                }
-                
-                import_response = session.post(
-                    import_url,
-                    files=files,
-                    data=data,
-                    timeout=60
-                )
-                
-                if import_response.status_code in [200, 201, 204]:
-                    import_success = True
-                    import_message = f"Successfully imported via direct POST (HTTP {import_response.status_code})"
-                else:
-                    import_message = f"Direct POST failed (HTTP {import_response.status_code}): {import_response.text[:200]}"
-                    
-            except Exception as e:
-                import_message = f"Direct POST approach failed: {str(e)}"
+            import_response = requests.put(
+                data_endpoint,
+                data=ontology_content,
+                headers=headers,
+                params=params,
+                timeout=120
+            )
             
-            # Approach 2: SPARQL UPDATE if direct POST failed
-            if not import_success:
-                try:
-                    # Convert to string for SPARQL UPDATE
-                    ontology_string = ontology_content.decode('utf-8')
-                    
-                    # Create SPARQL UPDATE query
-                    sparql_update = f"""
-                    INSERT DATA {{
-                        GRAPH <{graph_uri}> {{
-                            # RDF data will be inserted here
-                        }}
-                    }}
-                    """
-                    
-                    # This approach is complex for large ontologies, so we'll use a simpler method
-                    # Just try the REST API endpoint
-                    rest_url = f"{blazegraph_endpoint}/namespace/kb/sparql"
-                    
-                    headers = {
-                        'Content-Type': 'application/rdf+xml',
-                        'Accept': 'application/xml'
-                    }
-                    
-                    params = {
-                        'context-uri': graph_uri
-                    }
-                    
-                    import_response = session.post(
-                        rest_url,
-                        data=ontology_content,
-                        headers=headers,
-                        params=params,
-                        timeout=60
-                    )
-                    
-                    if import_response.status_code in [200, 201, 204]:
-                        import_success = True
-                        import_message = f"Successfully imported via REST API (HTTP {import_response.status_code})"
-                    else:
-                        import_message += f" | REST API failed (HTTP {import_response.status_code}): {import_response.text[:200]}"
-                        
-                except Exception as e:
-                    import_message += f" | REST API approach failed: {str(e)}"
-            
-            # Approach 3: Simple SPARQL endpoint if others failed
-            if not import_success:
-                try:
-                    simple_url = f"{blazegraph_endpoint}/sparql"
-                    
-                    # Try as form data
-                    form_data = {
-                        'update': f'LOAD <file://{ontology_file_path}> INTO GRAPH <{graph_uri}>'
-                    }
-                    
-                    headers = {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                    
-                    import_response = session.post(
-                        simple_url,
-                        data=form_data,
-                        headers=headers,
-                        timeout=60
-                    )
-                    
-                    if import_response.status_code in [200, 201, 204]:
-                        import_success = True
-                        import_message = f"Successfully imported via SPARQL LOAD (HTTP {import_response.status_code})"
-                    else:
-                        import_message += f" | SPARQL LOAD failed (HTTP {import_response.status_code})"
-                        
-                except Exception as e:
-                    import_message += f" | SPARQL LOAD approach failed: {str(e)}"
-            
-            if import_success:
-                # Verify the import by querying
-                try:
-                    verify_query = f"SELECT (COUNT(*) as ?count) WHERE {{ GRAPH <{graph_uri}> {{ ?s ?p ?o }} }}"
-                    verify_response = session.post(
-                        f"{blazegraph_endpoint}/sparql",
-                        data={'query': verify_query},
-                        headers={'Accept': 'application/sparql-results+json'},
-                        timeout=30
-                    )
-                    
-                    if verify_response.status_code == 200:
-                        result = verify_response.json()
-                        count = result['results']['bindings'][0]['count']['value']
-                        import_message += f" | Verified: {count} triples imported"
-                        logger.info(f"Blazegraph import verification: {count} triples in graph {graph_uri}")
-                    
-                except Exception as e:
-                    logger.warning(f"Could not verify import: {str(e)}")
-                
-                return True, import_message, graph_uri
+            if import_response.status_code in [200, 201, 204]:
+                return True, f"Successfully imported to Fuseki (HTTP {import_response.status_code})", graph_uri
             else:
-                return False, f"All import approaches failed: {import_message}", None
+                return False, f"Import failed (HTTP {import_response.status_code}): {import_response.text[:200]}", ""
                 
         except Exception as e:
-            return False, f"Error during ontology import: {str(e)}", None
+            return False, f"Error during import: {str(e)}", ""
             
     except Exception as e:
-        logger.error(f"Unexpected error in Blazegraph import: {str(e)}")
-        return False, f"Unexpected error: {str(e)}", None
+        logger.error(f"Unexpected error in Fuseki import: {str(e)}")
+        return False, f"Unexpected error: {str(e)}", ""
 
-def test_blazegraph_connection():
-    """
-    Test Blazegraph connection and return detailed status.
-    """
+def test_fuseki_connection():
+    """Test Fuseki connection and return detailed status."""
     from flask import current_app
     
-    if not current_app.config.get('BLAZEGRAPH_ENABLED'):
-        return False, "Blazegraph not enabled in configuration"
+    if not current_app.config.get('TRIPLESTORE_ENABLED'):
+        return False, "Triplestore not enabled in configuration"
     
-    blazegraph_endpoint = current_app.config['BLAZEGRAPH_ENDPOINT']
+    fuseki_base = current_app.config.get('FUSEKI_BASE_URL')
+    fuseki_sparql = current_app.config.get('FUSEKI_SPARQL_ENDPOINT')
+    
+    if not fuseki_base:
+        return False, "Fuseki base URL not configured"
     
     try:
-        response = requests.get(blazegraph_endpoint, timeout=10)
-        if response.status_code == 200:
-            return True, f"Blazegraph accessible at {blazegraph_endpoint}"
+        # Test ping endpoint
+        ping_response = requests.get(f"{fuseki_base}/$/ping", timeout=10)
+        
+        if ping_response.status_code == 200:
+            # Test SPARQL query
+            if fuseki_sparql:
+                test_query = "SELECT * WHERE { ?s ?p ?o } LIMIT 1"
+                query_response = requests.post(
+                    fuseki_sparql,
+                    data={'query': test_query},
+                    headers={'Accept': 'application/sparql-results+json'},
+                    timeout=10
+                )
+                
+                if query_response.status_code in [200, 404]:  # 404 OK if no data
+                    return True, f"Fuseki accessible at {fuseki_base}"
+                else:
+                    return False, f"SPARQL query failed: HTTP {query_response.status_code}"
+            else:
+                return True, f"Fuseki ping successful at {fuseki_base}"
         else:
-            return False, f"Blazegraph returned HTTP {response.status_code}"
+            return False, f"Fuseki ping failed: HTTP {ping_response.status_code}"
+            
     except requests.exceptions.ConnectTimeout:
-        return False, f"Connection timeout to {blazegraph_endpoint}"
+        return False, f"Connection timeout to {fuseki_base}"
     except requests.exceptions.ConnectionError:
-        return False, f"Cannot connect to {blazegraph_endpoint} - check if Blazegraph is running"
+        return False, f"Cannot connect to {fuseki_base} - check if Fuseki is running"
     except Exception as e:
-        return False, f"Error connecting to Blazegraph: {str(e)}"
+        return False, f"Error connecting to Fuseki: {str(e)}"
 
-# Update your existing import_to_blazegraph function in utils.py
-def import_to_blazegraph(ontology_file_path, ontology_name, version):
-    """
-    Wrapper function that uses the enhanced import method.
-    """
-    try:
-        return import_to_blazegraph_enhanced(ontology_file_path, ontology_name, version)
-    except Exception as e:
-        logger.error(f"Blazegraph import wrapper error: {str(e)}")
-        return False, f"Import wrapper error: {str(e)}", None
+
+# Backward compatibility wrapper
+def import_to_blazegraph(ontology_file_path: str, ontology_name: str, version: str) -> Tuple[bool, str, str]:
+    """Backward compatibility wrapper for Fuseki import."""
+    return import_to_fuseki(ontology_file_path, ontology_name, version)
 
 # =============================================================================
 # Quick Blazegraph Diagnostics Script

@@ -131,13 +131,27 @@ class SheetsIntegration:
                 "version_info": {}
             }
             
-            # Get worksheet info
+            # Get worksheet info with actual data dimensions
             for worksheet in spreadsheet.worksheets():
+                # Get actual data to count real rows and columns
+                all_values = worksheet.get_all_values()
+
+                # Count non-empty rows (excluding header)
+                actual_rows = 0
+                actual_cols = 0
+
+                if all_values:
+                    # Count rows with at least one non-empty cell
+                    actual_rows = sum(1 for row in all_values if any(cell.strip() for cell in row))
+                    # Get max column count from non-empty rows
+                    if actual_rows > 0:
+                        actual_cols = max(len([cell for cell in row if cell.strip()]) for row in all_values if any(cell.strip() for cell in row))
+
                 worksheet_meta = {
                     "title": worksheet.title,
                     "id": worksheet.id,
-                    "row_count": worksheet.row_count,
-                    "col_count": worksheet.col_count
+                    "row_count": actual_rows,
+                    "col_count": actual_cols
                 }
                 metadata["worksheets"].append(worksheet_meta)
             

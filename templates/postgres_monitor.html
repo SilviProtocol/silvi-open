@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PostgreSQL Monitor - Treekipedia</title>
+    <title>PostgreSQL to Fuseki Monitor - Treekipedia</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/treekipedia-unified.css">
@@ -11,8 +11,8 @@
 <body>
     <div class="container">
         <div class="header compact">
-            <h1><i class="fas fa-database"></i> Treekipedia PostgreSQL Monitor</h1>
-            <p class="lead">Monitor PostgreSQL integration and RDF generation</p>
+            <h1><i class="fas fa-database"></i> PostgreSQL to Fuseki Monitor</h1>
+            <p class="lead">Monitor PostgreSQL integration and sync to Apache Jena Fuseki</p>
             <span class="treekipedia-highlight"><i class="fas fa-tree"></i> 50,000+ Tree Species</span>
         </div>
 
@@ -31,8 +31,8 @@
             </div>
             <div class="col-md-3">
                 <div class="info-card text-center">
-                    <h5><span id="blazegraph-status-indicator" class="status-indicator loading"></span>Blazegraph</h5>
-                    <p id="blazegraph-status-text">Checking...</p>
+                    <h5><span id="fuseki-status-indicator" class="status-indicator loading"></span>Apache Fuseki</h5>
+                    <p id="fuseki-status-text">Checking...</p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -70,74 +70,173 @@
                     </div>
                 </div>
 
-                <!-- Recent Changes -->
+                <!-- Sync Results -->
                 <div class="info-card">
-                    <h4><i class="fas fa-history"></i> Recent Changes (24h)</h4>
-                    <div id="changes-content"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                    <h4><i class="fas fa-sync-alt"></i> Sync Results</h4>
+                    <div id="sync-results-content">
+                        <p class="text-muted">No sync operations performed yet.</p>
+                    </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <!-- Automation Control -->
+                <!-- Fuseki Operations -->
                 <div class="info-card">
-                    <h4><i class="fas fa-robot"></i> Automation</h4>
-                    <div id="automation-status" class="alert alert-info mb-3">
-                        <i class="fas fa-spinner fa-spin"></i> Checking...
+                    <h4><i class="fas fa-server"></i> Fuseki Operations</h4>
+                    <div id="fuseki-stats" class="mb-3">
+                        <div class="loading">Loading Fuseki statistics...</div>
                     </div>
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary" onclick="runAutomation()" id="run-automation-btn">
-                            <i class="fas fa-play"></i> Run Automation
+                        <button class="btn btn-success" onclick="syncAllTables()" id="sync-all-btn">
+                            <i class="fas fa-rocket"></i> Sync All Tables to Fuseki
                         </button>
-                        <button class="btn btn-outline-primary" onclick="generateRDFModal()">
-                            <i class="fas fa-project-diagram"></i> Generate RDF
+                        <button class="btn btn-info" onclick="loadFusekiStats()">
+                            <i class="fas fa-chart-bar"></i> Refresh Fuseki Stats
                         </button>
+                        <a href="http://167.172.143.162:3030/" target="_blank" class="btn btn-outline-primary">
+                            <i class="fas fa-external-link-alt"></i> Open Fuseki Web UI
+                        </a>
                         <a href="/" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left"></i> Back to Home
                         </a>
                     </div>
                 </div>
 
-                <!-- Statistics -->
+                <!-- Quick Actions -->
                 <div class="info-card">
-                    <h4><i class="fas fa-chart-bar"></i> Statistics</h4>
-                    <div class="row text-center">
-                        <div class="col-6 border-end">
-                            <h6>Species</h6>
-                            <span id="species-count" class="h5 text-primary-custom">-</span>
-                        </div>
-                        <div class="col-6">
-                            <h6>Est. Triples</h6>
-                            <span id="generated-triples" class="h5 text-success">-</span>
-                        </div>
+                    <h4><i class="fas fa-zap"></i> Quick Actions</h4>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-success btn-sm" onclick="testConnections()">
+                            <i class="fas fa-heartbeat"></i> Test Connections
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" onclick="queryFuseki()">
+                            <i class="fas fa-search"></i> Query Fuseki
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="clearFusekiData()">
+                            <i class="fas fa-trash"></i> Clear Fuseki Data
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- RDF Generation Modal -->
-    <div class="modal fade" id="rdfModal" tabindex="-1">
+    <!-- Sync Modal -->
+    <div class="modal fade" id="syncModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Generate RDF</h5>
+                    <h5 class="modal-title">Sync Table to Fuseki</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Table</label>
-                        <select id="rdf-table-select" class="form-select">
+                        <select id="sync-table-select" class="form-select">
                             <option value="">Select table...</option>
                         </select>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="push-to-blazegraph" checked>
-                        <label class="form-check-label" for="push-to-blazegraph">Push to Blazegraph</label>
+                    <div class="mb-3">
+                        <label class="form-label">Batch Size</label>
+                        <input type="number" id="batch-size" class="form-control" value="1000" min="100" max="10000">
+                        <div class="form-text">Number of records to process at once</div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" onclick="startRDFGeneration()" id="generate-rdf-btn">Generate</button>
+                    <button class="btn btn-primary" onclick="startSyncOperation()" id="sync-btn">
+                        <i class="fas fa-sync-alt"></i> Start Sync
+                    </button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Query Modal -->
+    <div class="modal fade" id="queryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Query Fuseki</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">SPARQL Query</label>
+                        <textarea id="sparql-query" class="form-control" rows="6" placeholder="Enter SPARQL query...">SELECT * WHERE { ?s ?p ?o } LIMIT 10</textarea>
+                    </div>
+                    <div id="query-results"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="executeSparqlQuery()">
+                        <i class="fas fa-play"></i> Execute Query
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSampleQueries()">
+                        <i class="fas fa-lightbulb"></i> Sample Queries
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch Info Modal -->
+    <div class="modal fade" id="batchInfoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-info-circle"></i> Batch Processing Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="batch-info-content">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Getting table information...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="start-batch-sync" onclick="startBatchSync()" disabled>
+                        <i class="fas fa-play"></i> Start Batch Sync
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch Progress Modal -->
+    <div class="modal fade" id="batchProgressModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-cogs"></i> Batch Sync Progress</h5>
+                </div>
+                <div class="modal-body">
+                    <div id="batch-progress-content">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span id="progress-status">Preparing...</span>
+                                <span id="progress-percentage">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" id="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div id="batch-details" class="small text-muted"></div>
+                        <div id="batch-logs" class="mt-3" style="max-height: 300px; overflow-y: auto;">
+                            <!-- Progress logs will be added here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-batch" onclick="cancelBatchSync()">Cancel</button>
+                    <button type="button" class="btn btn-success" id="complete-batch" onclick="completeBatchSync()" disabled style="display: none;">
+                        <i class="fas fa-check"></i> Complete
+                    </button>
                 </div>
             </div>
         </div>
@@ -149,7 +248,7 @@
         let systemOnline = false;
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 PostgreSQL Monitor starting...');
+            console.log('🚀 PostgreSQL to Fuseki Monitor starting...');
             initializeMonitor();
         });
 
@@ -157,8 +256,7 @@
             try {
                 await checkSystemStatus();
                 await loadTables();
-                await loadChanges();
-                await checkAutomationStatus();
+                await loadFusekiStats();
                 
                 // Auto-refresh every 30 seconds
                 setInterval(checkSystemStatus, 30000);
@@ -185,7 +283,8 @@
 
         async function checkSystemStatus() {
             try {
-                const response = await fetch('/api/system-status');
+                // Check both PostgreSQL and Fuseki status
+                const response = await fetch('/api/system-status-fuseki');
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
                 }
@@ -198,15 +297,15 @@
                 document.getElementById('postgres-status-text').textContent = 
                     status.postgresql?.message || 'Connection failed';
                 
-                // Update Blazegraph status
-                updateStatusIndicator('blazegraph', status.blazegraph?.status || 'error');
-                document.getElementById('blazegraph-status-text').textContent = 
-                    status.blazegraph?.message || 'Connection failed';
+                // Update Fuseki status
+                updateStatusIndicator('fuseki', status.fuseki?.status || 'error');
+                document.getElementById('fuseki-status-text').textContent = 
+                    status.fuseki?.message || 'Connection failed';
                 
-                systemOnline = status.postgresql?.status === 'connected';
+                systemOnline = status.postgresql?.status === 'connected' && status.fuseki?.status === 'online';
                 
                 if (!systemOnline) {
-                    showConnectionAlert('PostgreSQL connection failed. Check database credentials.', 'danger');
+                    showConnectionAlert('One or more connections failed. Check PostgreSQL and Fuseki servers.', 'danger');
                     disableButtons();
                 } else {
                     hideConnectionAlert();
@@ -216,9 +315,9 @@
             } catch (error) {
                 console.error('Status check error:', error);
                 updateStatusIndicator('postgres', 'error');
-                updateStatusIndicator('blazegraph', 'error');
+                updateStatusIndicator('fuseki', 'error');
                 document.getElementById('postgres-status-text').textContent = 'Check failed';
-                document.getElementById('blazegraph-status-text').textContent = 'Check failed';
+                document.getElementById('fuseki-status-text').textContent = 'Check failed';
                 showConnectionAlert(`System check failed: ${error.message}`, 'danger');
                 disableButtons();
             }
@@ -243,13 +342,13 @@
         }
 
         function enableButtons() {
-            document.getElementById('run-automation-btn').disabled = false;
-            document.getElementById('generate-rdf-btn').disabled = false;
+            document.getElementById('sync-all-btn').disabled = false;
+            document.getElementById('sync-btn').disabled = false;
         }
 
         function disableButtons() {
-            document.getElementById('run-automation-btn').disabled = true;
-            document.getElementById('generate-rdf-btn').disabled = true;
+            document.getElementById('sync-all-btn').disabled = true;
+            document.getElementById('sync-btn').disabled = true;
         }
 
         async function loadTables() {
@@ -269,16 +368,8 @@
                     allTables = data.tables;
                     document.getElementById('table-count').textContent = data.total_tables || 0;
                     
-                    let totalRows = 0;
-                    let speciesCount = 0;
-                    
                     const tbody = document.getElementById('tables-list');
                     tbody.innerHTML = data.tables.map(table => {
-                        totalRows += table.total_rows || 0;
-                        if (table.name === 'species') {
-                            speciesCount = table.total_rows || 0;
-                        }
-                        
                         return `
                         <tr class="table-row-clickable">
                             <td>
@@ -287,20 +378,22 @@
                             </td>
                             <td>${(table.total_rows || 0).toLocaleString()}</td>
                             <td>
-                                <button class="btn btn-sm btn-outline-primary" onclick="generateRDF('${table.name}')" 
-                                        ${!systemOnline ? 'disabled' : ''}>
-                                    <i class="fas fa-project-diagram"></i>
-                                </button>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="syncTable('${table.name}')"
+                                            ${!systemOnline ? 'disabled' : ''}>
+                                        <i class="fas fa-sync-alt"></i> Sync Sample
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info" onclick="showBatchInfo('${table.name}')"
+                                            ${!systemOnline ? 'disabled' : ''}>
+                                        <i class="fas fa-info-circle"></i> Batch Info
+                                    </button>
+                                </div>
                             </td>
                         </tr>`;
                     }).join('');
 
-                    // Update statistics
-                    document.getElementById('species-count').textContent = speciesCount.toLocaleString();
-                    document.getElementById('generated-triples').textContent = (totalRows * 20).toLocaleString();
-
                     // Update table select dropdown
-                    const select = document.getElementById('rdf-table-select');
+                    const select = document.getElementById('sync-table-select');
                     select.innerHTML = '<option value="">Select table...</option>' + 
                         data.tables.map(table => `<option value="${table.name}">${table.name} (${(table.total_rows || 0).toLocaleString()} rows)</option>`).join('');
                 } else {
@@ -316,211 +409,517 @@
             }
         }
 
-        async function loadChanges() {
+        async function loadFusekiStats() {
+            const statsDiv = document.getElementById('fuseki-stats');
+            statsDiv.innerHTML = '<div class="loading">Loading Fuseki statistics...</div>';
+            
             try {
-                document.getElementById('changes-content').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading changes...';
-                
-                const response = await fetch('/postgres-changes?hours=24');
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
+                const response = await fetch('/fuseki-stats');
                 const data = await response.json();
-                console.log('Changes data:', data);
                 
-                if (data.success && data.changes) {
-                    const content = document.getElementById('changes-content');
-                    const changes = Object.entries(data.changes);
+                if (data.success) {
+                    const stats = data.statistics;
+                    let html = `
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <h6>Total Triples</h6>
+                                <div class="h5 text-primary">${stats.total_triples.toLocaleString()}</div>
+                            </div>
+                            <div class="col-6">
+                                <h6>Entities</h6>
+                                <div class="h5 text-success">${stats.total_entities.toLocaleString()}</div>
+                            </div>
+                        </div>
+                    `;
                     
-                    if (changes.length === 0) {
-                        content.innerHTML = '<p class="text-muted"><i class="fas fa-info-circle"></i> No tables monitored</p>';
-                        return;
+                    if (stats.entity_types.length > 0) {
+                        html += '<hr><h6>Top Entity Types:</h6><ul class="list-unstyled small">';
+                        stats.entity_types.slice(0, 3).forEach(type => {
+                            const shortType = type.type.split('/').pop() || type.type;
+                            html += `<li><i class="fas fa-circle text-primary me-1"></i> ${shortType}: ${type.count.toLocaleString()}</li>`;
+                        });
+                        html += '</ul>';
                     }
                     
-                    const totalChanges = changes.reduce((sum, [table, info]) => sum + (info.change_count || 0), 0);
-                    
-                    if (totalChanges === 0) {
-                        content.innerHTML = '<p class="text-muted"><i class="fas fa-check-circle"></i> No changes detected in last 24 hours</p>';
-                    } else {
-                        content.innerHTML = changes.map(([table, info]) => {
-                            let alertClass = 'alert-info';
-                            let icon = 'fas fa-info-circle';
-                            let message = '';
-                            
-                            if (info.error) {
-                                alertClass = 'alert-warning';
-                                icon = 'fas fa-exclamation-triangle';
-                                message = `Error: ${info.error}`;
-                            } else if (info.change_count > 0) {
-                                alertClass = 'alert-success';
-                                icon = 'fas fa-arrow-up';
-                                message = `${info.change_count} changes`;
-                            } else if (info.note) {
-                                alertClass = 'alert-secondary';
-                                icon = 'fas fa-database';
-                                message = info.note;
-                            } else {
-                                message = 'No changes';
-                            }
-                            
-                            return `<div class="alert ${alertClass} py-2 mb-2">
-                                <i class="${icon}"></i> <strong>${table}:</strong> ${message}
-                            </div>`;
-                        }).join('');
-                    }
+                    statsDiv.innerHTML = html;
+                    document.getElementById('triple-count').textContent = stats.total_triples.toLocaleString();
                 } else {
-                    throw new Error(data.error || 'Invalid response format');
+                    statsDiv.innerHTML = `<div class="error">Error: ${data.error}</div>`;
                 }
+                
             } catch (error) {
-                console.error('Load changes error:', error);
-                document.getElementById('changes-content').innerHTML = 
-                    `<p class="error-message"><i class="fas fa-exclamation-triangle"></i> Error loading changes: ${error.message}</p>`;
+                statsDiv.innerHTML = `<div class="error">Error loading statistics: ${error.message}</div>`;
             }
         }
 
-        async function checkAutomationStatus() {
-            try {
-                const response = await fetch('/postgres-automation-status');
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log('Automation status:', data);
-                
-                const statusDiv = document.getElementById('automation-status');
-                
-                if (data.running) {
-                    statusDiv.innerHTML = '<i class="fas fa-play-circle text-success"></i> Running';
-                    statusDiv.className = 'alert alert-success mb-3';
-                } else {
-                    statusDiv.innerHTML = `<i class="fas fa-pause-circle text-info"></i> Ready (Last: ${data.last_run})`;
-                    statusDiv.className = 'alert alert-info mb-3';
-                }
-            } catch (error) {
-                console.error('Automation status error:', error);
-                const statusDiv = document.getElementById('automation-status');
-                statusDiv.innerHTML = '<i class="fas fa-exclamation-circle text-warning"></i> Status unknown';
-                statusDiv.className = 'alert alert-warning mb-3';
-            }
-        }
-
-        async function runAutomation() {
+        function syncTable(tableName) {
             if (!systemOnline) {
-                alert('Cannot run automation: PostgreSQL connection failed');
+                alert('Cannot sync: System connections failed');
                 return;
             }
             
-            if (!confirm('Run PostgreSQL automation for Treekipedia database?\n\nThis will check for changes and generate RDF data.')) {
-                return;
-            }
-            
-            const button = document.getElementById('run-automation-btn');
-            const originalText = button.innerHTML;
-            
-            try {
-                button.disabled = true;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running...';
-                
-                const response = await fetch('/run-postgres-automation', { 
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const result = await response.json();
-                console.log('Automation result:', result);
-                
-                if (result.success) {
-                    alert('✅ Automation completed successfully!');
-                    // Refresh data
-                    await loadTables();
-                    await loadChanges();
-                    await checkAutomationStatus();
-                } else {
-                    alert(`❌ Automation failed: ${result.message}`);
-                }
-            } catch (error) {
-                console.error('Automation error:', error);
-                alert(`❌ Error running automation: ${error.message}`);
-            } finally {
-                button.disabled = false;
-                button.innerHTML = originalText;
-            }
+            document.getElementById('sync-table-select').value = tableName;
+            const modal = new bootstrap.Modal(document.getElementById('syncModal'));
+            modal.show();
         }
 
-        function generateRDF(tableName) {
-            if (!systemOnline) {
-                alert('Cannot generate RDF: PostgreSQL connection failed');
-                return;
-            }
-            
-            document.getElementById('rdf-table-select').value = tableName;
-            generateRDFModal();
-        }
-
-        function generateRDFModal() {
-            if (!systemOnline) {
-                alert('Cannot generate RDF: PostgreSQL connection failed');
-                return;
-            }
-            
-            new bootstrap.Modal(document.getElementById('rdfModal')).show();
-        }
-
-        async function startRDFGeneration() {
-            const tableName = document.getElementById('rdf-table-select').value;
-            const pushToBlazegraph = document.getElementById('push-to-blazegraph').checked;
+        async function startSyncOperation() {
+            const tableName = document.getElementById('sync-table-select').value;
+            const batchSize = document.getElementById('batch-size').value;
             
             if (!tableName) {
-                alert('Please select a table');
+                alert('Please select a table to sync');
                 return;
             }
-
-            const button = document.getElementById('generate-rdf-btn');
+            
+            const button = document.getElementById('sync-btn');
             const originalText = button.innerHTML;
             
             try {
                 button.disabled = true;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing...';
                 
                 const formData = new FormData();
                 formData.append('table_name', tableName);
-                formData.append('push_to_blazegraph', pushToBlazegraph);
+                formData.append('batch_size', batchSize);
                 
-                const response = await fetch('/postgres-generate-rdf', { 
-                    method: 'POST', 
-                    body: formData 
+                // Use the new Fuseki sync endpoint
+                const response = await fetch('/postgres-sync-fuseki', {
+                    method: 'POST',
+                    body: formData
                 });
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
+                const data = await response.json();
                 
-                const result = await response.json();
-                console.log('RDF generation result:', result);
-                
-                if (result.success) {
-                    const message = `✅ Success!\n\nTable: ${result.table_name}\nRecords: ${result.records_processed.toLocaleString()}\nRDF Triples: ${result.rdf_triples.toLocaleString()}\n\nBlazegraph: ${result.blazegraph.message}`;
-                    alert(message);
+                if (data.success) {
+                    const resultHTML = `
+                        <div class="alert alert-success">
+                            <h5><i class="fas fa-check-circle"></i> Sync Successful!</h5>
+                            <ul class="mb-0">
+                                <li><strong>Table:</strong> ${data.table_name}</li>
+                                <li><strong>Records Processed:</strong> ${data.records_processed.toLocaleString()}</li>
+                                <li><strong>RDF Triples Generated:</strong> ${data.rdf_triples.toLocaleString()}</li>
+                                <li><strong>Upload Success:</strong> ${data.upload_success ? 'Yes' : 'No'}</li>
+                            </ul>
+                        </div>
+                    `;
                     
-                    document.getElementById('generated-triples').textContent = result.rdf_triples.toLocaleString();
-                    bootstrap.Modal.getInstance(document.getElementById('rdfModal')).hide();
+                    document.getElementById('sync-results-content').innerHTML = resultHTML;
+                    
+                    // Hide modal and refresh stats
+                    bootstrap.Modal.getInstance(document.getElementById('syncModal')).hide();
+                    loadFusekiStats();
                 } else {
-                    alert(`❌ Failed: ${result.error}`);
+                    alert(`Sync Failed: ${data.error}`);
                 }
+                
             } catch (error) {
-                console.error('RDF generation error:', error);
-                alert(`❌ Error: ${error.message}`);
+                alert(`Sync Error: ${error.message}`);
             } finally {
                 button.disabled = false;
                 button.innerHTML = originalText;
             }
+        }
+
+        async function syncAllTables() {
+            if (!systemOnline) {
+                alert('Cannot sync: System connections failed');
+                return;
+            }
+            
+            if (!confirm('This will sync ALL tables from PostgreSQL to Fuseki. This may take a long time. Continue?')) {
+                return;
+            }
+            
+            const button = document.getElementById('sync-all-btn');
+            const originalText = button.innerHTML;
+            
+            try {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing All Tables...';
+                
+                const response = await fetch('/postgres-full-sync-fuseki', {
+                    method: 'POST',
+                    body: new FormData()
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let resultHTML = `
+                        <div class="alert alert-success">
+                            <h5><i class="fas fa-check-circle"></i> Full Sync Completed!</h5>
+                            <ul>
+                                <li><strong>Tables Processed:</strong> ${data.tables_processed}</li>
+                                <li><strong>Total Records:</strong> ${data.total_records.toLocaleString()}</li>
+                                <li><strong>Total Triples:</strong> ${data.total_triples.toLocaleString()}</li>
+                            </ul>
+                        </div>
+                        
+                        <h6>Table Results:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead><tr><th>Table</th><th>Records</th><th>Triples</th><th>Status</th></tr></thead>
+                                <tbody>
+                    `;
+                    
+                    data.table_results.forEach(result => {
+                        const status = result.success ? '<span class="text-success">✅ Success</span>' : '<span class="text-danger">❌ Failed</span>';
+                        resultHTML += `
+                            <tr>
+                                <td>${result.table_name}</td>
+                                <td>${result.records_processed.toLocaleString()}</td>
+                                <td>${result.triples_generated.toLocaleString()}</td>
+                                <td>${status}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    resultHTML += '</tbody></table></div>';
+                    
+                    if (data.errors.length > 0) {
+                        resultHTML += '<h6>Errors:</h6><ul>';
+                        data.errors.forEach(error => {
+                            resultHTML += `<li class="text-danger">${error}</li>`;
+                        });
+                        resultHTML += '</ul>';
+                    }
+                    
+                    document.getElementById('sync-results-content').innerHTML = resultHTML;
+                    loadFusekiStats();
+                } else {
+                    alert(`Full Sync Failed: ${data.error}`);
+                }
+                
+            } catch (error) {
+                alert(`Full Sync Error: ${error.message}`);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        }
+
+        async function testConnections() {
+            try {
+                const response = await fetch('/api/system-status-fuseki');
+                const status = await response.json();
+                
+                const postgresStatus = status.postgresql?.status === 'connected' ? '✅ Connected' : '❌ Failed';
+                const fusekiStatus = status.fuseki?.status === 'online' ? '✅ Online' : '❌ Offline';
+                
+                alert(`Connection Test Results:\n\nPostgreSQL: ${postgresStatus}\nApache Fuseki: ${fusekiStatus}`);
+            } catch (error) {
+                alert(`Connection test failed: ${error.message}`);
+            }
+        }
+
+        function queryFuseki() {
+            const modal = new bootstrap.Modal(document.getElementById('queryModal'));
+            modal.show();
+        }
+
+        async function executeSparqlQuery() {
+            const query = document.getElementById('sparql-query').value;
+            const resultsDiv = document.getElementById('query-results');
+            
+            if (!query.trim()) {
+                alert('Please enter a SPARQL query');
+                return;
+            }
+            
+            resultsDiv.innerHTML = '<div class="loading">Executing query...</div>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('query', query);
+                
+                const response = await fetch('/fuseki-test-query', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const results = data.results.results.bindings;
+                    let html = `<h6>Query Results (${results.length} rows)</h6>`;
+                    
+                    if (results.length > 0) {
+                        html += '<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr>';
+                        
+                        // Get column headers
+                        const headers = Object.keys(results[0]);
+                        headers.forEach(header => {
+                            html += `<th>${header}</th>`;
+                        });
+                        html += '</tr></thead><tbody>';
+                        
+                        // Add rows (limit to first 20)
+                        results.slice(0, 20).forEach(row => {
+                            html += '<tr>';
+                            headers.forEach(header => {
+                                const value = row[header]?.value || '';
+                                const shortValue = value.length > 50 ? value.substring(0, 50) + '...' : value;
+                                html += `<td title="${value}">${shortValue}</td>`;
+                            });
+                            html += '</tr>';
+                        });
+                        
+                        html += '</tbody></table></div>';
+                        
+                        if (results.length > 20) {
+                            html += `<p class="small text-muted">Showing first 20 of ${results.length} results</p>`;
+                        }
+                    } else {
+                        html += '<p class="text-muted">No results found</p>';
+                    }
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = `<div class="alert alert-danger">Query Failed: ${data.error}</div>`;
+                }
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="alert alert-danger">Query Error: ${error.message}</div>`;
+            }
+        }
+
+        function loadSampleQueries() {
+            const queries = [
+                'SELECT * WHERE { ?s ?p ?o } LIMIT 10',
+                'SELECT (COUNT(*) as ?count) WHERE { ?s ?p ?o }',
+                'SELECT ?type (COUNT(?s) as ?count) WHERE { ?s a ?type } GROUP BY ?type ORDER BY DESC(?count)',
+                'SELECT * WHERE { ?s a <http://treekipedia.org/ontology/Species> } LIMIT 10',
+                'SELECT * WHERE { ?s <http://treekipedia.org/property/species> ?species } LIMIT 10'
+            ];
+            
+            const query = queries[Math.floor(Math.random() * queries.length)];
+            document.getElementById('sparql-query').value = query;
+        }
+
+        async function clearFusekiData() {
+            if (!confirm('⚠️ WARNING: This will delete ALL data from Fuseki. This action cannot be undone. Are you sure?')) {
+                return;
+            }
+            
+            if (!confirm('This is your final warning. All RDF data in Fuseki will be permanently deleted. Continue?')) {
+                return;
+            }
+            
+            try {
+                // Execute a DELETE query to clear all data
+                const deleteQuery = 'DROP ALL';
+                
+                const formData = new FormData();
+                formData.append('query', deleteQuery);
+                
+                const response = await fetch('/fuseki-test-query', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    alert('✅ Fuseki data cleared successfully');
+                    loadFusekiStats();
+                } else {
+                    alert('❌ Failed to clear Fuseki data');
+                }
+                
+            } catch (error) {
+                alert(`Error clearing data: ${error.message}`);
+            }
+        }
+
+        // Batch Processing Functions
+        let currentBatchInfo = null;
+        let batchSyncRunning = false;
+
+        async function showBatchInfo(tableName) {
+            const modal = new bootstrap.Modal(document.getElementById('batchInfoModal'));
+            modal.show();
+
+            try {
+                const formData = new FormData();
+                formData.append('table_name', tableName);
+
+                const response = await fetch('/postgres-table-info', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentBatchInfo = data;
+
+                    const approxRows = data.approx_rows || 'Unknown';
+                    const estimatedBatches = data.estimated_batches || 'Unknown';
+                    const batchSize = data.recommended_batch_size;
+
+                    const content = `
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-table"></i> Table: ${tableName}</h6>
+                            <ul class="mb-0">
+                                <li><strong>Approximate Rows:</strong> ${typeof approxRows === 'number' ? approxRows.toLocaleString() : approxRows}</li>
+                                <li><strong>Primary Key:</strong> ${data.primary_key || 'None detected'}</li>
+                                <li><strong>Batch Size:</strong> ${batchSize.toLocaleString()} records per batch</li>
+                                <li><strong>Estimated Batches:</strong> ${typeof estimatedBatches === 'number' ? estimatedBatches.toLocaleString() : estimatedBatches}</li>
+                            </ul>
+                        </div>
+
+                        <div class="mt-3">
+                            <h6>How Batch Sync Works:</h6>
+                            <ol class="small">
+                                <li>Processes ${batchSize.toLocaleString()} records at a time</li>
+                                <li>Uses primary key ordering to prevent duplicates</li>
+                                <li>Shows real-time progress</li>
+                                <li>Can be resumed if interrupted</li>
+                            </ol>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-exclamation-triangle"></i> Important Notes:</h6>
+                            <ul class="mb-0">
+                                <li>This will sync the entire table to Fuseki</li>
+                                <li>Large tables may take considerable time</li>
+                                <li>Existing data with same IDs will be updated</li>
+                                <li>You can cancel at any time</li>
+                            </ul>
+                        </div>
+                    `;
+
+                    document.getElementById('batch-info-content').innerHTML = content;
+                    document.getElementById('start-batch-sync').disabled = false;
+                } else {
+                    document.getElementById('batch-info-content').innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> Error: ${data.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('batch-info-content').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i> Error loading table info: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function startBatchSync() {
+            if (!currentBatchInfo || batchSyncRunning) return;
+
+            // Hide info modal and show progress modal
+            bootstrap.Modal.getInstance(document.getElementById('batchInfoModal')).hide();
+            const progressModal = new bootstrap.Modal(document.getElementById('batchProgressModal'));
+            progressModal.show();
+
+            batchSyncRunning = true;
+            let currentOffset = 0;
+            let batchNumber = 1;
+            let totalProcessed = 0;
+            let hasMore = true;
+
+            const tableName = currentBatchInfo.table_name;
+            const batchSize = currentBatchInfo.recommended_batch_size;
+            const estimatedBatches = currentBatchInfo.estimated_batches || 1;
+
+            // Initialize progress display
+            updateProgress(0, `Starting batch sync for ${tableName}...`, '');
+
+            try {
+                while (hasMore && batchSyncRunning) {
+                    const progress = estimatedBatches > 0 ? (batchNumber / estimatedBatches) * 100 : 0;
+                    updateProgress(
+                        Math.min(progress, 95), // Never show 100% until truly complete
+                        `Processing batch ${batchNumber}${estimatedBatches > 0 ? ` of ~${estimatedBatches}` : ''}...`,
+                        `Offset: ${currentOffset.toLocaleString()}, Processed: ${totalProcessed.toLocaleString()}`
+                    );
+
+                    const formData = new FormData();
+                    formData.append('table_name', tableName);
+                    formData.append('offset', currentOffset);
+                    formData.append('batch_size', batchSize);
+
+                    const response = await fetch('/postgres-sync-batch', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        totalProcessed += result.records_processed;
+                        hasMore = result.has_more;
+                        currentOffset = result.next_offset || (currentOffset + batchSize);
+
+                        addLogEntry(
+                            `✅ Batch ${batchNumber} completed: ${result.records_processed} records, ${result.rdf_triples} triples generated`,
+                            'success'
+                        );
+
+                        if (!hasMore) {
+                            updateProgress(100, 'Batch sync completed!', `Total processed: ${totalProcessed.toLocaleString()}`);
+                            addLogEntry(`🎉 All batches completed! Total: ${totalProcessed.toLocaleString()} records`, 'success');
+
+                            document.getElementById('cancel-batch').style.display = 'none';
+                            document.getElementById('complete-batch').style.display = 'inline-block';
+                            document.getElementById('complete-batch').disabled = false;
+
+                            // Refresh Fuseki stats
+                            loadFusekiStats();
+                            break;
+                        }
+                    } else {
+                        addLogEntry(`❌ Batch ${batchNumber} failed: ${result.error}`, 'error');
+                        updateProgress(progress, `Batch ${batchNumber} failed`, result.error);
+                        break;
+                    }
+
+                    batchNumber++;
+
+                    // Small delay to prevent overwhelming the server
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+            } catch (error) {
+                addLogEntry(`💥 Sync error: ${error.message}`, 'error');
+                updateProgress(0, 'Sync failed', error.message);
+            }
+
+            batchSyncRunning = false;
+        }
+
+        function updateProgress(percentage, status, details) {
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('progress-percentage').textContent = `${Math.round(percentage)}%`;
+            document.getElementById('progress-status').textContent = status;
+            document.getElementById('batch-details').textContent = details;
+        }
+
+        function addLogEntry(message, type = 'info') {
+            const logsDiv = document.getElementById('batch-logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const alertClass = type === 'success' ? 'alert-success' : type === 'error' ? 'alert-danger' : 'alert-info';
+
+            const logEntry = document.createElement('div');
+            logEntry.className = `alert ${alertClass} py-2 mb-1 small`;
+            logEntry.innerHTML = `<strong>${timestamp}:</strong> ${message}`;
+
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function cancelBatchSync() {
+            batchSyncRunning = false;
+            addLogEntry('🛑 Batch sync cancelled by user', 'warning');
+            updateProgress(0, 'Cancelled', 'Batch sync was cancelled');
+        }
+
+        function completeBatchSync() {
+            bootstrap.Modal.getInstance(document.getElementById('batchProgressModal')).hide();
+            // Reset state
+            currentBatchInfo = null;
+            batchSyncRunning = false;
         }
     </script>
 </body>

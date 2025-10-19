@@ -7,9 +7,9 @@ gunicorn==20.1.0
 owlready2==0.34
 rdflib==6.3.2
 
-# Google Sheets integration
+# Google Sheets integration - Updated versions for compatibility
 gspread==5.10.0
-google-auth==2.22.0
+google-auth>=2.22.0,<3.0.0
 google-auth-oauthlib==1.0.0
 google-auth-httplib2==0.1.0
 
@@ -17,9 +17,9 @@ google-auth-httplib2==0.1.0
 psycopg2-binary==2.9.7
 SQLAlchemy==2.0.19
 
-# HTTP requests and utilities
+# HTTP requests and utilities - Updated for compatibility
 requests==2.31.0
-urllib3==2.0.4
+urllib3>=1.26.0,<3.0.0
 
 # Data processing
 pandas==2.0.3
@@ -42,3 +42,7 @@ flake8==6.0.0
 click==8.1.6
 python-dateutil==2.8.2
 pytz==2023.3
+
+# Deployment dependencies
+paramiko==3.3.1
+scp==0.14.5

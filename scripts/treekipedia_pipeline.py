@@ -22,8 +22,25 @@ class TreekipediaPipeline:
     def load_config(self):
         try:
             with open(self.config_path, 'r') as f:
-                return json.load(f)
+                config = json.load(f)
+                
+                # Convert Blazegraph config to Fuseki if needed
+                if 'blazegraph' in config and 'fuseki' not in config:
+                    blazegraph_endpoint = config['blazegraph'].get('endpoint', '')
+                    if '9999' in blazegraph_endpoint:  # Old Blazegraph port
+                        # Convert to Fuseki
+                        config['fuseki'] = {
+                            'base_url': 'http://167.172.143.162:3030',
+                            'dataset': 'treekipedia',
+                            'sparql_endpoint': 'http://167.172.143.162:3030/treekipedia/sparql',
+                            'update_endpoint': 'http://167.172.143.162:3030/treekipedia/update',
+                            'data_endpoint': 'http://167.172.143.162:3030/treekipedia/data'
+                        }
+                        logger.info("🔄 Converted Blazegraph config to Fuseki")
+                
+                return config
         except:
+            logger.info("📝 Using default Fuseki configuration")
             return {
                 'postgresql': {
                     'enabled': True,
@@ -35,8 +52,12 @@ class TreekipediaPipeline:
                         'port': 5432
                     }
                 },
-                'blazegraph': {
-                    'endpoint': 'http://167.172.143.162:9999/blazegraph/namespace/kb/sparql'
+                'fuseki': {
+                    'base_url': 'http://167.172.143.162:3030',
+                    'dataset': 'treekipedia',
+                    'sparql_endpoint': 'http://167.172.143.162:3030/treekipedia/sparql',
+                    'update_endpoint': 'http://167.172.143.162:3030/treekipedia/update',
+                    'data_endpoint': 'http://167.172.143.162:3030/treekipedia/data'
                 },
                 'automation': {
                     'check_interval_minutes': 15
@@ -109,7 +130,7 @@ class TreekipediaPipeline:
             
             # Generate and import RDF
             rdf_file = self.generate_rdf(data)
-            success = self.import_to_blazegraph(rdf_file)
+            success = self.import_to_fuseki(rdf_file)
             
             if success:
                 state['last_check'] = datetime.now().isoformat()
@@ -157,34 +178,62 @@ class TreekipediaPipeline:
         
         return rdf_file
     
-    def import_to_blazegraph(self, rdf_file):
-        """Import RDF to Blazegraph"""
+    def import_to_fuseki(self, rdf_file):
+        """Import RDF to Apache Jena Fuseki (updated from Blazegraph)"""
         try:
+            logger.info("📤 Importing to Apache Jena Fuseki...")
+            
             with open(rdf_file, 'rb') as f:
                 rdf_data = f.read()
             
-            response = requests.post(
-                self.config['blazegraph']['endpoint'],
-                headers={'Content-Type': 'application/rdf+xml'},
+            # Get Fuseki endpoints from config
+            fuseki_config = self.config.get('fuseki', {})
+            data_endpoint = fuseki_config.get('data_endpoint')
+            
+            # Fallback to legacy Blazegraph endpoint converted to Fuseki
+            if not data_endpoint:
+                base_url = fuseki_config.get('base_url', 'http://167.172.143.162:3030')
+                dataset = fuseki_config.get('dataset', 'treekipedia')
+                data_endpoint = f"{base_url}/{dataset}/data"
+            
+            # Create graph URI for this update
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            graph_uri = f"http://treekipedia.org/data/auto_update_{timestamp}"
+            
+            # Use HTTP PUT to data endpoint (Fuseki style)
+            headers = {'Content-Type': 'application/rdf+xml'}
+            params = {'graph': graph_uri}
+            
+            response = requests.put(
+                data_endpoint,
                 data=rdf_data,
-                timeout=60
+                headers=headers,
+                params=params,
+                timeout=120
             )
             
-            if response.status_code == 200:
-                logger.info(f"✅ Imported {rdf_file}")
+            if response.status_code in [200, 201, 204]:
+                logger.info(f"✅ Imported {rdf_file} to Fuseki")
+                logger.info(f"   Graph URI: {graph_uri}")
                 os.remove(rdf_file)
                 return True
             else:
-                logger.error(f"❌ Import failed: {response.status_code}")
+                logger.error(f"❌ Fuseki import failed: HTTP {response.status_code}")
+                logger.error(f"   Response: {response.text[:200]}")
                 return False
                 
         except Exception as e:
-            logger.error(f"❌ Import error: {e}")
+            logger.error(f"❌ Fuseki import error: {e}")
             return False
+    
+    def import_to_blazegraph(self, rdf_file):
+        """Backward compatibility wrapper - now imports to Fuseki"""
+        logger.info("🔄 Redirecting Blazegraph import to Fuseki...")
+        return self.import_to_fuseki(rdf_file)
     
     def run_cycle(self):
         """Run automation cycle"""
-        logger.info("🤖 Starting automation cycle")
+        logger.info("🤖 Starting Treekipedia automation cycle with Fuseki")
         
         if self.detect_changes():
             return self.process_updates()
@@ -204,6 +253,7 @@ def main():
     if args.once:
         success = pipeline.run_cycle()
         print(f"\n{'✅ SUCCESS' if success else '❌ FAILED'}")
+        print(f"🔗 Fuseki endpoint: {pipeline.config.get('fuseki', {}).get('sparql_endpoint', 'Not configured')}")
         sys.exit(0 if success else 1)
     else:
         pipeline.run_cycle()
