@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Treekipedia GraphFlow v2.0</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/treekipedia-unified.css">
+    <style>
+        :root {
+            --doc-primary: #2d6a4f;
+            --doc-secondary: #52b788;
+            --doc-accent: #74c69d;
+            --doc-dark: #1b4332;
+            --doc-light: #d8f3dc;
+            --doc-warning: #f77f00;
+            --doc-danger: #d62828;
+            --doc-info: #0077b6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, var(--doc-dark) 0%, var(--doc-primary) 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .doc-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-header .version-badge {
+            background: var(--doc-accent);
+            color: var(--doc-dark);
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 1rem;
+        }
+
+        .doc-sidebar {
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .doc-sidebar .nav-link {
+            color: #495057;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.25rem;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .doc-sidebar .nav-link:hover {
+            background: var(--doc-light);
+            color: var(--doc-primary);
+            border-left-color: var(--doc-primary);
+        }
+
+        .doc-sidebar .nav-link.active {
+            background: var(--doc-primary);
+            color: white;
+            border-left-color: var(--doc-accent);
+        }
+
+        .doc-sidebar .nav-link i {
+            width: 20px;
+            margin-right: 8px;
+        }
+
+        .doc-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: var(--doc-dark);
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid var(--doc-accent);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 1rem;
+            color: var(--doc-primary);
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, var(--doc-light) 0%, white 100%);
+            border: 2px solid var(--doc-accent);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(45, 106, 79, 0.15);
+        }
+
+        .feature-card h5 {
+            color: var(--doc-primary);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border-left: 4px solid var(--doc-accent);
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .code-block .comment { color: #6a9955; }
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .function { color: #dcdcaa; }
+
+        .alert-custom {
+            border-radius: 10px;
+            border: none;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .alert-info { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); color: #01579b; }
+        .alert-success { background: linear-gradient(135deg, #d8f3dc 0%, #95d5b2 100%); color: #1b4332; }
+        .alert-warning { background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); color: #856404; }
+        .alert-danger { background: linear-gradient(135deg, #f8d7da 0%, #f1aeb5 100%); color: #721c24; }
+
+        .architecture-diagram {
+            background: white;
+            border: 2px dashed var(--doc-accent);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .layer-box {
+            background: var(--doc-light);
+            border: 2px solid var(--doc-primary);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .layer-box h6 {
+            color: var(--doc-primary);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .tech-badge {
+            display: inline-block;
+            background: var(--doc-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0.25rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .step-number {
+            background: var(--doc-primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .status-fixed { background: #d1e7dd; color: #0f5132; }
+        .status-new { background: #cfe2ff; color: #084298; }
+        .status-improved { background: #fff3cd; color: #664d03; }
+
+        table.comparison-table {
+            width: 100%;
+            margin: 1.5rem 0;
+        }
+
+        table.comparison-table thead {
+            background: var(--doc-primary);
+            color: white;
+        }
+
+        table.comparison-table th {
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        table.comparison-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        table.comparison-table tr:hover {
+            background: var(--doc-light);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--doc-primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: var(--doc-dark);
+            transform: translateY(-5px);
+        }
+
+        .endpoint-card {
+            background: #f8f9fa;
+            border-left: 4px solid var(--doc-info);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
+        .endpoint-card .method {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 5px;
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+
+        .method-get { background: #61affe; color: white; }
+        .method-post { background: #49cc90; color: white; }
+        .method-put { background: #fca130; color: white; }
+        .method-delete { background: #f93e3e; color: white; }
+
+        @media (max-width: 992px) {
+            .doc-sidebar {
+                position: relative;
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="doc-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1>
+                        <i class="fas fa-tree"></i> Treekipedia GraphFlow
+                        <span class="version-badge">v2.0.0</span>
+                    </h1>
+                    <p class="lead mb-0">Complete Platform Documentation</p>
+                    <p class="small">Biodiversity Data → Semantic Knowledge Graphs</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="/" class="btn btn-light btn-lg me-2">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                    <a href="#quick-start" class="btn btn-outline-light btn-lg">
+                        Quick Start
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div class="doc-sidebar">
+                    <h5 class="mb-3"><i class="fas fa-book me-2"></i>Contents</h5>
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#overview">
+                            <i class="fas fa-info-circle"></i>Overview
+                        </a>
+                        <a class="nav-link" href="#quick-start">
+                            <i class="fas fa-rocket"></i>Quick Start
+                        </a>
+                        <a class="nav-link" href="#architecture">
+                            <i class="fas fa-sitemap"></i>Architecture
+                        </a>
+                        <a class="nav-link" href="#data-formats">
+                            <i class="fas fa-table"></i>Data Formats
+                        </a>
+                        <a class="nav-link" href="#components">
+                            <i class="fas fa-cubes"></i>Components
+                        </a>
+                        <a class="nav-link" href="#pipeline">
+                            <i class="fas fa-project-diagram"></i>Pipeline
+                        </a>
+                        <a class="nav-link" href="#api">
+                            <i class="fas fa-code"></i>API Reference
+                        </a>
+                        <a class="nav-link" href="#setup">
+                            <i class="fas fa-cog"></i>Setup Guide
+                        </a>
+                        <a class="nav-link" href="#user-guide">
+                            <i class="fas fa-user"></i>User Guide
+                        </a>
+                        <a class="nav-link" href="#troubleshooting">
+                            <i class="fas fa-wrench"></i>Troubleshooting
+                        </a>
+                        <a class="nav-link" href="#faq">
+                            <i class="fas fa-question-circle"></i>FAQ
+                        </a>
+                    </nav>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="small text-muted mb-2">Last Updated</p>
+                        <p class="small"><strong>October 8, 2025</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Overview Section -->
+                <div class="doc-content" id="overview">
+                    <h2 class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Overview
+                    </h2>
+
+                    <p class="lead">
+                        Treekipedia GraphFlow transforms biodiversity data from multiple sources into semantically rich OWL ontologies and manages them in a graph database.
+                    </p>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="feature-card">
+                                <h5><i class="fas fa-database me-2"></i>Multi-Source Integration</h5>
+                                <ul>
+                                    <li>Google Sheets (collaborative)</li>
+                                    <li>PostgreSQL (enterprise scale)</li>
+                                    <li>CSV Files (quick imports)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="feature-card">
+                                <h5><i class="fas fa-brain me-2"></i>Smart Analysis</h5>
+                                <ul>
+                                    <li>120+ field patterns</li>
+                                    <li>8 ontology classes</li>
+                                    <li>Automatic categorization</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="feature-card">
+                                <h5><i class="fas fa-magic me-2"></i>Format Flexibility</h5>
+                                <ul>
+                                    <li>Direct schema (columns)</li>
+                                    <li>Transposed (rows)</li>
+                                    <li>MVP metadata format</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="feature-card">
+                                <h5><i class="fas fa-cloud-upload-alt me-2"></i>Triple Store Ready</h5>
+                                <ul>
+                                    <li>Apache Jena Fuseki</li>
+                                    <li>SPARQL endpoints</li>
+                                    <li>Incremental updates</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert-custom alert-success mt-4">
+                        <h6><i class="fas fa-check-circle me-2"></i>Recent Improvements (v2.0)</h6>
+                        <ul class="mb-0">
+                            <li><span class="status-badge status-new">NEW</span> Automatic transposed format detection</li>
+                            <li><span class="status-badge status-fixed">FIXED</span> Accurate row/column counts</li>
+                            <li><span class="status-badge status-fixed">FIXED</span> "Page not found" alert</li>
+                            <li><span class="status-badge status-improved">IMPROVED</span> Direct schema processing</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Quick Start -->
+                <div class="doc-content" id="quick-start">
+                    <h2 class="section-title">
+                        <i class="fas fa-rocket"></i>
+                        Quick Start
+                    </h2>
+
+                    <div class="step-indicator">
+                        <div class="step-number">1</div>
+                        <div>
+                            <h5 class="mb-1">Install Dependencies</h5>
+                            <p class="text-muted mb-0">Set up Python environment</p>
+                        </div>
+                    </div>
+                    <div class="code-block">
+<span class="comment"># Clone and setup</span>
+git clone &lt;your-repo&gt;
+cd biodiversity-ontology-automation
+
+<span class="comment"># Create virtual environment</span>
+python -m venv venv
+source venv/bin/activate  <span class="comment"># Mac/Linux</span>
+
+<span class="comment"># Install packages</span>
+pip install -r requirements.txt
+                    </div>
+
+                    <div class="step-indicator">
+                        <div class="step-number">2</div>
+                        <div>
+                            <h5 class="mb-1">Configure Services</h5>
+                            <p class="text-muted mb-0">Set up Google Sheets & Fuseki</p>
+                        </div>
+                    </div>
+                    <div class="code-block">
+<span class="comment"># config.py</span>
+<span class="keyword">USE_GOOGLE_SHEETS</span> = <span class="keyword">True</span>
+<span class="keyword">GOOGLE_SHEETS_CREDS_FILE</span> = <span class="string">'service_account.json'</span>
+
+<span class="keyword">FUSEKI_BASE_URL</span> = <span class="string">'http://167.172.143.162:3030'</span>
+<span class="keyword">FUSEKI_DATASET</span> = <span class="string">'treekipedia'</span>
+                    </div>
+
+                    <div class="step-indicator">
+                        <div class="step-number">3</div>
+                        <div>
+                            <h5 class="mb-1">Run Application</h5>
+                            <p class="text-muted mb-0">Start the Flask server</p>
+                        </div>
+                    </div>
+                    <div class="code-block">
+python app.py
+
+<span class="comment"># Access at http://localhost:5001</span>
+                    </div>
+
+                    <div class="step-indicator">
+                        <div class="step-number">4</div>
+                        <div>
+                            <h5 class="mb-1">Import Your Data</h5>
+                            <p class="text-muted mb-0">Generate your first ontology</p>
+                        </div>
+                    </div>
+
+                    <div class="alert-custom alert-info">
+                        <strong><i class="fas fa-lightbulb me-2"></i>Pro Tip:</strong> Your TreeSheet with transposed species data (120 rows × 1 column) will be automatically detected and processed!
+                    </div>
+                </div>
+
+                <!-- Architecture -->
+                <div class="doc-content" id="architecture">
+                    <h2 class="section-title">
+                        <i class="fas fa-sitemap"></i>
+                        System Architecture
+                    </h2>
+
+                    <div class="architecture-diagram">
+                        <div class="layer-box">
+                            <h6><i class="fas fa-laptop me-2"></i>PRESENTATION LAYER</h6>
+                            <span class="tech-badge">Bootstrap 5</span>
+                            <span class="tech-badge">JavaScript</span>
+                            <span class="tech-badge">Custom CSS</span>
+                        </div>
+
+                        <div class="text-center my-3">
+                            <i class="fas fa-arrow-down fa-2x text-muted"></i>
+                        </div>
+
+                        <div class="layer-box">
+                            <h6><i class="fas fa-server me-2"></i>APPLICATION LAYER</h6>
+                            <span class="tech-badge">Flask</span>
+                            <span class="tech-badge">Python 3.8+</span>
+                            <span class="tech-badge">REST API</span>
+                        </div>
+
+                        <div class="text-center my-3">
+                            <i class="fas fa-arrow-down fa-2x text-muted"></i>
+                        </div>
+
+                        <div class="layer-box">
+                            <h6><i class="fas fa-cogs me-2"></i>PROCESSING LAYER</h6>
+                            <span class="tech-badge">Owlready2</span>
+                            <span class="tech-badge">gspread</span>
+                            <span class="tech-badge">psycopg2</span>
+                        </div>
+
+                        <div class="text-center my-3">
+                            <i class="fas fa-arrow-down fa-2x text-muted"></i>
+                        </div>
+
+                        <div class="layer-box">
+                            <h6><i class="fas fa-database me-2"></i>DATA LAYER</h6>
+                            <span class="tech-badge">Apache Fuseki</span>
+                            <span class="tech-badge">PostgreSQL</span>
+                            <span class="tech-badge">File System</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Formats -->
+                <div class="doc-content" id="data-formats">
+                    <h2 class="section-title">
+                        <i class="fas fa-table"></i>
+                        Supported Data Formats
+                    </h2>
+
+                    <p>The system automatically detects and handles three data formats:</p>
+
+                    <table class="comparison-table table">
+                        <thead>
+                            <tr>
+                                <th>Format</th>
+                                <th>Structure</th>
+                                <th>Best For</th>
+                                <th>Auto-Detect</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Direct Schema</strong></td>
+                                <td>Field names as columns</td>
+                                <td>Most users, simple setup</td>
+                                <td><i class="fas fa-check text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Transposed</strong></td>
+                                <td>Field names in rows (1 col)</td>
+                                <td>Your TreeSheet format!</td>
+                                <td><i class="fas fa-check text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td><strong>MVP Format</strong></td>
+                                <td>Metadata sheet structure</td>
+                                <td>Advanced users</td>
+                                <td><i class="fas fa-check text-success"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 class="mt-4">Your TreeSheet Example</h4>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="feature-card">
+                                <h6><i class="fas fa-file-alt me-2"></i>Species Sheet (Transposed)</h6>
+                                <div class="code-block">
+Species
+species_scientific_name
+subspecies
+taxon_id_new
+family
+genus
+... (120 total fields)
+                                </div>
+                                <p class="small text-muted mb-0">
+                                    <i class="fas fa-check-circle text-success me-1"></i>
+                                    Automatically detected as transposed format
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="feature-card">
+                                <h6><i class="fas fa-list me-2"></i>Optionset Sheet</h6>
+                                <div class="code-block">
+Biomes | Conservation | Climate
+Tropical | LC | Af
+Temperate | NT | Am
+... (815 rows × 24 cols)
+                                </div>
+                                <p class="small text-muted mb-0">
+                                    <i class="fas fa-check-circle text-success me-1"></i>
+                                    23 option sets detected
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Reference -->
+                <div class="doc-content" id="api">
+                    <h2 class="section-title">
+                        <i class="fas fa-code"></i>
+                        API Reference
+                    </h2>
+
+                    <div class="endpoint-card">
+                        <span class="method method-get">GET</span>
+                        <code>/api/system-status</code>
+                        <p class="mt-2 mb-0">Check status of all integrations (Fuseki, Google Sheets, PostgreSQL)</p>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <span class="method method-post">POST</span>
+                        <code>/import-from-sheets</code>
+                        <p class="mt-2 mb-0">Import and generate ontology from Google Sheets</p>
+                        <p class="small text-muted mb-0">
+                            <strong>Form Data:</strong> spreadsheet_id/name, ontology_name, force_generation
+                        </p>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <span class="method method-get">GET</span>
+                        <code>/spreadsheet-metadata</code>
+                        <p class="mt-2 mb-0">Get sheet metadata (actual row/col counts, version info)</p>
+                        <p class="small text-muted mb-0">
+                            <strong>Query:</strong> ?spreadsheet_name=TreeSheet
+                        </p>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <span class="method method-post">POST</span>
+                        <code>/preview-multi-sheet-ontology</code>
+                        <p class="mt-2 mb-0">Preview ontology structure before generation</p>
+                    </div>
+
+                    <div class="alert-custom alert-info">
+                        <strong><i class="fas fa-book me-2"></i>Full API Documentation:</strong> See <code>DOCUMENTATION.md</code> for complete endpoint reference with examples.
+                    </div>
+                </div>
+
+                <!-- Troubleshooting -->
+                <div class="doc-content" id="troubleshooting">
+                    <h2 class="section-title">
+                        <i class="fas fa-wrench"></i>
+                        Troubleshooting
+                    </h2>
+
+                    <div class="accordion" id="troubleshootingAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#issue1">
+                                    <i class="fas fa-bug me-2"></i>Small Ontology Generated (&lt;2KB)
+                                </button>
+                            </h2>
+                            <div id="issue1" class="accordion-collapse collapse show">
+                                <div class="accordion-body">
+                                    <p><strong>Status:</strong> <span class="status-badge status-fixed">FIXED in v2.0</span></p>
+                                    <p><strong>Cause:</strong> Transposed format not detected</p>
+                                    <p><strong>Solution:</strong> System now auto-detects 120 rows × 1 column format</p>
+                                    <p class="mb-0"><strong>Expected:</strong> ~100KB+ OWL file with all 120 fields</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue2">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>"Page Not Found" Alert
+                                </button>
+                            </h2>
+                            <div id="issue2" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <p><strong>Status:</strong> <span class="status-badge status-fixed">FIXED in v2.0</span></p>
+                                    <p><strong>Cause:</strong> Browser requests for favicon.ico, .well-known/</p>
+                                    <p class="mb-0"><strong>Solution:</strong> These requests now ignored by 404 handler</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue3">
+                                    <i class="fas fa-chart-bar me-2"></i>Incorrect Row/Column Counts
+                                </button>
+                            </h2>
+                            <div id="issue3" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <p><strong>Status:</strong> <span class="status-badge status-fixed">FIXED in v2.0</span></p>
+                                    <p><strong>Was:</strong> Showing allocated size (1000 × 26)</p>
+                                    <p class="mb-0"><strong>Now:</strong> Shows actual non-empty data dimensions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert-custom alert-warning mt-4">
+                        <h6><i class="fas fa-ambulance me-2"></i>Still Having Issues?</h6>
+                        <ol class="mb-0">
+                            <li>Check <code>app.log</code> for detailed error messages</li>
+                            <li>Enable DEBUG logging in config.py</li>
+                            <li>Review terminal/console output</li>
+                            <li>Open GitHub issue with logs attached</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="doc-content" id="faq">
+                    <h2 class="section-title">
+                        <i class="fas fa-question-circle"></i>
+                        Frequently Asked Questions
+                    </h2>
+
+                    <div class="feature-card">
+                        <h5>Q: How many fields can the system handle?</h5>
+                        <p class="mb-0">A: Tested with 120+ fields. Performance limit is approximately 500 fields for dynamic analysis.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h5>Q: Do I need Google Sheets?</h5>
+                        <p class="mb-0">A: No! CSV upload works standalone. Google Sheets adds collaboration and change detection features.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h5>Q: Can I customize ontology classes?</h5>
+                        <p class="mb-0">A: Yes! Edit <code>multi_sheet_biodiversity_generator.py</code> to add custom classes and field patterns.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h5>Q: How do I query the generated ontology?</h5>
+                        <p class="mb-0">A: Use the SPARQL endpoint at <code>http://167.172.143.162:3030/treekipedia/sparql</code></p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h5>Q: What about my 50,000+ species data?</h5>
+                        <p class="mb-0">A: For actual species data rows, use PostgreSQL import. The current system processes <strong>schema definitions</strong> (field names), not data rows.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- Footer -->
+    <div class="container-fluid mt-5 py-4" style="background: var(--doc-dark); color: white;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-tree me-2"></i>Treekipedia GraphFlow</h5>
+                    <p class="small mb-0">Transforming biodiversity data into knowledge graphs</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="small mb-0">Built with ❤️ for biodiversity conservation</p>
+                    <p class="small mb-0">Version 2.0.0 | October 2025</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    // Update active link
+                    document.querySelectorAll('.doc-sidebar .nav-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // Spy scrolling for nav
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.doc-content');
+            const scrollPos = window.pageYOffset + 100;
+
+            sections.forEach(section => {
+                if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
+                    const id = section.getAttribute('id');
+                    document.querySelectorAll('.doc-sidebar .nav-link').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

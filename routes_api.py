@@ -2,8 +2,8 @@
 # routes_api.py - API and Status Routes
 # =============================================================================
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from config import logger, check_blazegraph_status, test_postgres_connection, test_postgres_connection_simple, test_blazegraph_connection_simple
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app
 from utils import increment_version
 import os
 import json
@@ -34,7 +34,7 @@ def test_postgres_connection_simple() -> bool:
             user='postgres',
             password='9353jeremic',
             port=5432,
-            connect_timeout=5
+            connect_timeout=30
         )
         cursor = conn.cursor()
         cursor.execute("SELECT 1")
@@ -53,7 +53,472 @@ def test_blazegraph_connection_simple() -> bool:
         return response.status_code == 200
     except Exception as e:
         logger.error(f"Blazegraph connection failed: {e}")
+        return False    
+
+# Add these configuration variables
+FUSEKI_CONFIG = {
+    'enabled': True,
+    'base_url': 'http://167.172.143.162:3030',
+    'dataset': 'treekipedia',
+    'sparql_endpoint': 'http://167.172.143.162:3030/treekipedia/sparql',
+    'update_endpoint': 'http://167.172.143.162:3030/treekipedia/update',
+    'data_endpoint': 'http://167.172.143.162:3030/treekipedia/data'
+}
+
+def test_fuseki_connection_simple() -> bool:
+    """Test Fuseki connection"""
+    try:
+        response = requests.get(f"{FUSEKI_CONFIG['base_url']}/$/ping", timeout=5)
+        return response.status_code == 200
+    except Exception as e:
+        logger.error(f"Fuseki connection failed: {e}")
         return False
+    
+
+# Add these new routes to your routes_api.py
+
+@api_bp.route('/api/system-status-fuseki')
+def api_system_status_fuseki():
+    """System status with Fuseki instead of Blazegraph"""
+    try:
+        # Test PostgreSQL connection
+        postgres_working = test_postgres_connection_simple()
+        postgres_message = "Connected to Treekipedia database" if postgres_working else "Connection failed"
+        
+        # Test Fuseki connection
+        fuseki_working = test_fuseki_connection_simple()
+        fuseki_message = "Fuseki accessible" if fuseki_working else "Connection failed"
+        
+        status = {
+            "timestamp": datetime.now().isoformat(),
+            "postgresql": {
+                "enabled": True,
+                "status": "connected" if postgres_working else "error",
+                "message": postgres_message
+            },
+            "fuseki": {
+                "enabled": True,
+                "status": "online" if fuseki_working else "offline",
+                "message": fuseki_message,
+                "dataset": FUSEKI_CONFIG['dataset']
+            },
+            "blazegraph": {
+                "enabled": False,
+                "status": "disabled",
+                "message": "Migrated to Fuseki"
+            },
+            "google_sheets": {
+                "enabled": current_app.config.get('USE_GOOGLE_SHEETS', False),
+                "initialized": hasattr(current_app, 'sheets_integration') and current_app.sheets_integration is not None
+            }
+        }
+        
+        return jsonify(status)
+        
+    except Exception as e:
+        logger.error(f"Error in system status check: {str(e)}")
+        return jsonify({
+            "error": f"System status check failed: {str(e)}",
+            "timestamp": datetime.now().isoformat()
+        }), 500
+
+@api_bp.route('/postgres-sync-fuseki', methods=['POST'])
+def postgres_sync_fuseki():
+    """Sync PostgreSQL data to Fuseki"""
+    try:
+        table_name = request.form.get('table_name')
+        batch_size = int(request.form.get('batch_size', 1000))
+        
+        if not table_name:
+            return jsonify({"error": "Table name is required"}), 400
+        
+        # Import and use the Fuseki sync
+        from postgres_to_fuseki_sync import PostgreSQLFusekiSync
+        
+        syncer = PostgreSQLFusekiSync()
+        
+        # Test connections first
+        postgres_ok, postgres_msg = syncer.test_postgres_connection()
+        if not postgres_ok:
+            return jsonify({
+                "success": False,
+                "error": f"PostgreSQL connection failed: {postgres_msg}"
+            }), 500
+        
+        fuseki_ok, fuseki_msg = syncer.test_fuseki_connection()
+        if not fuseki_ok:
+            return jsonify({
+                "success": False,
+                "error": f"Fuseki connection failed: {fuseki_msg}"
+            }), 500
+        
+        # Sync the table with improved error handling
+        logger.info(f"Starting Fuseki sync for table: {table_name} (batch size: {batch_size})")
+
+        try:
+            result = syncer.sync_table_to_fuseki(table_name, batch_size)
+        except Exception as e:
+            logger.error(f"Sync error: {e}")
+            return jsonify({
+                "success": False,
+                "error": f"Sync error: {str(e)}",
+                "table_name": table_name
+            }), 500
+        
+        return jsonify({
+            "success": result['success'],
+            "table_name": result['table_name'],
+            "records_processed": result['records_processed'],
+            "rdf_triples": result['triples_generated'],
+            "upload_success": result['upload_success'],
+            "message": "Successfully synced to Fuseki" if result['success'] else f"Sync failed: {result['error']}",
+            "fuseki_endpoint": FUSEKI_CONFIG['sparql_endpoint'],
+            "error": result.get('error')
+        })
+
+    except Exception as e:
+        logger.error(f"Error in Fuseki sync: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": f"Sync error: {str(e)}"
+        }), 500
+
+@api_bp.route('/postgres-table-info', methods=['POST'])
+def postgres_table_info():
+    """Get information about a PostgreSQL table for batch processing"""
+    try:
+        table_name = request.form.get('table_name')
+
+        if not table_name:
+            return jsonify({"error": "Table name is required"}), 400
+
+        from postgres_to_fuseki_sync import PostgreSQLFusekiSync
+
+        syncer = PostgreSQLFusekiSync()
+        table_info = syncer.get_table_info(table_name)
+
+        # Calculate estimated batches
+        batch_size = 1000  # Default batch size
+        estimated_batches = None
+        if table_info['approx_rows']:
+            estimated_batches = (table_info['approx_rows'] + batch_size - 1) // batch_size
+
+        return jsonify({
+            "success": True,
+            "table_name": table_name,
+            "approx_rows": table_info['approx_rows'],
+            "primary_key": table_info['primary_key'],
+            "has_primary_key": table_info['has_primary_key'],
+            "estimated_batches": estimated_batches,
+            "recommended_batch_size": batch_size,
+            "columns": table_info['columns']
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting table info: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": f"Error getting table info: {str(e)}"
+        }), 500
+
+@api_bp.route('/postgres-sync-batch', methods=['POST'])
+def postgres_sync_batch():
+    """Sync a single batch of PostgreSQL data to Fuseki"""
+    try:
+        table_name = request.form.get('table_name')
+        offset = int(request.form.get('offset', 0))
+        batch_size = int(request.form.get('batch_size', 1000))
+
+        if not table_name:
+            return jsonify({"error": "Table name is required"}), 400
+
+        from postgres_to_fuseki_sync import PostgreSQLFusekiSync
+
+        syncer = PostgreSQLFusekiSync()
+
+        # Get table info for primary key
+        table_info = syncer.get_table_info(table_name)
+        primary_key = table_info['primary_key']
+
+        # Get batch data
+        batch_result = syncer.get_table_data_batch(
+            table_name=table_name,
+            offset=offset,
+            limit=batch_size,
+            primary_key=primary_key
+        )
+
+        if not batch_result['success']:
+            return jsonify({
+                "success": False,
+                "error": batch_result['error'],
+                "batch_number": batch_result.get('batch_number', 0)
+            }), 500
+
+        # Convert to RDF and upload to Fuseki
+        batch_data = batch_result['data']
+        if not batch_data:
+            return jsonify({
+                "success": True,
+                "message": "No more data to process",
+                "batch_number": batch_result['batch_number'],
+                "records_processed": 0,
+                "has_more": False
+            })
+
+        # Process this batch (similar to existing sync logic)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        try:
+            # Convert batch to RDF
+            rdf_data = syncer.convert_data_to_rdf(batch_data, table_name, timestamp)
+
+            if rdf_data:
+                # Upload to Fuseki
+                upload_success = syncer.upload_rdf_to_fuseki(rdf_data, f"{table_name}_batch_{batch_result['batch_number']}")
+
+                return jsonify({
+                    "success": True,
+                    "table_name": table_name,
+                    "batch_number": batch_result['batch_number'],
+                    "offset": offset,
+                    "records_processed": len(batch_data),
+                    "rdf_triples": len(rdf_data.split('\n')) - 1,  # Approximate
+                    "upload_success": upload_success,
+                    "has_more": batch_result['has_more'],
+                    "next_offset": offset + batch_size if batch_result['has_more'] else None,
+                    "message": f"Batch {batch_result['batch_number']} synced successfully"
+                })
+            else:
+                return jsonify({
+                    "success": False,
+                    "error": "Failed to convert data to RDF",
+                    "batch_number": batch_result['batch_number']
+                }), 500
+
+        except Exception as e:
+            logger.error(f"Error processing batch {batch_result['batch_number']}: {e}")
+            return jsonify({
+                "success": False,
+                "error": f"Error processing batch: {str(e)}",
+                "batch_number": batch_result['batch_number']
+            }), 500
+
+    except Exception as e:
+        logger.error(f"Error in batch sync: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": f"Batch sync error: {str(e)}"
+        }), 500
+
+@api_bp.route('/postgres-full-sync-fuseki', methods=['POST'])
+def postgres_full_sync_fuseki():
+    """Run full PostgreSQL to Fuseki sync"""
+    try:
+        tables_to_sync = request.form.getlist('tables') if request.form.getlist('tables') else None
+        batch_size = int(request.form.get('batch_size', 1000))
+        
+        from postgres_to_fuseki_sync import PostgreSQLFusekiSync
+        
+        syncer = PostgreSQLFusekiSync()
+        
+        logger.info("Starting full PostgreSQL to Fuseki sync...")
+        result = syncer.run_full_sync(tables_to_sync, batch_size)
+        
+        return jsonify({
+            "success": result['success'],
+            "tables_processed": result['tables_processed'],
+            "total_records": result['total_records'],
+            "total_triples": result['total_triples'],
+            "table_results": result['table_results'],
+            "errors": result['errors'],
+            "start_time": result['start_time'],
+            "end_time": result.get('end_time'),
+            "message": "Full sync completed successfully" if result['success'] else "Full sync completed with errors"
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in full Fuseki sync: {e}")
+        return jsonify({
+            "success": False,
+            "error": f"Full sync error: {str(e)}"
+        }), 500
+
+@api_bp.route('/fuseki-test-query', methods=['POST'])
+def fuseki_test_query():
+    """Test a SPARQL query on Fuseki"""
+    try:
+        query = request.form.get('query', 'SELECT * WHERE { ?s ?p ?o } LIMIT 10')
+        
+        # For UPDATE queries (DELETE, DROP, INSERT, etc.), use the update endpoint
+        query_upper = query.strip().upper()
+        if query_upper.startswith(('DELETE', 'DROP', 'INSERT', 'CLEAR')):
+            endpoint = FUSEKI_CONFIG['update_endpoint']
+            headers = {'Content-Type': 'application/sparql-update'}
+            data = query
+        else:
+            endpoint = FUSEKI_CONFIG['sparql_endpoint']
+            headers = {'Accept': 'application/sparql-results+json'}
+            data = {'query': query}
+        
+        response = requests.post(
+            endpoint,
+            data=data,
+            headers=headers,
+            timeout=30
+        )
+
+        if response.status_code in [200, 204]:
+            if query_upper.startswith(('DELETE', 'DROP', 'INSERT', 'CLEAR')):
+                return jsonify({
+                    "success": True,
+                    "message": f"{query_upper.split()[0]} query executed successfully",
+                    "query": query,
+                    "endpoint": endpoint
+                })
+            else:
+                result = response.json()
+                return jsonify({
+                    "success": True,
+                    "results": result,
+                    "query": query,
+                    "endpoint": endpoint
+                })
+        else:
+            logger.error(f"Fuseki query failed: HTTP {response.status_code}")
+            logger.error(f"Query: {query}")
+            logger.error(f"Endpoint: {endpoint}")
+            logger.error(f"Response: {response.text[:1000]}")
+            return jsonify({
+                "success": False,
+                "error": f"Query failed: HTTP {response.status_code}",
+                "response": response.text[:500],
+                "query": query,
+                "endpoint": endpoint
+            }), 400
+            
+    except Exception as e:
+        logger.error(f"Error in Fuseki query test: {e}")
+        return jsonify({
+            "success": False,
+            "error": f"Query error: {str(e)}"
+        }), 500
+
+@api_bp.route('/fuseki-stats')
+def fuseki_stats():
+    """Get Fuseki dataset statistics"""
+    try:
+        # Count total triples
+        count_query = """
+        SELECT (COUNT(*) as ?count) WHERE { 
+            { ?s ?p ?o }
+            UNION
+            { GRAPH ?g { ?s ?p ?o } }
+        }
+        """
+        
+        response = requests.post(
+            FUSEKI_CONFIG['sparql_endpoint'],
+            data={'query': count_query},
+            headers={'Accept': 'application/sparql-results+json'},
+            timeout=30
+        )
+        
+        total_triples = 0
+        if response.status_code == 200:
+            result = response.json()
+            total_triples = int(result['results']['bindings'][0]['count']['value'])
+        
+        # Count distinct subjects (entities)
+        subjects_query = """
+        SELECT (COUNT(DISTINCT ?s) as ?count) WHERE { 
+            { ?s ?p ?o }
+            UNION
+            { GRAPH ?g { ?s ?p ?o } }
+        }
+        """
+        
+        response = requests.post(
+            FUSEKI_CONFIG['sparql_endpoint'],
+            data={'query': subjects_query},
+            headers={'Accept': 'application/sparql-results+json'},
+            timeout=30
+        )
+        
+        total_entities = 0
+        if response.status_code == 200:
+            result = response.json()
+            total_entities = int(result['results']['bindings'][0]['count']['value'])
+        
+        # Get types (classes)
+        types_query = """
+        SELECT ?type (COUNT(?s) as ?count) WHERE {
+            {
+                ?s a ?type
+            }
+            UNION
+            {
+                GRAPH ?g { ?s a ?type }
+            }
+        }
+        GROUP BY ?typeß
+        ORDER BY DESC(?count)
+        LIMIT 10
+        """
+
+        
+        response = requests.post(
+            FUSEKI_CONFIG['sparql_endpoint'],
+            data={'query': types_query},
+            headers={'Accept': 'application/sparql-results+json'},
+            timeout=30
+        )
+        
+        entity_types = []
+        if response.status_code == 200:
+            result = response.json()
+            for binding in result['results']['bindings']:
+                entity_types.append({
+                    'type': binding['type']['value'],
+                    'count': int(binding['count']['value'])
+                })
+        
+        return jsonify({
+            "success": True,
+            "dataset": FUSEKI_CONFIG['dataset'],
+            "endpoint": FUSEKI_CONFIG['sparql_endpoint'],
+            "statistics": {
+                "total_triples": total_triples,
+                "total_entities": total_entities,
+                "entity_types": entity_types
+            },
+            "timestamp": datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting Fuseki stats: {e}")
+        return jsonify({
+            "success": False,
+            "error": f"Stats error: {str(e)}"
+        }), 500
+
+@api_bp.route('/fuseki-status')
+def fuseki_status():
+    """Check the status of Fuseki integration."""
+    if not FUSEKI_CONFIG['enabled']:
+        return jsonify({
+            "enabled": False,
+            "message": "Fuseki integration is not enabled"
+        })
+    
+    status = test_fuseki_connection_simple()
+    return jsonify({
+        "enabled": True,
+        "status": "online" if status else "offline",
+        "endpoint": FUSEKI_CONFIG['sparql_endpoint'],
+        "dataset": FUSEKI_CONFIG['dataset'],
+        "message": "Fuseki is accessible" if status else "Cannot connect to Fuseki"
+    })    
 
 
 @api_bp.route('/blazegraph-status')
@@ -167,7 +632,7 @@ def list_postgres_tables():
             user=config_db['user'],
             password=config_db['password'],
             port=config_db['port'],
-            connect_timeout=10
+            connect_timeout=30
         )
         
         cursor = conn.cursor()
@@ -741,6 +1206,45 @@ def contextual_help(section):
                 <li><strong>Features</strong></li>
             </ul>
             '''
+        },
+        'automation': {
+            'title': 'Automation Help',
+            'content': '''
+            <h5>Data Source Integrations</h5>
+            <p>Choose your preferred data source for automatic ontology generation:</p>
+            <ul>
+                <li><strong>Google Sheets:</strong> Automatic change detection and real-time updates</li>
+                <li><strong>PostgreSQL:</strong> Monitor database tables for changes</li>
+                <li><strong>CSV Upload:</strong> Quick one-time ontology generation</li>
+            </ul>
+            <h6>Automation Features:</h6>
+            <ul>
+                <li>Smart ontology generation</li>
+                <li>Automatic RDF conversion</li>
+                <li>Version management</li>
+                <li>Change detection</li>
+            </ul>
+            '''
+        },
+        'version-management': {
+            'title': 'Version Management Help',
+            'content': '''
+            <h5>Version Management System</h5>
+            <p>Track and manage versions of your biodiversity data and ontologies:</p>
+            <ul>
+                <li><strong>Automatic versioning:</strong> Each generation creates a new version</li>
+                <li><strong>Change tracking:</strong> See what data has been modified</li>
+                <li><strong>Rollback capability:</strong> Restore previous versions if needed</li>
+                <li><strong>Version comparison:</strong> Compare different versions</li>
+            </ul>
+            <h6>How to Use:</h6>
+            <ol>
+                <li>Click "Manage Versions" to view version history</li>
+                <li>Compare versions to see changes</li>
+                <li>Export specific versions as needed</li>
+                <li>Monitor version status and metadata</li>
+            </ol>
+            '''
         }
     }
     
@@ -810,6 +1314,7 @@ def system_health():
         }), 500
 
 
+@api_bp.route('/api/system-status')
 def api_system_status():
     """FIXED API endpoint for system status"""
     try:
@@ -831,10 +1336,11 @@ def api_system_status():
             },
             "google_sheets": {
                 "enabled": current_app.config.get('USE_GOOGLE_SHEETS', False),
-                "initialized": hasattr(current_app, 'sheets_integration') and current_app.sheets_integration is not None
+                "initialized": hasattr(current_app, 'sheets_integration') and current_app.sheets_integration is not None and hasattr(current_app.sheets_integration, 'is_initialized') and current_app.sheets_integration.is_initialized(),
+                "status": "connected" if (hasattr(current_app, 'sheets_integration') and current_app.sheets_integration is not None and hasattr(current_app.sheets_integration, 'is_initialized') and current_app.sheets_integration.is_initialized()) else "disabled"
             }
         }
-        
+
         logger.info(f"System status check: PostgreSQL={postgres_working}, Blazegraph={blazegraph_working}")
         return jsonify(status)
         
@@ -847,31 +1353,6 @@ def api_system_status():
             "blazegraph": {"enabled": True, "status": "error", "message": f"Error: {str(e)}"},
             "google_sheets": {"enabled": False, "initialized": False}
         }), 500
-def api_system_status():
-    """API endpoint for system status"""
-    from flask import current_app
-    
-    try:
-        status = {
-            "timestamp": datetime.now().isoformat(),
-            "postgresql": {
-                "enabled": True,
-                "status": "connected" if test_postgres_connection_simple() else "error"
-            },
-            "blazegraph": {
-                "enabled": True,
-                "status": "online" if test_blazegraph_connection_simple() else "offline"
-            },
-            "google_sheets": {
-                "enabled": current_app.config.get('USE_GOOGLE_SHEETS', False),
-                "initialized": hasattr(current_app, 'sheets_integration') and current_app.sheets_integration is not None
-            }
-        }
-        return jsonify(status)
-        
-    except Exception as e:
-        logger.error(f"Error checking system status: {str(e)}")
-        return jsonify({"error": "System status check failed"}), 500
 
 @api_bp.route('/api/documentation-stats')
 def documentation_stats():
@@ -1017,78 +1498,6 @@ def list_version_history():
             'error': f'Error retrieving version history: {str(e)}'
         }), 500
 
-# MINIMAL WORKING SYSTEM STATUS ENDPOINT
-@api_bp.route('/api/system-status')
-def api_system_status():
-    """Minimal working system status endpoint"""
-    try:
-        # Test PostgreSQL connection
-        postgres_working = False
-        postgres_message = "Connection failed"
-        
-        try:
-            import psycopg2
-            conn = psycopg2.connect(
-                host='167.172.143.162',
-                database='treekipedia',
-                user='postgres',
-                password='9353jeremic',
-                port=5432,
-                connect_timeout=5
-            )
-            cursor = conn.cursor()
-            cursor.execute("SELECT 1")
-            cursor.close()
-            conn.close()
-            postgres_working = True
-            postgres_message = "Connected to Treekipedia database"
-        except Exception as e:
-            postgres_message = f"Connection failed: {str(e)[:50]}"
-        
-        # Test Blazegraph connection
-        blazegraph_working = False
-        blazegraph_message = "Connection failed"
-        
-        try:
-            import requests
-            response = requests.get('http://167.172.143.162:9999/blazegraph', timeout=5)
-            if response.status_code == 200:
-                blazegraph_working = True
-                blazegraph_message = "Blazegraph accessible"
-            else:
-                blazegraph_message = f"HTTP {response.status_code}"
-        except Exception as e:
-            blazegraph_message = f"Connection failed: {str(e)[:50]}"
-        
-        # Return status
-        status = {
-            "timestamp": datetime.now().isoformat(),
-            "postgresql": {
-                "enabled": True,
-                "status": "connected" if postgres_working else "error",
-                "message": postgres_message
-            },
-            "blazegraph": {
-                "enabled": True,
-                "status": "online" if blazegraph_working else "offline",
-                "message": blazegraph_message
-            },
-            "google_sheets": {
-                "enabled": False,
-                "initialized": False
-            }
-        }
-        
-        return jsonify(status)
-        
-    except Exception as e:
-        return jsonify({
-            "error": f"System status check failed: {str(e)}",
-            "timestamp": datetime.now().isoformat(),
-            "postgresql": {"enabled": True, "status": "error", "message": "Check failed"},
-            "blazegraph": {"enabled": True, "status": "error", "message": "Check failed"},
-            "google_sheets": {"enabled": False, "initialized": False}
-        }), 500
 
 
 
@@ -1104,7 +1513,7 @@ def api_postgres_tables():
             user='postgres',
             password='9353jeremic',
             port=5432,
-            connect_timeout=10
+            connect_timeout=30
         )
         
         cursor = conn.cursor()
@@ -1155,4 +1564,3 @@ def api_postgres_tables():
             "tables": [],
             "total_tables": 0
         }), 500
-

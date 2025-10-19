@@ -1,5 +1,5 @@
 # =============================================================================
-# config.py - Configuration Only
+# Updated config.py - Apache Jena Fuseki Configuration
 # =============================================================================
 
 import os
@@ -20,7 +20,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class AppConfig:
-    """Application configuration and initialization"""
+    """Application configuration and initialization with Fuseki support"""
     
     def __init__(self, app):
         self.app = app
@@ -29,7 +29,7 @@ class AppConfig:
         self.setup_integrations()
     
     def setup_config(self):
-        """Setup Flask configuration"""
+        """Setup Flask configuration with Fuseki endpoints"""
         self.app.secret_key = os.environ.get('SECRET_KEY', "biodiversity_ontology_builder")
         
         # Set up storage directories
@@ -48,9 +48,24 @@ class AppConfig:
         self.app.config['GOOGLE_SHEETS_CREDS_FILE'] = 'service_account.json'
         self.app.config['SPREADSHEET_ID'] = os.environ.get('SPREADSHEET_ID', '')
 
-        # Blazegraph configuration
-        self.app.config['BLAZEGRAPH_ENDPOINT'] = os.environ.get('BLAZEGRAPH_ENDPOINT', 'http://167.172.143.162:9999/blazegraph/namespace/kb/sparql')
-        self.app.config['BLAZEGRAPH_ENABLED'] = True
+        # Apache Jena Fuseki configuration (replacing Blazegraph)
+        fuseki_base = os.environ.get('FUSEKI_ENDPOINT', 'http://167.172.143.162:3030')
+        dataset_name = os.environ.get('FUSEKI_DATASET', 'treekipedia')
+        
+        self.app.config['TRIPLESTORE_TYPE'] = 'fuseki'
+        self.app.config['TRIPLESTORE_ENABLED'] = True
+        self.app.config['FUSEKI_BASE_URL'] = fuseki_base
+        self.app.config['FUSEKI_DATASET'] = dataset_name
+        
+        # Keep these for backward compatibility with existing code
+        self.app.config['BLAZEGRAPH_ENDPOINT'] = f"{fuseki_base}/{dataset_name}/sparql"
+        self.app.config['BLAZEGRAPH_ENABLED'] = True  # Keep name for compatibility
+        
+        # New Fuseki-specific endpoints
+        self.app.config['FUSEKI_SPARQL_ENDPOINT'] = f"{fuseki_base}/{dataset_name}/sparql"
+        self.app.config['FUSEKI_UPDATE_ENDPOINT'] = f"{fuseki_base}/{dataset_name}/update"
+        self.app.config['FUSEKI_DATA_ENDPOINT'] = f"{fuseki_base}/{dataset_name}/data"
+        self.app.config['FUSEKI_UPLOAD_ENDPOINT'] = f"{fuseki_base}/{dataset_name}/upload"
 
         # PostgreSQL configuration
         self.app.config['POSTGRESQL_ENABLED'] = True
@@ -158,19 +173,46 @@ def test_postgres_connection_simple():
     except Exception:
         return False
 
-def test_blazegraph_connection_simple():
-    """Simple Blazegraph connection test"""
+def test_fuseki_connection():
+    """Test Apache Jena Fuseki connection"""
+    from flask import current_app
     try:
-        response = requests.get("http://167.172.143.162:9999/blazegraph", timeout=3)
+        fuseki_base = current_app.config.get('FUSEKI_BASE_URL', 'http://167.172.143.162:3030')
+        
+        # Test server ping endpoint
+        ping_response = requests.get(f"{fuseki_base}/$/ping", timeout=5)
+        if ping_response.status_code != 200:
+            return False
+        
+        # Test dataset endpoint
+        sparql_endpoint = current_app.config.get('FUSEKI_SPARQL_ENDPOINT')
+        if sparql_endpoint:
+            test_query = "SELECT * WHERE { ?s ?p ?o } LIMIT 1"
+            query_response = requests.post(
+                sparql_endpoint,
+                data={'query': test_query},
+                headers={'Accept': 'application/sparql-results+json'},
+                timeout=5
+            )
+            return query_response.status_code in [200, 404]  # 404 is OK if no data
+        
+        return True
+    except Exception:
+        return False
+
+def test_fuseki_connection_simple():
+    """Simple Fuseki connection test"""
+    try:
+        response = requests.get("http://167.172.143.162:3030/$/ping", timeout=3)
         return response.status_code == 200
     except Exception:
         return False
 
+# Keep backward compatibility
 def check_blazegraph_status():
-    """Check if Blazegraph is accessible."""
-    from flask import current_app
-    try:
-        response = requests.get(current_app.config['BLAZEGRAPH_ENDPOINT'], timeout=5)
-        return response.status_code == 200
-    except:
-        return False
+    """Check if triplestore (Fuseki) is accessible - renamed for compatibility."""
+    return test_fuseki_connection_simple()
+
+def test_blazegraph_connection_simple():
+    """Backward compatibility wrapper"""
+    return test_fuseki_connection_simple()
