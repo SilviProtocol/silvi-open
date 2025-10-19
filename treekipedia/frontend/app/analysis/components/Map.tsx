@@ -169,7 +169,7 @@ function EcoregionLayer({ visible }: { visible: boolean }) {
 
     try {
       setLoading(true);
-      const response = await fetch(`https://treekipedia-api.silvi.earth/api/geospatial/ecoregions/boundaries?bbox=${bbox}&simplify=${simplify}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/geospatial/ecoregions/boundaries?bbox=${bbox}&simplify=${simplify}`);
       const data = await response.json();
 
       // Remove old layer
@@ -223,6 +223,137 @@ function EcoregionLayer({ visible }: { visible: boolean }) {
   return null;
 }
 
+// Intact forest layer component
+function IntactForestLayer({ visible, opacity }: { visible: boolean; opacity: number }) {
+  const map = useMap();
+  const layerRef = useRef<L.GeoJSON | null>(null);
+  const [loading, setLoading] = useState(false);
+  const lastRequestRef = useRef<{ bbox: string; zoom: number } | null>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useMapEvents({
+    moveend: () => {
+      if (visible) {
+        debouncedLoadIntactForests();
+      }
+    },
+    zoomend: () => {
+      if (visible) {
+        debouncedLoadIntactForests();
+      }
+    }
+  });
+
+  const debouncedLoadIntactForests = () => {
+    // Clear existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Set new timer - wait 300ms after user stops moving/zooming
+    debounceTimerRef.current = setTimeout(() => {
+      loadIntactForests();
+    }, 300);
+  };
+
+  const loadIntactForests = async () => {
+    if (!visible) return;
+
+    const bounds = map.getBounds();
+    const bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+    const zoom = map.getZoom();
+
+    // Skip if already loading the same request
+    if (loading && lastRequestRef.current?.bbox === bbox && lastRequestRef.current?.zoom === zoom) {
+      return;
+    }
+
+    lastRequestRef.current = { bbox, zoom };
+
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/geospatial/intact-forests/boundaries?bbox=${bbox}&zoom=${zoom}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Remove old layer
+      if (layerRef.current) {
+        map.removeLayer(layerRef.current);
+      }
+
+      // Add new layer
+      layerRef.current = L.geoJSON(data, {
+        style: () => ({
+          color: '#065f46', // Dark green border
+          weight: 1,
+          opacity: opacity,
+          fillOpacity: opacity * 0.4,
+          fillColor: '#10b981' // Emerald green fill
+        }),
+        onEachFeature: (feature, layer) => {
+          const props = feature.properties;
+          layer.bindPopup(`
+            <div class="p-2">
+              <h3 class="font-semibold text-emerald-600">Intact Forest Landscape</h3>
+              <p class="text-sm"><strong>Year:</strong> ${props.year}</p>
+              <p class="text-sm"><strong>Area:</strong> ${props.area_km2?.toLocaleString()} km²</p>
+              <p class="text-xs text-gray-500">ID: ${props.ifl_id}</p>
+            </div>
+          `);
+        }
+      });
+
+      layerRef.current.addTo(map);
+    } catch (error) {
+      console.error('Error loading intact forests:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (visible) {
+      loadIntactForests();
+    } else if (layerRef.current) {
+      map.removeLayer(layerRef.current);
+      layerRef.current = null;
+      lastRequestRef.current = null;
+      // Clear any pending debounce timer
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    }
+
+    return () => {
+      if (layerRef.current) {
+        map.removeLayer(layerRef.current);
+      }
+      // Clear debounce timer on unmount
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [visible]);
+
+  // Update opacity when it changes
+  useEffect(() => {
+    if (layerRef.current && visible) {
+      layerRef.current.setStyle({
+        opacity: opacity,
+        fillOpacity: opacity * 0.4
+      });
+    }
+  }, [opacity, visible]);
+
+  return null;
+}
+
 // External polygon display component
 function ExternalPolygonLayer({ geometry }: { geometry: GeoJSONPolygon | null }) {
   const map = useMap();
@@ -268,16 +399,17 @@ function ExternalPolygonLayer({ geometry }: { geometry: GeoJSONPolygon | null })
 export default function Map({ onAnalysisComplete, onAnalysisError, onLoadingChange, onClear }: MapProps) {
   const [externalGeometry, setExternalGeometry] = useState<GeoJSONPolygon | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
-  const [showEcoregions, setShowEcoregions] = useState(false);
+  const [selectedLayer, setSelectedLayer] = useState<'none' | 'ecoregions' | 'intact-forests'>('none');
+  const [layerOpacity, setLayerOpacity] = useState(0.6);
 
   // Function to handle externally provided geometry (from KML upload)
   const handleExternalGeometry = async (geometry: GeoJSONPolygon) => {
     try {
       onLoadingChange(true);
       onClear();
-      
+
       setExternalGeometry(geometry);
-      
+
       const results = await analyzePlot(geometry);
       onAnalysisComplete(results);
     } catch (error) {
@@ -300,7 +432,7 @@ export default function Map({ onAnalysisComplete, onAnalysisError, onLoadingChan
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='© OpenStreetMap contributors'
         />
-        
+
         <DrawControl
           onAnalysisComplete={onAnalysisComplete}
           onAnalysisError={onAnalysisError}
@@ -310,23 +442,45 @@ export default function Map({ onAnalysisComplete, onAnalysisError, onLoadingChan
 
         <ExternalPolygonLayer geometry={externalGeometry} />
 
-        <EcoregionLayer visible={showEcoregions} />
+        <EcoregionLayer visible={selectedLayer === 'ecoregions'} />
+        <IntactForestLayer visible={selectedLayer === 'intact-forests'} opacity={layerOpacity} />
       </MapContainer>
-      
-      {/* Ecoregion toggle button */}
-      <div className="absolute top-4 right-4 z-10">
-        <button
-          onClick={() => setShowEcoregions(!showEcoregions)}
-          className={`bg-black/80 backdrop-blur-md border ${
-            showEcoregions ? 'border-emerald-500 text-emerald-300' : 'border-white/20 text-white/80'
-          } rounded-xl shadow-lg p-3 transition-all hover:scale-105 flex items-center gap-2`}
-          aria-label="Toggle ecoregion boundaries"
-        >
-          <Layers className="w-5 h-5" />
-          <span className="text-sm font-medium">
-            {showEcoregions ? 'Hide' : 'Show'} Ecoregions
-          </span>
-        </button>
+
+      {/* Layer control dropdown */}
+      <div className="absolute top-4 right-4 z-10 space-y-2">
+        <div className="bg-black/80 backdrop-blur-md border border-white/20 rounded-xl shadow-lg p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <Layers className="w-5 h-5 text-emerald-300" />
+            <span className="text-sm font-medium text-white">Map Layer</span>
+          </div>
+
+          <select
+            value={selectedLayer}
+            onChange={(e) => setSelectedLayer(e.target.value as 'none' | 'ecoregions' | 'intact-forests')}
+            className="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+          >
+            <option value="none">None</option>
+            <option value="ecoregions">Ecoregions</option>
+            <option value="intact-forests">Intact Forests</option>
+          </select>
+
+          {selectedLayer !== 'none' && (
+            <div className="mt-3">
+              <label className="text-xs text-white/80 mb-1 block">
+                Opacity: {Math.round(layerOpacity * 100)}%
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={layerOpacity}
+                onChange={(e) => setLayerOpacity(parseFloat(e.target.value))}
+                className="w-full accent-emerald-500"
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Collapsible instructions overlay */}
