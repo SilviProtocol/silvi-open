@@ -57,9 +57,9 @@ class AppConfig:
         self.app.config['FUSEKI_BASE_URL'] = fuseki_base
         self.app.config['FUSEKI_DATASET'] = dataset_name
         
-        # Keep these for backward compatibility with existing code
-        self.app.config['BLAZEGRAPH_ENDPOINT'] = f"{fuseki_base}/{dataset_name}/sparql"
-        self.app.config['BLAZEGRAPH_ENABLED'] = True  # Keep name for compatibility
+        # Maintain backward compatibility with old variable names
+        self.app.config['BLAZEGRAPH_ENDPOINT'] = f"{fuseki_base}/{dataset_name}/sparql"  # Points to Fuseki
+        self.app.config['BLAZEGRAPH_ENABLED'] = True  # Actually enables Fuseki
         
         # New Fuseki-specific endpoints
         self.app.config['FUSEKI_SPARQL_ENDPOINT'] = f"{fuseki_base}/{dataset_name}/sparql"
@@ -208,11 +208,11 @@ def test_fuseki_connection_simple():
     except Exception:
         return False
 
-# Keep backward compatibility
+# Backward compatibility wrappers (these actually test Fuseki, not Blazegraph)
 def check_blazegraph_status():
-    """Check if triplestore (Fuseki) is accessible - renamed for compatibility."""
+    """Check if triplestore (Apache Fuseki) is accessible."""
     return test_fuseki_connection_simple()
 
 def test_blazegraph_connection_simple():
-    """Backward compatibility wrapper"""
+    """Test Fuseki connection - kept for backward compatibility."""
     return test_fuseki_connection_simple()

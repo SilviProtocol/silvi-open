@@ -707,16 +707,16 @@ def test_fuseki_connection():
 
 # Backward compatibility wrapper
 def import_to_blazegraph(ontology_file_path: str, ontology_name: str, version: str) -> Tuple[bool, str, str]:
-    """Backward compatibility wrapper for Fuseki import."""
+    """Import to Apache Fuseki (kept for backward compatibility)."""
     return import_to_fuseki(ontology_file_path, ontology_name, version)
 
 # =============================================================================
-# Quick Blazegraph Diagnostics Script
+# Quick Apache Fuseki Diagnostics Script
 # =============================================================================
 
 def diagnose_blazegraph_issue():
     """
-    Diagnostic function to identify Blazegraph issues.
+    Diagnostic function to identify Apache Fuseki issues.
     """
     print("🔍 BLAZEGRAPH DIAGNOSTIC REPORT")
     print("=" * 50)
@@ -732,7 +732,7 @@ def diagnose_blazegraph_issue():
     print(f"  • Endpoint: {blazegraph_endpoint}")
     
     if not blazegraph_enabled:
-        print("\n❌ Blazegraph is disabled in configuration")
+        print("\n❌ Apache Fuseki is disabled in configuration")
         return
     
     # Test connection
@@ -744,7 +744,7 @@ def diagnose_blazegraph_issue():
     else:
         print(f"❌ {message}")
         print("\n🔧 Possible solutions:")
-        print("  1. Check if Blazegraph is running")
+        print("  1. Check if Apache Fuseki is running")
         print("  2. Verify the endpoint URL in config")
         print("  3. Check network connectivity")
         print("  4. Try accessing the endpoint in a browser")

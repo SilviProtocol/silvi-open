@@ -46,13 +46,13 @@ def test_postgres_connection_simple() -> bool:
         return False
 
 def test_blazegraph_connection_simple() -> bool:
-    """Fixed Blazegraph connection test"""
+    """Test Fuseki connection (renamed for backward compatibility)"""
     try:
         import requests
-        response = requests.get('http://167.172.143.162:9999/blazegraph', timeout=5)
+        response = requests.get('http://167.172.143.162:3030/$/ping', timeout=5)
         return response.status_code == 200
     except Exception as e:
-        logger.error(f"Blazegraph connection failed: {e}")
+        logger.error(f"Fuseki connection failed: {e}")
         return False    
 
 # Add these configuration variables
@@ -523,21 +523,21 @@ def fuseki_status():
 
 @api_bp.route('/blazegraph-status')
 def blazegraph_status():
-    """Check the status of Blazegraph integration."""
+    """Check the status of Apache Fuseki triplestore."""
     from flask import current_app
-    
+
     if not current_app.config['BLAZEGRAPH_ENABLED']:
         return jsonify({
             "enabled": False,
-            "message": "Blazegraph integration is not enabled"
+            "message": "Apache Fuseki integration is not enabled"
         })
-    
+
     status = check_blazegraph_status()
     return jsonify({
         "enabled": True,
         "status": "online" if status else "offline",
         "endpoint": current_app.config['BLAZEGRAPH_ENDPOINT'],
-        "message": "Blazegraph is accessible" if status else "Cannot connect to Blazegraph"
+        "message": "Apache Fuseki is accessible" if status else "Cannot connect to Apache Fuseki"
     })
 
 @api_bp.route('/sheets-status')
@@ -850,20 +850,20 @@ def generate_rdf_from_postgres():
         else:
             simulated_triples = record_count * 8
         
-        # Simulate Blazegraph import if requested
+        # Simulate Apache Fuseki import if requested
         blazegraph_success = False
         blazegraph_message = "Not requested"
-        
+
         if push_to_blazegraph:
             try:
                 response = requests.get(current_app.config['BLAZEGRAPH_ENDPOINT'], timeout=5)
                 if response.status_code == 200:
                     blazegraph_success = True
-                    blazegraph_message = "Successfully pushed to Blazegraph"
+                    blazegraph_message = "Successfully pushed to Apache Fuseki"
                 else:
-                    blazegraph_message = f"Blazegraph not accessible (HTTP {response.status_code})"
+                    blazegraph_message = f"Apache Fuseki not accessible (HTTP {response.status_code})"
             except Exception as e:
-                blazegraph_message = f"Blazegraph connection failed: {str(e)}"
+                blazegraph_message = f"Apache Fuseki connection failed: {str(e)}"
         
         return jsonify({
             "success": True,
@@ -1198,9 +1198,9 @@ def contextual_help(section):
             '''
         },
         'blazegraph': {
-            'title': 'Blazegraph Integration Help',
+            'title': 'Apache Fuseki Integration Help',
             'content': '''
-            <h5>Blazegraph Triple Store</h5>
+            <h5>Apache Fuseki Triple Store</h5>
             <ul>
                 <li><strong>Configuration</strong></li>
                 <li><strong>Features</strong></li>
@@ -1331,8 +1331,8 @@ def api_system_status():
             },
             "blazegraph": {
                 "enabled": True,
-                "status": "online" if blazegraph_working else "offline", 
-                "message": "Blazegraph accessible" if blazegraph_working else "Connection failed - check Blazegraph server"
+                "status": "online" if blazegraph_working else "offline",
+                "message": "Apache Fuseki accessible" if blazegraph_working else "Connection failed - check Apache Fuseki server"
             },
             "google_sheets": {
                 "enabled": current_app.config.get('USE_GOOGLE_SHEETS', False),
@@ -1341,7 +1341,7 @@ def api_system_status():
             }
         }
 
-        logger.info(f"System status check: PostgreSQL={postgres_working}, Blazegraph={blazegraph_working}")
+        logger.info(f"System status check: PostgreSQL={postgres_working}, Apache Fuseki={blazegraph_working}")
         return jsonify(status)
         
     except Exception as e:
@@ -1434,9 +1434,9 @@ def run_full_automation():
             results['sheets'] = {'success': True, 'message': 'Google Sheets processing completed'}
             success_count += 1
         
-        # Blazegraph automation
+        # Apache Fuseki automation
         if current_app.config['BLAZEGRAPH_ENABLED'] and check_blazegraph_status():
-            results['blazegraph'] = {'success': True, 'message': 'Blazegraph is online and ready'}
+            results['blazegraph'] = {'success': True, 'message': 'Apache Fuseki is online and ready'}
             success_count += 1
         
         results['overall_success'] = success_count >= 2

@@ -19,7 +19,7 @@
       <div class="header">
         <h1><i class="fas fa-dna"></i> Treekipedia GraphFlow</h1>
         <p class="lead">
-          Smart Ontology Generator - Data flowing from sheets → RDF → Blazegraph
+          Smart Ontology Generator - Data flowing from sheets → RDF → Apache Fuseki
         </p>
         <!-- Documentation Button in Header -->
         <div class="mt-3">
@@ -171,7 +171,7 @@
               <li><strong>Multi-source support:</strong> CSV files, Google Sheets, PostgreSQL</li>
               <li><strong>Smart analysis:</strong> Automatic field detection and categorization</li>
               <li><strong>Automatic validation:</strong> RDF structure checking</li>
-              <li><strong>Blazegraph integration:</strong> Direct import to triple store</li>
+              <li><strong>Apache Fuseki integration:</strong> Direct import to triple store</li>
               <li><strong>Version management:</strong> Track changes over time</li>
               <li><strong>Change detection:</strong> Only process updated data</li>
             </ul>
@@ -298,7 +298,7 @@
                 <ul class="small">
                   <li>Upload CSV files or connect data sources</li>
                   <li>Smart ontology generation automatically detects structure</li>
-                  <li>Import to Blazegraph triple store</li>
+                  <li>Import to Apache Fuseki triple store</li>
                   <li>Monitor system health and status</li>
                 </ul>
                 
@@ -550,7 +550,7 @@
 
       // Run full automation
       async function runFullAutomation() {
-        if (!confirm('This will run the complete automation process including PostgreSQL sync, Google Sheets import, and Blazegraph updates. This may take several minutes. Continue?')) {
+        if (!confirm('This will run the complete automation process including PostgreSQL sync, Google Sheets import, and Apache Fuseki updates. This may take several minutes. Continue?')) {
           return;
         }
 
@@ -609,12 +609,12 @@
             </div>
           `;
           
-          // Blazegraph Results
+          // Apache Fuseki Results
           resultsHTML += `
             <div class="col-md-4">
               <div class="card">
                 <div class="card-header">
-                  <h6 class="mb-0"><i class="fas fa-project-diagram"></i> Blazegraph</h6>
+                  <h6 class="mb-0"><i class="fas fa-project-diagram"></i> Apache Fuseki</h6>
                 </div>
                 <div class="card-body">
                   <div class="text-center">
@@ -677,7 +677,7 @@
               <div class="col-md-4">
                 <div class="card">
                   <div class="card-header">
-                    <h6 class="mb-0"><i class="fas fa-project-diagram"></i> Blazegraph</h6>
+                    <h6 class="mb-0"><i class="fas fa-project-diagram"></i> Apache Fuseki</h6>
                   </div>
                   <div class="card-body">
                     <div class="text-center">
