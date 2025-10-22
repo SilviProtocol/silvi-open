@@ -1,4 +1,6 @@
 const express = require('express');
+const cors = require('cors');
+const { validateApiKey, rateLimitByApiKey } = require('../middleware/apiAuth');
 
 module.exports = (pool) => {
 const router = express.Router();
@@ -8,6 +10,14 @@ const geospatialController = require('../controllers/geospatial')(pool);
  * Geospatial API Routes
  * All routes are prefixed with /api/geospatial
  */
+
+// Public CORS configuration for public API endpoints
+const publicCors = cors({
+  origin: '*',  // Allow all origins
+  methods: ['GET', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'x-api-key'],
+  credentials: false
+});
 
 // Find species near a location
 // GET /api/geospatial/species/nearby?lat=37.7749&lng=-122.4194&radius=5
@@ -61,9 +71,15 @@ router.get('/ecoregions/:ecoregion_id/export', geospatialController.exportEcoreg
 // GET /api/geospatial/ecoregions/boundaries?bbox=-180,-90,180,90&simplify=0.01
 router.get('/ecoregions/boundaries', geospatialController.getEcoregionBoundaries);
 
-// Get native species by ecoregion name
+// Get native species by ecoregion name (PUBLIC ENDPOINT - requires API key)
 // GET /api/geospatial/ecoregions/native-species/:ecoregion_name?native_only=true&exclude_invasive=true
-router.get('/ecoregions/native-species/:ecoregion_name', geospatialController.getNativeSpeciesByEcoregionName);
+// Headers: x-api-key: <your_api_key>
+router.get('/ecoregions/native-species/:ecoregion_name',
+  publicCors,           // Allow all origins (public access)
+  validateApiKey,       // Require valid API key
+  rateLimitByApiKey,    // Rate limit per API key (60 req/min)
+  geospatialController.getNativeSpeciesByEcoregionName
+);
 
 return router;
 };

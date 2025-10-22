@@ -1,13 +1,15 @@
-# Treekipedia Current State (Updated: October 2025)
+# Treekipedia Current State (Updated: October 22, 2025)
 
 ## 🚀 What's Live and Working
 
 ### Deployment Status
 - **Backend API**: Running at `https://treekipedia-api.silvi.earth` (PM2 managed, port 3000)
 - **Frontend**: Deployed on Vercel at `https://treekipedia.silvi.earth`
+- **Ontology Service**: Running at `https://treekipedia-graph-flow.silvi.earth` (port 8000)
 - **Database**: PostgreSQL with 67,743 species (50,797 species + 16,946 subspecies), 19 researched, 8 users, 20 NFTs minted
 - **PostGIS**: Spatial database extension enabled for geospatial queries
 - **Blazegraph**: Knowledge graph running on port 9999
+- **Fuseki**: SPARQL endpoint accessible at `https://treekipedia-graph-flow.silvi.earth/fuseki/` (port 3030)
 - **IPFS**: Lighthouse integration for decentralized storage
 
 ### Core Working Features ✅
@@ -20,6 +22,7 @@
 7. **Research Data Display** - Species pages show AI vs human data with visual indicators
 8. **Geospatial Analysis** - Full interactive map-based species analysis with polygon drawing and KML upload
 9. **Spatial Species Queries** - PostGIS-powered location-based species search with 5.3M geohash tiles
+10. **Public API Access** - External API access with API key authentication for native species recommendations
 
 ## 🏗 Current Architecture
 
@@ -31,8 +34,14 @@
   - `blockchain.js` - Multi-chain NFT minting (Base, Celo, Optimism, Arbitrum)
   - `ipfs.js` - Lighthouse IPFS storage
   - `researchQueue.js` - Background job processing
-- **New Controllers**:
+- **Controllers**:
   - `geospatial.js` - Spatial queries for species distribution and nearby search
+  - `species.js` - Species search, details, images, and subspecies
+  - `research.js` - AI research generation and NFT minting
+  - `treederboard.js` - Leaderboard and user contributions
+  - `sponsorship.js` - Payment tracking and webhooks
+- **Middleware**:
+  - `apiAuth.js` - API key validation and rate limiting for public endpoints
 
 ### Frontend (`/frontend/`)
 - **Framework**: Next.js 14+ with TypeScript
@@ -292,11 +301,50 @@ cd scripts && node import_geohash_csv.js ../Treekipedia_geohash_15djuly.csv
 
 ---
 
-**Last Updated**: October 2, 2025
-**Next Review**: After image re-linking improvements and remaining unlinked images analysis
+**Last Updated**: October 22, 2025
+**Next Review**: After SSL certificate renewal and NGINX optimization review
 **Maintainer**: Update this doc whenever major changes are made
 
-### Latest Completed Work (October 2, 2025):
+### Latest Completed Work (October 22, 2025):
+
+#### **SSL & NGINX Configuration for Ontology Service:**
+- **Domain**: Migrated ontology service to `https://treekipedia-graph-flow.silvi.earth`
+- **Replaced**: Old `TreekipediaGraphflow.com` domain configuration
+- **SSL Certificate**: Let's Encrypt certificate already in place (valid until Nov 24, 2025)
+- **NGINX Configuration**: Created new config at `/etc/nginx/sites-available/treekipedia-graph-flow`
+- **Security Features**:
+  - HTTP/2 enabled for improved performance
+  - HSTS header with 1-year max-age and includeSubDomains
+  - Automatic HTTP to HTTPS redirect (301)
+  - SSL protocols: TLSv1.2 and TLSv1.3 only
+- **Services Exposed**:
+  - Main ontology service: Port 8000 → `/`
+  - Fuseki SPARQL endpoint: Port 3030 → `/fuseki/`
+  - Health check endpoint: `/health`
+  - Static files: `/static` directory
+- **Configuration**: 300-second timeouts for large ontology queries
+- **File Modified**: `/etc/nginx/sites-available/biodiversity-ontology` replaced with new config
+
+#### **Public API Access with API Key Authentication:**
+- **Feature**: Enabled external access to native species recommendation endpoint
+- **Authentication**: Implemented API key middleware (`backend/middleware/apiAuth.js`)
+- **CORS Configuration**: Route-specific public CORS allowing all origins for authenticated requests
+- **Rate Limiting**: Built-in 60 requests/minute per API key with in-memory tracking
+- **Protected Endpoint**: `GET /api/geospatial/ecoregions/native-species/:ecoregion_name`
+- **Security Model**: Two-layer approach - public CORS + required API key validation
+- **Key Management**: Simple comma-separated API keys in environment variables
+- **Response Headers**: Rate limit info (X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset)
+- **Error Handling**: Clear 401/403/429 responses with helpful messages
+- **Documentation**: Complete PUBLIC_API_GUIDE.md with examples in cURL, JavaScript, Python, Node.js
+- **Sample Keys**: 3 initial API keys generated for testing and external partners
+- **Files Created**:
+  - `backend/middleware/apiAuth.js` - Authentication middleware with rate limiting
+  - `PUBLIC_API_GUIDE.md` - Comprehensive API documentation for external users
+- **Files Modified**:
+  - `backend/routes/geospatial.js` - Added public CORS + API key middleware to native species endpoint
+  - `.env` - Added API_KEYS environment variable with initial keys
+
+### Previous Completed Work (October 2, 2025):
 
 #### **Image Re-linking After v9 Migration:**
 - **Problem**: v9 species import changed taxon_id structure, breaking all 31,796 image links (0% matched)
