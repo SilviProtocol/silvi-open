@@ -1,7 +1,7 @@
 # Silvi
 
 ## About
-Silvi is a revolutionary platform that bridges the gap between tree planting initiatives and digital verification through blockchain technology. Our mission is to enable transparent, verifiable tree planting activities while providing fair compensation to planters through web3 technology.
+Silvi bridges the gap between tree planting initiatives and digital verification through blockchain technology. Our mission is to enable transparent, verifiable tree planting activities while providing fair compensation to planters through web3 technology.
 
 ## Core Features
 - **Digital Tree Verification**: Streamlined process for documenting and verifying tree planting activities
@@ -71,3 +71,4 @@ Copyright © 2024 Silvi. All rights reserved.
 ---
 
 For detailed documentation and guides, visit our [Documentation Portal](https://docs.silvi.earth).
+
