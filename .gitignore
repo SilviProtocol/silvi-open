@@ -59,6 +59,40 @@ venv.bak/
 
 # Data files (if you want to exclude large data files)
 *.parquet
-*.csv
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+gee-env/
+venv/
+env/
+
+# Google credentials
+token.pickle
+credentials.json
+
+# Data files (large)
+*.parquet
+data/embeddings/*.csv
+data/signatures/*.csv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
 *.hdf5
 *.h5

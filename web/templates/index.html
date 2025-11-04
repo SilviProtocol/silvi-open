@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Species Habitat Similarity Demo</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            height: 100vh;
+            gap: 0;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .sidebar {
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            text-align: center;
+            transition: opacity 0.5s ease-out, max-height 0.5s ease-out, padding 0.5s ease-out;
+            overflow: hidden;
+        }
+
+        .header.fade-out {
+            opacity: 0;
+            max-height: 0;
+            padding: 0 24px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .instructions {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            transition: opacity 0.5s ease-out, max-height 0.5s ease-out, padding 0.5s ease-out;
+            overflow: hidden;
+        }
+
+        .instructions.fade-out {
+            opacity: 0;
+            max-height: 0;
+            padding: 0 20px;
+            border-bottom: none;
+        }
+
+        .instructions h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .instructions p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .controls {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        .control-group input,
+        .control-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .results h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: box-shadow 0.2s;
+        }
+
+        .result-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .result-rank {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-right: 10px;
+        }
+
+        .result-species {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin: 8px 0;
+        }
+
+        .result-score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 8px 0;
+        }
+
+        .result-meta {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c00;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #0d47a1;
+        }
+
+        .leaflet-popup-content {
+            font-size: 14px;
+        }
+
+        .leaflet-popup-content strong {
+            color: #667eea;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto;
+            }
+
+            .sidebar {
+                max-height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Map -->
+        <div id="map"></div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="header">
+                <h1>🌍 Species Habitat Similarity</h1>
+                <p>Click anywhere to find similar species</p>
+            </div>
+
+            <div class="instructions">
+                <h3>How it works:</h3>
+                <p>
+                    Click anywhere on the map to query that location's habitat signature.
+                    The system compares it to all known species signatures and returns
+                    the most similar species.
+                </p>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Latitude:</label>
+                    <input type="number" id="lat" step="0.01" value="-33.5" readonly>
+                </div>
+
+                <div class="control-group">
+                    <label>Longitude:</label>
+                    <input type="number" id="lon" step="0.01" value="151.0" readonly>
+                </div>
+
+                <div class="control-group">
+                    <label>Year:</label>
+                    <select id="year">
+                        <option value="2024" selected>2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                        <option value="2018">2018</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Top N Species:</label>
+                    <select id="topN">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+
+                <button class="btn" id="queryBtn">🔍 Query Location</button>
+            </div>
+
+            <div class="results" id="results">
+                <div class="info-box">
+                    👆 Click anywhere on the map or use the button above to start
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([-33.5, 151.0], 8);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Current marker
+        let currentMarker = null;
+
+        // Function to fade out the header
+        function fadeOutHeader() {
+            const header = document.querySelector('.header');
+            const instructions = document.querySelector('.instructions');
+            header.classList.add('fade-out');
+            instructions.classList.add('fade-out');
+        }
+
+        // Function to fade in the header
+        function fadeInHeader() {
+            const header = document.querySelector('.header');
+            const instructions = document.querySelector('.instructions');
+            header.classList.remove('fade-out');
+            instructions.classList.remove('fade-out');
+        }
+
+        // Handle map clicks
+        map.on('click', function(e) {
+            const lat = e.latlng.lat.toFixed(4);
+            const lon = e.latlng.lng.toFixed(4);
+
+            // Update inputs
+            document.getElementById('lat').value = lat;
+            document.getElementById('lon').value = lon;
+
+            // Update marker
+            if (currentMarker) {
+                map.removeLayer(currentMarker);
+            }
+
+            currentMarker = L.marker([lat, lon]).addTo(map)
+                .bindPopup(`<strong>Query Location</strong><br>Lat: ${lat}<br>Lon: ${lon}`)
+                .openPopup();
+
+            // Auto-query
+            queryLocation();
+        });
+
+        // Query button
+        document.getElementById('queryBtn').addEventListener('click', queryLocation);
+
+
+        function queryLocation() {
+            const lat = parseFloat(document.getElementById('lat').value);
+            const lon = parseFloat(document.getElementById('lon').value);
+            const year = parseInt(document.getElementById('year').value);
+            const topN = parseInt(document.getElementById('topN').value);
+
+            // Fade out header and instructions when starting query
+            fadeOutHeader();
+
+            // Show loading in sidebar
+            document.getElementById('results').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Querying tile embedding and comparing to species signatures...</p>
+                </div>
+            `;
+
+            // Disable button
+            const btn = document.getElementById('queryBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Querying...';
+
+            // Make API request
+            fetch('/api/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    lat: lat,
+                    lon: lon,
+                    year: year,
+                    top_n: topN
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Re-enable button
+                btn.disabled = false;
+                btn.textContent = '🔍 Query Location';
+
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    displayError(data.error);
+                }
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.textContent = '🔍 Query Location';
+                displayError('Network error: ' + error.message);
+            });
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+
+            // Build results HTML
+            let html = `
+                <h3>📊 Results for (${data.location.lat}, ${data.location.lon})</h3>
+                <div class="info-box">
+                    Comparing to ${data.results.length} species signatures using centroid distance
+                </div>
+            `;
+
+            data.results.forEach((result, index) => {
+                const rank = index + 1;
+                const scorePct = (result.similarity * 100).toFixed(2);
+                const progressWidth = result.similarity * 100;
+
+                html += `
+                    <div class="result-item">
+                        <div>
+                            <span class="result-rank">#${rank}</span>
+                        </div>
+                        <div class="result-species">${result.species}</div>
+                        <div class="result-score">${scorePct}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressWidth}%"></div>
+                        </div>
+                        <div class="result-meta">
+                            Based on ${result.occurrences.toLocaleString()} occurrences
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Update sidebar
+            resultsDiv.innerHTML = html;
+        }
+
+        function displayError(message) {
+            const resultsDiv = document.getElementById('results');
+
+            const errorHtml = `
+                <div class="error">
+                    <strong>Error:</strong> ${message}
+                </div>
+                <div class="info-box">
+                    Try clicking on a land location with forest cover.
+                </div>
+            `;
+
+            // Show error in sidebar
+            resultsDiv.innerHTML = errorHtml;
+        }
+
+        // Load stats on page load
+        fetch('/api/stats')
+            .then(response => response.json())
+            .then(data => {
+                if (data.loaded) {
+                    console.log(`Loaded ${data.num_species} species:`, data.species_list);
+                }
+            });
+    </script>
+</body>
+</html>

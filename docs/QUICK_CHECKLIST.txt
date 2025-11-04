@@ -1,0 +1,72 @@
+╔════════════════════════════════════════════════════════════════╗
+║          AUTOMATED PIPELINE SETUP - QUICK CHECKLIST            ║
+╔════════════════════════════════════════════════════════════════╗
+
+STEP 1: INSTALL PACKAGES
+═══════════════════════════════════════════════════════════════
+□ Activate gee-env:
+  source activate gee-env
+
+□ Install packages:
+  pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
+
+□ Verify:
+  python3 -c "from googleapiclient.discovery import build; print('OK')"
+
+
+STEP 2: GOOGLE CLOUD SETUP
+═══════════════════════════════════════════════════════════════
+□ Go to: https://console.cloud.google.com
+
+□ Create project: "gee-species-extraction"
+
+□ Enable Google Drive API
+
+□ Configure OAuth consent screen:
+  - Type: External
+  - App name: GEE Species Extraction
+  - Add your email
+
+□ Create OAuth credentials:
+  - Type: Desktop app
+  - Name: GEE Pipeline
+  - Download JSON
+
+□ Rename & move file:
+  cd ~/Downloads
+  mv client_secret_*.json credentials.json
+  mv credentials.json /Users/jeremicarose/Downloads/GEE/
+
+□ Verify:
+  ls -la /Users/jeremicarose/Downloads/GEE/credentials.json
+
+
+STEP 3: RUN THE PIPELINE
+═══════════════════════════════════════════════════════════════
+□ Navigate to directory:
+  cd /Users/jeremicarose/Downloads/GEE
+
+□ Activate environment:
+  source activate gee-env
+
+□ Run pipeline:
+  python3 automated_pipeline.py
+
+□ First time only: Browser opens
+  - Sign in to Google
+  - Click "Advanced" → "Go to GEE Species Extraction (unsafe)"
+  - Click "Continue"
+  - Close browser
+
+□ Watch it work! (~6 minutes)
+
+
+DONE! 🎉
+═══════════════════════════════════════════════════════════════
+Result: Quercus_coccifera_2018-2024_signature_256d_AUTO.csv
+Location: Google Drive/species_signatures/
+
+No manual downloads needed!
+
+═══════════════════════════════════════════════════════════════
+For help: See SETUP_STEPS.md
